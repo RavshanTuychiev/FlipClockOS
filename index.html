@@ -141,32 +141,65 @@ a:hover{text-decoration:underline}
 .clock-brand{font-size:10px;color:#9a9080;text-align:right;margin-top:2px;letter-spacing:1px;position:relative;z-index:1}
 
 /* ===== FOCUS ===== */
-.focus-layout{display:grid;grid-template-columns:1fr 320px;gap:20px}
-.focus-left{display:flex;flex-direction:column;align-items:center;gap:20px}
-.mode-tabs{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;gap:2px}
-.mode-tab{padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all var(--transition)}
-.mode-tab.active{background:var(--bg4);color:var(--text1)}
-.mode-tab:hover:not(.active){color:var(--text1)}
-.timer-controls{display:flex;gap:10px;align-items:center}
-.timer-task-card{width:100%;max-width:500px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.timer-task-label{font-size:11px;color:var(--text3);margin-bottom:2px}
-.timer-task-name{font-size:14px;font-weight:500;color:var(--text1)}
-.timer-task-sub{font-size:11px;color:var(--text2);margin-top:2px}
-.session-stats{display:flex;gap:24px}
-.sess-stat{text-align:center}
-.sess-stat-val{font-size:20px;font-weight:600;color:var(--text1)}
-.sess-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
-.pom-dots{display:flex;gap:5px;justify-content:center}
-.pom-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:background 0.3s}
+/* ===== FOCUS PAGE — PREMIUM ===== */
+.focus-layout{display:grid;grid-template-columns:1fr 288px;gap:28px;align-items:start}
+.focus-left{display:flex;flex-direction:column;align-items:center;gap:0}
+.mode-tabs{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:40px;padding:4px;gap:2px;margin-bottom:28px}
+.mode-tab{padding:7px 18px;border-radius:30px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;transition:all 0.18s;letter-spacing:0.2px;white-space:nowrap}
+.mode-tab.active{background:var(--bg);color:var(--text1);box-shadow:0 1px 6px rgba(0,0,0,0.5),0 0 0 1px var(--border)}
+.mode-tab:hover:not(.active){color:var(--text2)}
+.focus-progress-ring{width:100%;max-width:480px;height:2px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:22px}
+.focus-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--gold));border-radius:2px;transition:width 0.5s linear}
+.focus-task-card{width:100%;max-width:480px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.focus-task-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex-shrink:0;box-shadow:0 0 8px rgba(212,168,67,0.6)}
+.focus-task-dot.idle{background:var(--border2);box-shadow:none}
+.focus-task-text{flex:1;min-width:0}
+.focus-task-label{font-size:10px;color:var(--text3);letter-spacing:0.7px;text-transform:uppercase;margin-bottom:3px}
+.focus-task-name{font-size:13px;font-weight:500;color:var(--text1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.focus-task-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.focus-controls{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.btn-focus-main{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 40px;height:52px;border-radius:26px;font-size:14px;font-weight:600;letter-spacing:0.2px;cursor:pointer;transition:all 0.18s;border:1.5px solid transparent;font-family:var(--font)}
+.btn-focus-main.start{background:var(--accent);color:#0e0e0f;border-color:var(--accent)}
+.btn-focus-main.start:hover{background:var(--accent2);border-color:var(--accent2);box-shadow:0 4px 20px rgba(232,224,204,0.2);transform:translateY(-1px)}
+.btn-focus-main.pause{background:transparent;color:var(--gold);border-color:rgba(212,168,67,0.35)}
+.btn-focus-main.pause:hover{background:rgba(212,168,67,0.08)}
+.btn-focus-main.resume{background:var(--accent);color:#0e0e0f;border-color:var(--accent)}
+.btn-focus-main.resume:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-focus-main svg{width:15px;height:15px}
+.btn-focus-icon{width:44px;height:44px;border-radius:50%;background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;transition:all 0.18s;flex-shrink:0}
+.btn-focus-icon:hover:not(:disabled){background:var(--bg3);color:var(--text2);border-color:var(--border2)}
+.btn-focus-icon:disabled{opacity:0.25;cursor:not-allowed}
+.btn-focus-icon svg{width:14px;height:14px}
+.focus-stats-bar{width:100%;max-width:480px;display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.focus-stat-divider{background:var(--border)}
+.focus-stat-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:14px 8px}
+.focus-stat-val{font-size:17px;font-weight:600;color:var(--text1);line-height:1}
+.focus-stat-label{font-size:10px;color:var(--text3);letter-spacing:0.4px;text-transform:uppercase}
+.pom-dots{display:flex;gap:5px;justify-content:center;margin-bottom:1px}
+.pom-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background 0.3s}
 .pom-dot.done{background:var(--accent2)}
-.pom-dot.active{background:var(--gold)}
-.focus-right{display:flex;flex-direction:column;gap:12px}
+.pom-dot.active{background:var(--gold);box-shadow:0 0 6px rgba(212,168,67,0.7)}
+.focus-right{display:flex;flex-direction:column;gap:12px;position:sticky;top:24px}
+.focus-summary-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.focus-summary-row:last-child{border-bottom:none}
+/* legacy compat */
+.timer-controls{display:flex;gap:10px;align-items:center}
+.timer-task-card{display:none}
+.session-stats{display:none}
+.sess-stat{display:none}
 
 /* ===== HOME ===== */
 .home-greeting{margin-bottom:20px}
 .home-greeting h1{font-size:22px;font-weight:600;letter-spacing:-0.5px;color:var(--text1)}
 .home-greeting p{font-size:13px;color:var(--text2);margin-top:4px}
 .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+/* Home hero */
+.home-hero{display:grid;grid-template-columns:1fr 340px;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+.home-hero-text{padding:28px 28px;display:flex;flex-direction:column;justify-content:center;gap:0}
+.home-hero-greeting{font-size:11px;color:var(--text3);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:10px}
+.home-hero-name{font-size:26px;font-weight:600;letter-spacing:-0.5px;color:var(--text1);line-height:1.2;margin-bottom:8px}
+.home-hero-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.home-hero-clock{background:var(--bg);border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:240px}
 .next-action-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
 .na-icon{width:44px;height:44px;background:var(--gold-dim);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .na-icon svg{width:20px;height:20px;color:var(--gold)}
@@ -426,6 +459,8 @@ code{background:var(--bg4);border-radius:4px;padding:1px 5px;font-family:var(--m
   .analytics-stats{grid-template-columns:repeat(2,1fr)}
   .achievements-grid{grid-template-columns:repeat(2,1fr)}
   .creator-interests{grid-template-columns:1fr}
+  .home-hero{grid-template-columns:1fr}
+  .home-hero-clock{display:none}
 }
 @media (max-width:768px){
   .sidebar{position:fixed;left:-220px;width:220px;transition:left 0.3s ease}
@@ -444,6 +479,8 @@ code{background:var(--bg4);border-radius:4px;padding:1px 5px;font-family:var(--m
   .creator-roles{justify-content:center}
   .auth-card{padding:20px}
   .form-row{grid-template-columns:1fr}
+  .focus-stats-bar{grid-template-columns:1fr 1px 1fr 1px 1fr}
+  .mode-tabs{flex-wrap:wrap;border-radius:12px}
 }
 </style>
 <script>
@@ -741,7 +778,7 @@ function use3DClockAvailable() {
   })()).current;
 }
 
-function Clock3DCanvas({ seconds, mode }) {
+function Clock3DCanvas({ seconds, mode, height = '320px' }) {
   const mountRef = useRef(null);
   const rafRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -755,8 +792,8 @@ function Clock3DCanvas({ seconds, mode }) {
     const el = mountRef.current;
     if (!el) return;
 
-    const W = el.clientWidth || 400;
-    const H = el.clientHeight || 320;
+    const W = el.clientWidth || el.offsetWidth || 400;
+    const H = el.clientHeight || el.offsetHeight || 300;
 
     // Scene
     const scene = new THREE.Scene();
@@ -937,21 +974,30 @@ function Clock3DCanvas({ seconds, mode }) {
     };
     animate();
 
-    // Resize handler
+    // Resize handler — use ResizeObserver so hero & focus both respond correctly
     const onResize = () => {
-      const w = el.clientWidth;
-      const h = el.clientHeight;
+      const w = el.clientWidth || el.offsetWidth;
+      const h = el.clientHeight || el.offsetHeight;
       if (!w || !h) return;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
     window.addEventListener('resize', onResize);
+    // Also observe the element itself for size changes
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(onResize);
+      ro.observe(el);
+    }
+    // Initial size correction after mount (element may have been 0 during useEffect)
+    requestAnimationFrame(onResize);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
       el.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', onResize);
+      if (ro) ro.disconnect();
       renderer.dispose();
       if (renderer.domElement.parentNode === el) {
         el.removeChild(renderer.domElement);
@@ -963,8 +1009,8 @@ function Clock3DCanvas({ seconds, mode }) {
     ref: mountRef,
     style: {
       width: '100%',
-      height: '320px',
-      borderRadius: '16px',
+      height: height,
+      borderRadius: '0',
       overflow: 'hidden',
       cursor: 'grab',
     }
@@ -978,7 +1024,7 @@ function ClockDisplay({ seconds, mode }) {
 
   if (has3D && use3D) {
     return React.createElement('div', { className: 'flip-clock-wrap', style: { gap: 0 } },
-      React.createElement(Clock3DCanvas, { seconds, mode }),
+      React.createElement(Clock3DCanvas, { seconds, mode, height: '300px' }),
       React.createElement('div', {
         style: {
           fontFamily: 'var(--mono)',
@@ -1630,10 +1676,24 @@ function HomePage({ state, onNavigate, onCompleteTask, onStartFocusTask }) {
   const habitsDone = habits.filter(h=>h.days[todayDow]).length;
 
   return (
-    React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 855}}
-      , React.createElement('div', { className: "home-greeting", __self: this, __source: {fileName: _jsxFileName, lineNumber: 856}}
-        , React.createElement('h1', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 857}}, greeting, ", " , profile.name, ".")
-        , React.createElement('p', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 858}}, studyMinToday>0 ? `You've studied ${formatMinutes(studyMinToday)} today. ${goalPct>=100?'🎉 Daily goal reached!':`${profile.dailyGoalMin-studyMinToday}m left to hit your goal.`}` : "Ready to start? Hit your daily study goal today.")
+    React.createElement('div', null
+      , React.createElement('div', { className: "home-hero" }
+        , React.createElement('div', { className: "home-hero-text" }
+          , React.createElement('div', { className: "home-hero-greeting" }, greeting)
+          , React.createElement('div', { className: "home-hero-name" }, profile.name, ".")
+          , React.createElement('div', { className: "home-hero-sub" },
+              studyMinToday > 0
+                ? `${formatMinutes(studyMinToday)} studied today. ${goalPct>=100 ? '🎉 Daily goal reached!' : `${profile.dailyGoalMin - studyMinToday}m left.`}`
+                : "Ready to focus? Your clock is set."
+          )
+          , React.createElement('button', { className: "btn btn-primary", style: {alignSelf:'flex-start'}, onClick: ()=>onNavigate('focus') }
+            , React.createElement(Icons.Play)
+            , "Start focus"
+          )
+        )
+        , React.createElement('div', { className: "home-hero-clock" }
+          , React.createElement(Clock3DCanvas, { seconds: 0, mode: 'idle', height: '260px' })
+        )
       )
       , React.createElement('div', { className: "stat-grid", __self: this, __source: {fileName: _jsxFileName, lineNumber: 860}}
         , React.createElement('div', { className: "stat-card", __self: this, __source: {fileName: _jsxFileName, lineNumber: 861}}
@@ -1792,54 +1852,101 @@ function FocusPage({ state, onSessionComplete }) {
   const progressPct = Math.round((1-seconds/plannedRef.current)*100);
 
   return (
-    React.createElement('div', { className: "focus-layout", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1017}}
-      , React.createElement('div', { className: "focus-left", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1018}}
-        , React.createElement('div', { className: "mode-tabs", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1019}}
+    React.createElement('div', { className: "focus-layout" }
+      , React.createElement('div', { className: "focus-left" }
+        /* ── Mode selector ── */
+        , React.createElement('div', { className: "mode-tabs" }
           , [['focus','Focus 25'],['break','Break 5'],['long','Focus 50'],['custom','Custom']].map(([m,l])=>(
-            React.createElement('div', { key: m, className: `mode-tab${mode===m?' active':''}`, onClick: ()=>changeMode(m), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1021}}, l)
+            React.createElement('div', { key: m, className: `mode-tab${mode===m?' active':''}`, onClick: ()=>changeMode(m) }, l)
           ))
         )
+        /* ── 3D / 2D clock ── */
         , React.createElement(ClockDisplay, { seconds: seconds, mode: mode })
+        /* ── Custom duration input ── */
         , mode==='custom'&&!running&&(
-          React.createElement('div', { style: {display:'flex',alignItems:'center',gap:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1026}}
-            , React.createElement('span', { style: {fontSize:13,color:'var(--text2)'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1027}}, "Duration:")
-            , React.createElement('input', { type: "number", min: "1", max: "180", value: customMin, onChange: e=>{const v=parseInt(e.target.value)||1;setCustomMin(v);setSeconds(v*60);}, style: {width:70,background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:6,color:'var(--text1)',padding:'6px 10px',fontSize:13}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1028}} )
-            , React.createElement('span', { style: {fontSize:13,color:'var(--text2)'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1029}}, "min")
+          React.createElement('div', { style: {display:'flex',alignItems:'center',gap:10,marginTop:16,marginBottom:4} }
+            , React.createElement('span', { style: {fontSize:12,color:'var(--text3)'} }, "Duration")
+            , React.createElement('input', { type: "number", min: "1", max: "180", value: customMin,
+                onChange: e=>{const v=parseInt(e.target.value)||1;setCustomMin(v);setSeconds(v*60);},
+                style: {width:64,background:'var(--bg3)',border:'1px solid var(--border2)',borderRadius:6,color:'var(--text1)',padding:'5px 10px',fontSize:13,textAlign:'center'} })
+            , React.createElement('span', { style: {fontSize:12,color:'var(--text3)'} }, "min")
           )
         )
-        , React.createElement('div', { className: "timer-task-card", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1032}}
-          , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1033}}
-            , React.createElement('div', { className: "timer-task-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1034}}, "Working on" )
-            , React.createElement('div', { className: "timer-task-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1035}}, selectedTask?selectedTask.title:'No task selected')
-            , React.createElement('div', { className: "timer-task-sub", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1036}}, selectedTask?`${selectedTask.subject} · ${selectedTask.dur}m estimated`:'Select a task from Tasks to track it')
+        /* ── Progress bar (always present, active when running) ── */
+        , React.createElement('div', { className: "focus-progress-ring", style: {marginTop: mode==='custom'&&!running ? 14 : 18} }
+          , React.createElement('div', { className: "focus-progress-fill", style: {width:`${running||paused?progressPct:0}%`} })
+        )
+        /* ── Working on ── */
+        , React.createElement('div', { className: "focus-task-card" }
+          , React.createElement('div', { className: `focus-task-dot${selectedTask?'':' idle'}` })
+          , React.createElement('div', { className: "focus-task-text" }
+            , React.createElement('div', { className: "focus-task-label" }, "Working on")
+            , React.createElement('div', { className: "focus-task-name" }, selectedTask ? selectedTask.title : 'No task selected')
+            , React.createElement('div', { className: "focus-task-meta" },
+                selectedTask ? `${selectedTask.subject} · ${selectedTask.dur}m` : 'Select a task from the Tasks page'
+            )
           )
         )
-        , React.createElement('div', { className: "timer-controls", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1039}}
-          , React.createElement('button', { className: "btn btn-secondary btn-icon"  , onClick: reset, disabled: !running&&!paused, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1040}}, React.createElement(Icons.Reset, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1040}} ))
-          , !running&&!paused && React.createElement('button', { className: "btn btn-primary btn-lg"  , onClick: start, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1041}}, React.createElement(Icons.Play, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1041}} ), "Start")
-          , running&&!paused && React.createElement('button', { className: "btn btn-primary btn-lg"  , onClick: pause, style: {background:'var(--gold)',borderColor:'var(--gold)'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1042}}, React.createElement(Icons.Pause, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1042}} ), "Pause")
-          , paused && React.createElement('button', { className: "btn btn-primary btn-lg"  , onClick: resume, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1043}}, React.createElement(Icons.Play, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1043}} ), "Resume")
-          , React.createElement('button', { className: "btn btn-secondary btn-icon"  , onClick: reset, disabled: !running&&!paused, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1044}}, React.createElement(Icons.Skip, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1044}} ))
-        )
-        , running && React.createElement('div', { style: {width:'100%',maxWidth:480}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1046}}, React.createElement('div', { className: "progress-bar", style: {height:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1046}}, React.createElement('div', { className: "progress-fill gold" , style: {width:`${progressPct}%`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1046}})))
-        , React.createElement('div', { className: "session-stats", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1047}}
-          , React.createElement('div', { className: "sess-stat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1048}}, React.createElement('div', { className: "sess-stat-val", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1048}}, formatMinutes(state.studyMinToday)), React.createElement('div', { className: "sess-stat-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1048}}, "Today"))
-          , React.createElement('div', { className: "sess-stat", style: {borderLeft:'1px solid var(--border)',paddingLeft:24}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1049}}
-            , React.createElement('div', { className: "pom-dots", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1050}}, Array.from({length:4}).map((_,i)=>React.createElement('div', { key: i, className: `pom-dot${i<sessCount%4?' done':i===sessCount%4&&running?' active':''}`, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1050}})))
-            , React.createElement('div', { className: "sess-stat-label", style: {marginTop:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1051}}, "Sessions")
+        /* ── Controls ── */
+        , React.createElement('div', { className: "focus-controls" }
+          , React.createElement('button', { className: "btn-focus-icon", onClick: reset, disabled: !running&&!paused, title: "Reset" }
+            , React.createElement(Icons.Reset)
           )
-          , React.createElement('div', { className: "sess-stat", style: {borderLeft:'1px solid var(--border)',paddingLeft:24}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1053}}, React.createElement('div', { className: "sess-stat-val", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1053}}, state.totalSessions), React.createElement('div', { className: "sess-stat-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1053}}, "Total"))
+          , !running&&!paused && React.createElement('button', { className: "btn-focus-main start", onClick: start }
+            , React.createElement(Icons.Play), "Start session"
+          )
+          , running&&!paused && React.createElement('button', { className: "btn-focus-main pause", onClick: pause }
+            , React.createElement(Icons.Pause), "Pause"
+          )
+          , paused && React.createElement('button', { className: "btn-focus-main resume", onClick: resume }
+            , React.createElement(Icons.Play), "Resume"
+          )
+          , React.createElement('button', { className: "btn-focus-icon", onClick: reset, disabled: !running&&!paused, title: "Skip" }
+            , React.createElement(Icons.Skip)
+          )
+        )
+        /* ── Session stats bar ── */
+        , React.createElement('div', { className: "focus-stats-bar" }
+          , React.createElement('div', { className: "focus-stat-cell" }
+            , React.createElement('div', { className: "focus-stat-val" }, formatMinutes(state.studyMinToday))
+            , React.createElement('div', { className: "focus-stat-label" }, "Today")
+          )
+          , React.createElement('div', { className: "focus-stat-divider" })
+          , React.createElement('div', { className: "focus-stat-cell" }
+            , React.createElement('div', { className: "pom-dots" }
+              , Array.from({length:4}).map((_,i)=>React.createElement('div', { key: i, className: `pom-dot${i<sessCount%4?' done':i===sessCount%4&&running?' active':''}` }))
+            )
+            , React.createElement('div', { className: "focus-stat-label" }, `${sessCount} sessions`)
+          )
+          , React.createElement('div', { className: "focus-stat-divider" })
+          , React.createElement('div', { className: "focus-stat-cell" }
+            , React.createElement('div', { className: "focus-stat-val" }, state.totalSessions)
+            , React.createElement('div', { className: "focus-stat-label" }, "All time")
+          )
         )
       )
-      , React.createElement('div', { className: "focus-right", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1056}}
-        , React.createElement('div', { className: "card", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1057}}, React.createElement('div', { className: "card-header", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1057}}, React.createElement('span', { className: "card-title", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1057}}, "Focus tips" ))
-          , ['Put your phone away','Close distracting tabs','Get water before you start','One task at a time','Short breaks re-energize you'].map((t,i)=>(
-            React.createElement('div', { key: i, style: {display:'flex',gap:8,fontSize:12,color:'var(--text2)',marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1059}}, React.createElement('span', { style: {color:'var(--gold)',fontWeight:600,flexShrink:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1059}}, i+1, "."), t)
+      /* ── Right panel ── */
+      , React.createElement('div', { className: "focus-right" }
+        , React.createElement('div', { className: "card" }
+          , React.createElement('div', { className: "card-header" }
+            , React.createElement('span', { className: "card-title" }, "Today")
+          )
+          , [{l:'Study time',v:formatMinutes(state.studyMinToday)},{l:'Goal',v:`${Math.min(100,Math.round(state.studyMinToday/state.profile.dailyGoalMin*100))}%`},{l:'Sessions',v:sessCount},{l:'Total XP',v:state.xp.toLocaleString()}].map(s=>(
+            React.createElement('div', { key: s.l, className: "focus-summary-row" }
+              , React.createElement('span', { style: {fontSize:12,color:'var(--text3)'} }, s.l)
+              , React.createElement('span', { style: {fontSize:13,color:'var(--text1)',fontWeight:500} }, s.v)
+            )
           ))
         )
-        , React.createElement('div', { className: "card", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1062}}, React.createElement('div', { className: "card-header", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1062}}, React.createElement('span', { className: "card-title", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1062}}, "Today's summary" ))
-          , [{l:'Study time',v:formatMinutes(state.studyMinToday)},{l:'Goal progress',v:`${Math.min(100,Math.round(state.studyMinToday/state.profile.dailyGoalMin*100))}%`},{l:'Sessions today',v:sessCount},{l:'Total XP',v:state.xp.toLocaleString()}].map(s=>(
-            React.createElement('div', { key: s.l, style: {display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1064}}, React.createElement('span', { style: {color:'var(--text2)'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1064}}, s.l), React.createElement('span', { style: {color:'var(--text1)',fontWeight:500}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1064}}, s.v))
+        , React.createElement('div', { className: "card" }
+          , React.createElement('div', { className: "card-header" }
+            , React.createElement('span', { className: "card-title" }, "Tips")
+          )
+          , ['Phone away', 'Close distracting tabs', 'One task at a time', 'Water before you start', 'Breaks restore focus'].map((t,i)=>(
+            React.createElement('div', { key: i, style: {display:'flex',gap:10,fontSize:12,color:'var(--text2)',marginBottom:9,alignItems:'flex-start'} }
+              , React.createElement('span', { style: {color:'var(--border2)',fontFamily:'var(--mono)',fontSize:10,marginTop:1,flexShrink:0} }, `0${i+1}`)
+              , t
+            )
           ))
         )
       )
