@@ -17,16 +17,16 @@
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0e0e0f;--bg2:#141416;--bg3:#1a1a1d;--bg4:#222226;
-  --border:#2a2a2e;--border2:#333338;
-  --text1:#f0f0f2;--text2:#a0a0a8;--text3:#606068;
+  --bg:#0c0c0d;--bg2:#111113;--bg3:#18181b;--bg4:#202024;--bg5:#28282d;
+  --border:#252528;--border2:#303035;
+  --text1:#f0f0f2;--text2:#9090a0;--text3:#52525e;
   --accent:#e8e0cc;--accent2:#c8b89a;
-  --gold:#d4a843;--gold-dim:#3a2e10;
+  --gold:#d4a843;--gold-dim:#2a220a;--gold-glow:rgba(212,168,67,0.15);
   --red:#e05252;--green:#52c878;--blue:#5294e0;--purple:#9b52e0;--orange:#e07820;
   --radius:10px;--radius-sm:6px;--radius-lg:16px;
   --font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
   --sidebar-w:220px;--transition:0.15s ease;
-  --shadow:0 2px 12px rgba(0,0,0,0.4);--shadow-lg:0 8px 40px rgba(0,0,0,0.6);
+  --shadow:0 2px 12px rgba(0,0,0,0.5);--shadow-lg:0 8px 40px rgba(0,0,0,0.7);
 }
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--font);background:var(--bg);color:var(--text1);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -42,45 +42,46 @@ a:hover{text-decoration:underline}
 
 /* ===== SIDEBAR ===== */
 .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;overflow-x:hidden;z-index:100}
-.sidebar-brand{padding:20px 18px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
-.brand-icon{width:32px;height:32px;background:var(--accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.brand-name{font-size:13px;font-weight:600;letter-spacing:-0.3px;color:var(--text1)}
-.brand-sub{font-size:10px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
-.sidebar-user{padding:12px 18px;border-bottom:1px solid var(--border)}
+.sidebar-brand{padding:18px 16px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.brand-icon{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-name{font-size:12px;font-weight:600;letter-spacing:-0.2px;color:var(--text1)}
+.brand-sub{font-size:9px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-top:1px}
+.sidebar-user{padding:14px 16px;border-bottom:1px solid var(--border)}
 .user-row{display:flex;align-items:center;gap:10px}
-.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg4);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--accent2);flex-shrink:0}
-.user-name{font-size:13px;font-weight:500;color:var(--text1)}
-.user-level{font-size:11px;color:var(--text3)}
-.xp-bar{margin-top:8px}
-.xp-bar-track{height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg4);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent2);flex-shrink:0}
+.user-name{font-size:12px;font-weight:500;color:var(--text1);line-height:1.2}
+.user-level{font-size:10px;color:var(--text3);margin-top:1px}
+.xp-bar{margin-top:10px}
+.xp-bar-track{height:2px;background:var(--border2);border-radius:2px;overflow:hidden}
 .xp-bar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.5s ease}
-.xp-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px}
-.sidebar-nav{padding:10px;flex:1}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:var(--radius-sm);font-size:13px;color:var(--text2);cursor:pointer;transition:background var(--transition),color var(--transition);position:relative;user-select:none}
+.xp-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:5px}
+.sidebar-nav{padding:8px 8px;flex:1}
+.nav-section-label{font-size:9px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;padding:8px 8px 4px;margin-top:4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:var(--radius-sm);font-size:12.5px;color:var(--text2);cursor:pointer;transition:background var(--transition),color var(--transition);position:relative;user-select:none}
 .nav-item:hover{background:var(--bg3);color:var(--text1)}
 .nav-item.active{background:var(--bg4);color:var(--text1)}
-.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:14px;background:var(--accent2);border-radius:1px}
-.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:0.7;display:flex;align-items:center;justify-content:center}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:12px;background:var(--accent2);border-radius:1px}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:0.6;display:flex;align-items:center;justify-content:center}
 .nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1}
-.nav-badge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:600;padding:1px 5px;border-radius:10px;min-width:18px;text-align:center}
-.nav-streak{margin-left:auto;font-size:11px;color:var(--gold);font-weight:500}
-.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border)}
-.streak-display{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gold);font-weight:500}
+.nav-badge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:600;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center}
+.nav-streak{margin-left:auto;font-size:10px;color:var(--gold);font-weight:500}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border)}
+.streak-display{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3)}
 
 /* ===== MAIN CONTENT ===== */
 .main-content{flex:1;overflow-y:auto;overflow-x:hidden;min-width:0;display:flex;flex-direction:column}
-.topbar{height:52px;min-height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:50}
-.topbar-title{font-size:15px;font-weight:500;color:var(--text1);flex:1}
-.topbar-clock{font-family:var(--mono);font-size:13px;color:var(--text2);letter-spacing:1px}
-.topbar-btn{width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text2);transition:background var(--transition),color var(--transition);cursor:pointer}
+.topbar{height:48px;min-height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:13px;font-weight:500;color:var(--text1);flex:1}
+.topbar-clock{font-family:var(--mono);font-size:12px;color:var(--text2);letter-spacing:1.5px}
+.topbar-btn{width:28px;height:28px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text2);transition:background var(--transition),color var(--transition);cursor:pointer}
 .topbar-btn:hover{background:var(--bg4);color:var(--text1)}
-.topbar-btn svg{width:15px;height:15px}
+.topbar-btn svg{width:13px;height:13px}
 .topbar-btn-mobile{display:none}
 .page-content{padding:24px;flex:1}
 
 /* ===== BUTTONS ===== */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;border:1px solid transparent;transition:all var(--transition);white-space:nowrap;cursor:pointer}
-.btn-primary{background:var(--accent);color:#0e0e0f;border-color:var(--accent)}
+.btn-primary{background:var(--accent);color:#0c0c0d;border-color:var(--accent)}
 .btn-primary:hover{background:var(--accent2);border-color:var(--accent2)}
 .btn-secondary{background:var(--bg3);color:var(--text1);border-color:var(--border2)}
 .btn-secondary:hover{background:var(--bg4)}
@@ -94,25 +95,186 @@ a:hover{text-decoration:underline}
 .btn:disabled{opacity:0.4;cursor:not-allowed}
 .btn-auth{width:100%;justify-content:center;padding:11px;font-size:14px;border-radius:var(--radius)}
 .btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;background:white;color:#1a1a1a;border:1px solid #e0e0e0;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;transition:all var(--transition)}
-.btn-google:hover{background:#f5f5f5;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.btn-google:hover{background:#f5f5f5}
 .btn-google:disabled{opacity:0.6;cursor:not-allowed}
 .btn-google svg{width:20px;height:20px;flex-shrink:0}
 
 /* ===== CARDS ===== */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:12px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px}
+.card-title{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px}
 
-/* ===== STAT CARDS ===== */
+/* ===== HOME PAGE — PREMIUM REBUILD ===== */
+.home-page{display:flex;flex-direction:column;gap:0;min-height:0}
+
+/* Hero */
+.home-hero{
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:0;
+  background:linear-gradient(135deg,var(--bg2) 0%,#0f0f12 100%);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  margin-bottom:20px;
+  position:relative;
+  min-height:320px;
+}
+.home-hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 60% 80% at 70% 50%,rgba(212,168,67,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+.home-hero-left{
+  padding:36px 36px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:0;
+  position:relative;
+  z-index:1;
+}
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(212,168,67,0.1);
+  border:1px solid rgba(212,168,67,0.2);
+  border-radius:20px;
+  padding:4px 12px;
+  font-size:11px;
+  color:var(--gold);
+  font-weight:500;
+  margin-bottom:18px;
+  width:fit-content;
+}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.hero-headline{font-size:34px;font-weight:700;letter-spacing:-1.5px;color:var(--text1);line-height:1.1;margin-bottom:6px}
+.hero-headline span{color:var(--gold)}
+.hero-sub{font-size:13px;color:var(--text2);line-height:1.65;max-width:360px;margin-bottom:26px;margin-top:8px}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
+.hero-btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 22px;border-radius:8px;
+  font-size:13px;font-weight:600;
+  background:var(--accent);color:#0c0c0d;
+  border:none;cursor:pointer;
+  transition:all 0.18s;letter-spacing:0.1px;
+}
+.hero-btn-primary:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(232,224,204,0.2)}
+.hero-btn-primary svg{width:13px;height:13px}
+.hero-btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 22px;border-radius:8px;
+  font-size:13px;font-weight:500;
+  background:transparent;color:var(--text2);
+  border:1px solid var(--border2);cursor:pointer;
+  transition:all 0.18s;
+}
+.hero-btn-secondary:hover{background:var(--bg3);color:var(--text1);border-color:var(--border2)}
+.hero-btn-secondary svg{width:13px;height:13px}
+
+/* Hero right — clock area */
+.home-hero-right{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#0a0a0c 0%,#111115 100%);
+  border-left:1px solid var(--border);
+}
+.home-hero-right::before{
+  content:'';
+  position:absolute;
+  bottom:-30%;left:50%;
+  transform:translateX(-50%);
+  width:300px;height:300px;
+  background:radial-gradient(ellipse,rgba(212,168,67,0.08) 0%,transparent 65%);
+  pointer-events:none;
+}
+.clock-floating-labels{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:2;
+}
+.clock-label{
+  position:absolute;
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:500;
+  padding:4px 10px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.03);
+  color:var(--text3);
+  letter-spacing:0.3px;
+  backdrop-filter:blur(8px);
+}
+.clock-label-top{top:18px;right:16px}
+.clock-label-mid{top:50%;right:10px;transform:translateY(-50%) translateX(10px)}
+.clock-label-bot{bottom:18px;right:16px}
+.clock-label-icon{font-size:11px}
+
+/* Dashboard section */
+.home-dash-label{
+  font-size:9px;font-weight:500;color:var(--text3);
+  letter-spacing:1.5px;text-transform:uppercase;
+  text-align:center;
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.home-dash-label::before,.home-dash-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Stat cards */
+.home-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.home-stat-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  transition:border-color 0.18s;
+}
+.home-stat-card:hover{border-color:var(--border2)}
+.home-stat-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:14px}
+.home-stat-icon.gold{background:var(--gold-dim)}
+.home-stat-icon.green{background:rgba(82,200,120,0.1)}
+.home-stat-icon.blue{background:rgba(82,148,224,0.1)}
+.home-stat-icon.purple{background:rgba(155,82,224,0.1)}
+.home-stat-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.9px;margin-bottom:6px;font-weight:500}
+.home-stat-value{font-size:26px;font-weight:700;color:var(--text1);letter-spacing:-0.8px;line-height:1}
+.home-stat-value.gold{color:var(--gold)}
+.home-stat-value.green{color:var(--green)}
+.home-stat-sub{font-size:11px;color:var(--text3);margin-top:5px}
+.home-stat-bar{margin-top:10px}
+.home-stat-bar-track{height:2px;background:var(--bg4);border-radius:2px}
+.home-stat-bar-fill{height:100%;border-radius:2px;transition:width 0.5s ease}
+.home-stat-bar-fill.gold{background:var(--gold)}
+.home-stat-bar-fill.accent{background:var(--accent2)}
+
+/* Next up card + lower grid (reuse existing) */
+.next-action-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.na-icon{width:40px;height:40px;background:var(--gold-dim);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.na-icon svg{width:18px;height:18px;color:var(--gold)}
+.na-content{flex:1;min-width:0}
+.na-label{font-size:9px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:2px}
+.na-title{font-size:13px;font-weight:500;color:var(--text1)}
+.na-meta{font-size:11px;color:var(--text2);margin-top:2px}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ===== STAT GRID (other pages) ===== */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
 .stat-value{font-size:26px;font-weight:600;color:var(--text1);letter-spacing:-0.5px;line-height:1}
 .stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
 .stat-card.gold .stat-value{color:var(--gold)}
 .stat-card.green .stat-value{color:var(--green)}
 
-/* ===== FLIP CLOCK ===== */
+/* ===== FLIP CLOCK 2D (fallback + focus page) ===== */
 .flip-clock-wrap{display:flex;flex-direction:column;align-items:center;gap:24px}
 .flip-clock-body{background:linear-gradient(145deg,#f5f0e8,#e8e0d0);border-radius:22px;padding:30px 40px 26px;box-shadow:0 24px 70px rgba(0,0,0,0.75),inset 0 1px 0 rgba(255,255,255,0.6),0 0 0 2px #ccc0a0;position:relative}
 .flip-clock-body::before{content:'';position:absolute;inset:8px;border-radius:15px;border:2px solid #1a1a1a;pointer-events:none;z-index:0}
@@ -140,7 +302,6 @@ a:hover{text-decoration:underline}
 .clock-mode-label{font-family:var(--mono);font-size:11px;letter-spacing:3.5px;text-transform:uppercase;color:#6a6050;text-align:center;margin-top:12px;position:relative;z-index:1}
 .clock-brand{font-size:10px;color:#9a9080;text-align:right;margin-top:2px;letter-spacing:1px;position:relative;z-index:1}
 
-/* ===== FOCUS ===== */
 /* ===== FOCUS PAGE — PREMIUM ===== */
 .focus-layout{display:grid;grid-template-columns:1fr 288px;gap:28px;align-items:start}
 .focus-left{display:flex;flex-direction:column;align-items:center;gap:0}
@@ -159,11 +320,11 @@ a:hover{text-decoration:underline}
 .focus-task-meta{font-size:11px;color:var(--text3);margin-top:2px}
 .focus-controls{display:flex;align-items:center;gap:10px;margin-bottom:22px}
 .btn-focus-main{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 40px;height:52px;border-radius:26px;font-size:14px;font-weight:600;letter-spacing:0.2px;cursor:pointer;transition:all 0.18s;border:1.5px solid transparent;font-family:var(--font)}
-.btn-focus-main.start{background:var(--accent);color:#0e0e0f;border-color:var(--accent)}
+.btn-focus-main.start{background:var(--accent);color:#0c0c0d;border-color:var(--accent)}
 .btn-focus-main.start:hover{background:var(--accent2);border-color:var(--accent2);box-shadow:0 4px 20px rgba(232,224,204,0.2);transform:translateY(-1px)}
 .btn-focus-main.pause{background:transparent;color:var(--gold);border-color:rgba(212,168,67,0.35)}
 .btn-focus-main.pause:hover{background:rgba(212,168,67,0.08)}
-.btn-focus-main.resume{background:var(--accent);color:#0e0e0f;border-color:var(--accent)}
+.btn-focus-main.resume{background:var(--accent);color:#0c0c0d;border-color:var(--accent)}
 .btn-focus-main.resume:hover{background:var(--accent2);transform:translateY(-1px)}
 .btn-focus-main svg{width:15px;height:15px}
 .btn-focus-icon{width:44px;height:44px;border-radius:50%;background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;transition:all 0.18s;flex-shrink:0}
@@ -182,31 +343,10 @@ a:hover{text-decoration:underline}
 .focus-right{display:flex;flex-direction:column;gap:12px;position:sticky;top:24px}
 .focus-summary-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
 .focus-summary-row:last-child{border-bottom:none}
-/* legacy compat */
 .timer-controls{display:flex;gap:10px;align-items:center}
 .timer-task-card{display:none}
 .session-stats{display:none}
 .sess-stat{display:none}
-
-/* ===== HOME ===== */
-.home-greeting{margin-bottom:20px}
-.home-greeting h1{font-size:22px;font-weight:600;letter-spacing:-0.5px;color:var(--text1)}
-.home-greeting p{font-size:13px;color:var(--text2);margin-top:4px}
-.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-/* Home hero */
-.home-hero{display:grid;grid-template-columns:1fr 340px;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
-.home-hero-text{padding:28px 28px;display:flex;flex-direction:column;justify-content:center;gap:0}
-.home-hero-greeting{font-size:11px;color:var(--text3);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:10px}
-.home-hero-name{font-size:26px;font-weight:600;letter-spacing:-0.5px;color:var(--text1);line-height:1.2;margin-bottom:8px}
-.home-hero-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px}
-.home-hero-clock{background:var(--bg);border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:240px}
-.next-action-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
-.na-icon{width:44px;height:44px;background:var(--gold-dim);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.na-icon svg{width:20px;height:20px;color:var(--gold)}
-.na-content{flex:1;min-width:0}
-.na-label{font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px}
-.na-title{font-size:15px;font-weight:500;color:var(--text1)}
-.na-meta{font-size:12px;color:var(--text2);margin-top:3px}
 
 /* ===== TASKS ===== */
 .task-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
@@ -222,7 +362,7 @@ a:hover{text-decoration:underline}
 .task-checkbox:hover{border-color:var(--accent2)}
 .task-checkbox.checked{background:var(--accent2);border-color:var(--accent2)}
 .task-checkbox.checked svg{display:block}
-.task-checkbox svg{display:none;width:10px;height:10px;color:#0e0e0f}
+.task-checkbox svg{display:none;width:10px;height:10px;color:#0c0c0d}
 .task-body{flex:1;min-width:0}
 .task-title{font-size:13px;color:var(--text1);font-weight:500}
 .task-item.done .task-title{text-decoration:line-through;color:var(--text3)}
@@ -232,225 +372,165 @@ a:hover{text-decoration:underline}
 .tag-eng{background:rgba(82,200,120,0.15);color:var(--green)}
 .tag-sci{background:rgba(224,120,32,0.15);color:var(--orange)}
 .tag-prog{background:rgba(155,82,224,0.15);color:var(--purple)}
-.tag-ai{background:rgba(212,168,67,0.15);color:var(--gold)}
-.tag-default{background:rgba(160,160,168,0.15);color:var(--text2)}
-.priority-indicator{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.p-urgent{background:var(--red)}.p-high{background:var(--orange)}.p-medium{background:var(--blue)}.p-low{background:var(--text3)}
+.tag-default{background:var(--bg4);color:var(--text2)}
 .task-due{font-size:11px;color:var(--text3)}
-.task-dur{font-size:11px;color:var(--text3)}
-.task-actions{display:flex;gap:4px;opacity:0;transition:opacity var(--transition)}
-.task-item:hover .task-actions{opacity:1}
-.icon-btn{width:26px;height:26px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
-.icon-btn:hover{background:var(--bg4);color:var(--text1);border-color:var(--border2)}
-.icon-btn svg{width:12px;height:12px}
-.icon-btn.danger:hover{background:rgba(224,82,82,0.15);color:var(--red);border-color:rgba(224,82,82,0.3)}
+.priority-indicator{width:6px;height:6px;border-radius:50%;display:inline-block}
+.p-urgent{background:var(--red)}
+.p-high{background:var(--orange)}
+.p-medium{background:var(--blue)}
+.p-low{background:var(--text3)}
 
-/* ===== PROGRESS ===== */
-.progress-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
-.progress-fill{height:100%;border-radius:3px;transition:width 0.5s ease}
-.progress-fill.gold{background:var(--gold)}.progress-fill.green{background:var(--green)}.progress-fill.blue{background:var(--blue)}.progress-fill.accent{background:var(--accent2)}
+/* ===== PROGRESS BARS ===== */
+.progress-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width 0.5s ease}
+.progress-fill.gold{background:var(--gold)}
+.progress-fill.green{background:var(--green)}
+.progress-fill.blue{background:var(--blue)}
+.progress-fill.accent{background:var(--accent2)}
 
 /* ===== GOALS ===== */
 .goals-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.goal-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.goal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.goal-name{font-size:14px;font-weight:500;color:var(--text1)}
-.goal-deadline{font-size:11px;color:var(--text3)}
-.goal-progress-nums{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-top:8px}
-.milestone-list{margin-top:12px;display:flex;flex-direction:column;gap:4px}
-.milestone-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
-.ms-box{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all var(--transition);cursor:pointer}
-.ms-box.done{background:var(--accent2);border-color:var(--accent2)}
-.ms-box svg{display:none;width:8px;height:8px;color:#0e0e0f}
-.ms-box.done svg{display:block}
+.goal-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color var(--transition)}
+.goal-card:hover{border-color:var(--border2)}
+.goal-name{font-size:14px;font-weight:500;color:var(--text1);margin-bottom:4px}
+.goal-meta{font-size:11px;color:var(--text2);margin-bottom:10px}
+.goal-progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:6px}
+.goal-milestone{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border);font-size:12px;color:var(--text2);cursor:pointer}
+.goal-milestone.done{color:var(--text3);text-decoration:line-through}
 
 /* ===== HABITS ===== */
-.habits-list{display:flex;flex-direction:column;gap:8px}
-.habit-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px}
-.habit-emoji{font-size:22px;flex-shrink:0}
-.habit-body{flex:1;min-width:0}
-.habit-name{font-size:13px;font-weight:500;color:var(--text1);margin-bottom:6px}
+.habit-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:8px}
+.habit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.habit-name{font-size:13px;font-weight:500;color:var(--text1)}
 .habit-days{display:flex;gap:4px}
-.habit-day{width:26px;height:26px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3);cursor:pointer;transition:all var(--transition);font-weight:500}
-.habit-day:hover{border-color:var(--accent2);color:var(--text1)}
-.habit-day.done{background:var(--accent2);border-color:var(--accent2);color:#0e0e0f;font-weight:600}
-.habit-streak{font-size:13px;font-weight:600;color:var(--gold);margin-left:auto;display:flex;align-items:center;gap:4px;white-space:nowrap}
-
-/* ===== HEATMAP / ACTIVITY ===== */
-.heatmap-outer{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
-.heatmap-grid{display:grid;gap:3px;margin-top:10px}
-.heatmap-cell{aspect-ratio:1;border-radius:2px;cursor:pointer;transition:transform 0.1s}
-.heatmap-cell:hover{transform:scale(1.4)}
-.h0{background:var(--bg4)}.h1{background:#2e3a30}.h2{background:#3a5a3e}.h3{background:#4a8050}.h4{background:var(--green)}
-.heatmap-legend{display:flex;gap:4px;align-items:center;margin-top:8px;font-size:10px;color:var(--text3)}
-.heatmap-legend-cell{width:10px;height:10px;border-radius:2px}
-.activity-feed{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
-.activity-item:last-child{border-bottom:none}
-.activity-icon{width:32px;height:32px;border-radius:8px;background:var(--bg4);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.activity-icon svg{width:15px;height:15px}
-.activity-text{flex:1}
-.activity-title{font-size:13px;color:var(--text1)}
-.activity-time{font-size:11px;color:var(--text3);margin-top:2px}
-.activity-xp{margin-left:auto;font-size:12px;font-weight:600;color:var(--gold);background:rgba(212,168,67,0.1);padding:2px 8px;border-radius:5px;white-space:nowrap}
+.habit-day{width:28px;height:28px;border-radius:5px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3);transition:all 0.15s}
+.habit-day.done{background:var(--green);border-color:var(--green);color:#0c0c0d}
+.habit-day:hover:not(.done){background:var(--bg3);color:var(--text2)}
 
 /* ===== ANALYTICS ===== */
-.analytics-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.chart-title{font-size:12px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:14px}
-.bar-chart{display:flex;align-items:flex-end;gap:6px;height:120px}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
-.bar-col-bar{width:100%;border-radius:4px 4px 0 0;background:var(--bg4);transition:height 0.5s ease;min-height:3px}
-.bar-col-bar.highlight{background:var(--accent2)}
-.bar-col-label{font-size:10px;color:var(--text3)}
-.bar-col-val{font-size:10px;color:var(--text2)}
+.analytics-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:6px;height:80px}
+.chart-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.chart-bar{background:var(--bg4);border-radius:3px 3px 0 0;width:100%;transition:height 0.4s ease;min-height:2px}
+.chart-bar.active{background:var(--gold)}
+.chart-day{font-size:10px;color:var(--text3)}
+
+/* ===== ACTIVITY HEATMAP ===== */
+.heatmap-row{display:flex;gap:3px;margin-bottom:3px}
+.heatmap-cell{width:12px;height:12px;border-radius:2px;background:var(--bg4);transition:background 0.2s}
+.heatmap-cell.l1{background:rgba(212,168,67,0.2)}
+.heatmap-cell.l2{background:rgba(212,168,67,0.4)}
+.heatmap-cell.l3{background:rgba(212,168,67,0.6)}
+.heatmap-cell.l4{background:var(--gold)}
 
 /* ===== ACHIEVEMENTS ===== */
-.achievements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.ach-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;transition:border-color var(--transition)}
-.ach-card.unlocked{border-color:var(--gold-dim);box-shadow:0 0 0 1px var(--gold-dim)}
-.ach-icon{width:48px;height:48px;border-radius:12px;margin:0 auto 10px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:24px}
-.ach-card.unlocked .ach-icon{background:rgba(212,168,67,0.15)}
-.ach-name{font-size:13px;font-weight:500;color:var(--text1);margin-bottom:4px}
-.ach-desc{font-size:11px;color:var(--text3)}
-.ach-card.locked{opacity:0.4}
-.ach-unlocked-badge{font-size:10px;color:var(--gold);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-top:6px}
+.achievements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.achievement-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start;transition:all var(--transition)}
+.achievement-card.unlocked{border-color:rgba(212,168,67,0.25);background:rgba(212,168,67,0.03)}
+.achievement-card.locked{opacity:0.45}
+.achievement-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--bg3)}
+.achievement-name{font-size:12px;font-weight:600;color:var(--text1);margin-bottom:2px}
+.achievement-desc{font-size:11px;color:var(--text2)}
+.achievement-xp{font-size:10px;color:var(--gold);margin-top:4px;font-weight:500}
 
 /* ===== SETTINGS ===== */
-.settings-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
-.settings-section-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;padding:14px 16px 10px;border-bottom:1px solid var(--border)}
-.settings-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px}
+.settings-section{margin-bottom:24px}
+.settings-section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
 .settings-row:last-child{border-bottom:none}
-.settings-row-label{flex:1}
-.settings-row-label-title{font-size:13px;color:var(--text1)}
-.settings-row-label-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.toggle{width:40px;height:22px;border-radius:11px;background:var(--bg4);border:1px solid var(--border2);cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
-.toggle.on{background:var(--accent2);border-color:var(--accent2)}
-.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:2px;left:2px;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
-.toggle.on::after{transform:translateX(18px)}
-.settings-select{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;padding:6px 10px}
-.settings-input{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;padding:6px 10px;width:200px}
-.settings-input:focus{outline:none;border-color:var(--accent2)}
-
-/* ===== MODAL ===== */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:440px;box-shadow:var(--shadow-lg);animation:modalIn 0.18s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(0.96) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-size:16px;font-weight:600;color:var(--text1)}
-.modal-close{width:28px;height:28px;border-radius:5px;background:transparent;border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.modal-close:hover{background:var(--bg4);color:var(--text1)}
-.modal-close svg{width:14px;height:14px}
-.modal-body{padding:18px 20px}
-.modal-footer{padding:12px 20px 18px;display:flex;gap:8px;justify-content:flex-end}
-.form-group{margin-bottom:14px}
-.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px}
-.form-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;padding:8px 10px;transition:border-color var(--transition);font-family:var(--font)}
-.form-input:focus{outline:none;border-color:var(--accent2)}
-.form-input.error{border-color:var(--red)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form-select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;padding:8px 10px;font-family:var(--font)}
-.form-select:focus{outline:none;border-color:var(--accent2)}
-.form-error{font-size:11px;color:var(--red);margin-top:4px}
-
-/* ===== TOAST ===== */
-.toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;min-width:260px;max-width:340px;box-shadow:var(--shadow-lg);animation:toastIn 0.25s ease;pointer-events:all}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-.toast-title{font-size:13px;font-weight:600;color:var(--text1)}
-.toast-sub{font-size:12px;color:var(--text2);margin-top:2px}
-.toast.gold .toast-title{color:var(--gold)}
-.toast.green .toast-title{color:var(--green)}
+.settings-label{font-size:13px;color:var(--text1)}
+.settings-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11px;color:var(--text2);font-weight:500}
+.form-input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text1);padding:8px 10px;font-size:13px;outline:none;transition:border-color var(--transition);width:100%}
+.form-input:focus{border-color:var(--accent2)}
+.form-select{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text1);padding:8px 10px;font-size:13px;outline:none;width:100%}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg4);border-radius:10px;cursor:pointer;transition:0.3s}
+.toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:0.3s}
+.toggle input:checked+.toggle-slider{background:var(--gold)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(16px);background:var(--bg)}
 
 /* ===== EMPTY STATE ===== */
-.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
-.empty-state svg{width:40px;height:40px;margin:0 auto 12px;display:block}
-.empty-state-text{font-size:14px;color:var(--text2);margin-bottom:6px}
-.empty-state-sub{font-size:12px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;gap:8px}
+.empty-state svg{width:32px;height:32px;color:var(--text3)}
+.empty-state-text{font-size:14px;font-weight:500;color:var(--text2)}
+.empty-state-sub{font-size:12px;color:var(--text3)}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;width:100%;max-width:440px;box-shadow:var(--shadow-lg)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:16px;font-weight:600;color:var(--text1)}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
 
 /* ===== COMMAND PALETTE ===== */
-.cmdpal-backdrop{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.6);display:flex;align-items:flex-start;justify-content:center;padding-top:80px;backdrop-filter:blur(4px)}
-.cmdpal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:480px;max-width:95vw;box-shadow:var(--shadow-lg);overflow:hidden;animation:modalIn 0.15s ease}
-.cmdpal-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text1);font-size:15px;padding:16px 18px;font-family:var(--font)}
-.cmdpal-input:focus{outline:none}
-.cmdpal-results{max-height:300px;overflow-y:auto}
-.cmdpal-item{display:flex;align-items:center;gap:10px;padding:10px 18px;color:var(--text1);cursor:pointer;font-size:13px;transition:background var(--transition)}
-.cmdpal-item:hover{background:var(--bg3)}
-.cmdpal-item svg{width:15px;height:15px;color:var(--text3);flex-shrink:0}
+.cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;display:flex;align-items:flex-start;justify-content:center;padding-top:120px;backdrop-filter:blur(4px)}
+.cmd-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:480px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.8)}
+.cmd-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:14px 18px;font-size:14px;color:var(--text1);outline:none}
+.cmd-item{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;font-size:13px;color:var(--text2);transition:background var(--transition)}
+.cmd-item:hover,.cmd-item.selected{background:var(--bg3);color:var(--text1)}
+.cmd-item-icon{width:24px;height:24px;background:var(--bg4);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cmd-item-icon svg{width:12px;height:12px}
+.cmd-kbd{margin-left:auto;font-size:10px;color:var(--text3);background:var(--bg4);padding:2px 6px;border-radius:4px;font-family:var(--mono)}
 
-/* ===== AUTH PAGES ===== */
-.auth-page{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow-y:auto;padding:20px}
-.auth-bg{position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(200,184,154,0.04) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(212,168,67,0.03) 0%,transparent 60%);pointer-events:none}
-.auth-container{width:100%;max-width:400px;position:relative;z-index:1}
-.auth-brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:28px}
-.auth-brand-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
-.auth-brand-name{font-size:16px;font-weight:600;color:var(--text1);letter-spacing:-0.3px}
-.auth-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:28px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-.auth-header{margin-bottom:22px;text-align:center}
-.auth-title{font-size:22px;font-weight:600;color:var(--text1);letter-spacing:-0.5px;margin-bottom:6px}
-.auth-subtitle{font-size:13px;color:var(--text2)}
-.auth-form{display:flex;flex-direction:column;gap:0}
-.auth-error{display:flex;align-items:center;gap:8px;background:rgba(224,82,82,0.1);border:1px solid rgba(224,82,82,0.25);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--red);margin-bottom:14px}
-.auth-error svg{width:15px;height:15px;flex-shrink:0}
-.auth-divider{text-align:center;color:var(--text3);font-size:12px;margin:16px 0;position:relative}
-.auth-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
-.auth-divider span{background:var(--bg2);padding:0 12px;position:relative;z-index:1}
-.auth-footer{text-align:center;font-size:13px;color:var(--text2);margin-top:16px}
-.auth-link{background:none;border:none;color:var(--accent2);cursor:pointer;font-size:inherit;font-family:inherit;padding:0;transition:color var(--transition)}
-.auth-link:hover{color:var(--accent);text-decoration:underline}
-.input-wrap{position:relative}
-.input-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);width:16px;height:16px;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.input-icon svg{width:16px;height:16px}
-.auth-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text1);font-size:13px;padding:10px 12px;transition:border-color var(--transition);font-family:var(--font)}
-.auth-input:focus{outline:none;border-color:var(--accent2)}
-.eye-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;transition:color var(--transition)}
-.eye-toggle:hover{color:var(--text1)}
-.eye-toggle svg{width:16px;height:16px}
-.spinner{width:18px;height:18px;border:2px solid rgba(14,14,15,0.3);border-top-color:#0e0e0f;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
-.spinner-dark{border-color:rgba(160,160,168,0.3);border-top-color:var(--text2)}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ===== TOAST ===== */
+.toast-container{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow-lg);pointer-events:all;animation:slideIn 0.3s ease;min-width:220px;max-width:300px}
+.toast.gold{border-color:rgba(212,168,67,0.3);background:rgba(212,168,67,0.08)}
+.toast.green{border-color:rgba(82,200,120,0.3);background:rgba(82,200,120,0.05)}
+.toast-title{font-size:13px;font-weight:500;color:var(--text1)}
+.toast-sub{font-size:11px;color:var(--text2);margin-top:2px}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+
+/* ===== AUTH ===== */
+.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:20px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;width:100%;max-width:380px}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;justify-content:center}
+.auth-logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.auth-brand-name{font-size:16px;font-weight:600;color:var(--text1)}
+.auth-title{font-size:22px;font-weight:700;color:var(--text1);margin-bottom:6px;text-align:center;letter-spacing:-0.5px}
+.auth-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:24px}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0}
+.auth-divider-line{flex:1;height:1px;background:var(--border)}
+.auth-divider-text{font-size:11px;color:var(--text3)}
+.auth-link{background:none;border:none;color:var(--accent2);font-size:inherit;cursor:pointer;padding:0;font-family:inherit}
+.auth-link:hover{text-decoration:underline}
+.auth-error{background:rgba(224,82,82,0.1);border:1px solid rgba(224,82,82,0.3);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:var(--red);margin-bottom:14px}
 
 /* ===== SETUP NOTICE ===== */
-.setup-notice{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:300;width:calc(100% - 32px);max-width:600px}
-.setup-notice-inner{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:16px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--shadow-lg)}
-.setup-icon{width:20px;height:20px;color:var(--gold);flex-shrink:0;margin-top:1px}
-.setup-icon svg{width:20px;height:20px}
-.setup-title{font-size:13px;font-weight:600;color:var(--text1);margin-bottom:4px}
-.setup-desc{font-size:12px;color:var(--text2);margin-bottom:8px}
-.setup-steps{display:flex;flex-direction:column;gap:3px}
-.setup-step{font-size:11px;color:var(--text3)}
+.setup-notice{position:fixed;top:0;left:0;right:0;z-index:500;background:rgba(212,168,67,0.08);border-bottom:1px solid rgba(212,168,67,0.2);padding:10px 16px;display:flex;align-items:center;gap:10px}
+.setup-notice-inner{display:flex;align-items:flex-start;gap:10px;max-width:900px;margin:0 auto;width:100%}
+.setup-icon{color:var(--gold);flex-shrink:0;margin-top:2px}
+.setup-icon svg{width:16px;height:16px}
+.setup-title{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:2px}
+.setup-desc{font-size:12px;color:var(--text2)}
+.setup-steps{margin-top:8px;display:flex;flex-direction:column;gap:2px}
+.setup-step{font-size:11px;color:var(--text2)}
 .setup-link{color:var(--accent2)}
-code{background:var(--bg4);border-radius:4px;padding:1px 5px;font-family:var(--mono);font-size:11px;color:var(--accent2)}
+.setup-close{margin-left:auto;color:var(--text3);cursor:pointer;padding:4px;flex-shrink:0}
+.setup-close:hover{color:var(--text1)}
 
-/* ===== CREATOR PAGE ===== */
-.creator-page{max-width:800px;margin:0 auto;padding-bottom:40px}
-.creator-hero{display:flex;align-items:center;gap:24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px}
-.creator-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--gold));display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:#0e0e0f;flex-shrink:0;border:3px solid var(--border2)}
-.creator-hero-content{flex:1}
-.creator-tag{font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.creator-name{font-size:28px;font-weight:700;color:var(--text1);letter-spacing:-0.5px;margin-bottom:10px}
-.creator-roles{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.creator-role-badge{background:var(--bg4);border:1px solid var(--border2);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--text2)}
-.creator-location{font-size:13px;color:var(--text3)}
-.creator-content{display:flex;flex-direction:column;gap:16px}
-.creator-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
-.creator-section-title{font-size:16px;font-weight:600;color:var(--text1);margin-bottom:14px;letter-spacing:-0.3px}
-.creator-text{font-size:14px;color:var(--text2);line-height:1.7}
-.creator-story-card{display:flex;gap:16px;background:var(--bg3);border-radius:var(--radius);padding:18px}
-.creator-story-icon{font-size:28px;flex-shrink:0}
-.creator-interests{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.creator-interest-card{background:var(--bg3);border-radius:var(--radius);padding:16px}
-.creator-interest-icon{font-size:24px;margin-bottom:8px}
-.creator-interest-title{font-size:13px;font-weight:600;color:var(--text1);margin-bottom:4px}
-.creator-interest-desc{font-size:12px;color:var(--text3);line-height:1.5}
-.creator-skills{display:flex;flex-wrap:wrap;gap:8px}
-.creator-skill-tag{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text2)}
-.creator-learning{display:flex;flex-direction:column;gap:8px}
-.creator-learning-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)}
-.creator-learning-dot{color:var(--accent2);font-weight:600;flex-shrink:0}
-.creator-footer{text-align:center;margin-top:20px;padding:16px;font-size:12px;color:var(--text3)}
+/* ===== CREATOR ===== */
+.creator-hero{display:flex;gap:24px;align-items:center;padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:20px}
+.creator-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#0c0c0d;flex-shrink:0}
+.creator-name{font-size:22px;font-weight:700;color:var(--text1);letter-spacing:-0.5px;margin-bottom:4px}
+.creator-handle{font-size:13px;color:var(--text2);margin-bottom:10px}
+.creator-roles{display:flex;gap:6px;flex-wrap:wrap}
+.creator-role-tag{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--text2)}
+.creator-section-title{font-size:14px;font-weight:600;color:var(--text1);margin-bottom:10px}
+.creator-text{font-size:13px;color:var(--text2);line-height:1.7}
+.creator-interests{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.creator-interest{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:var(--text2)}
+.creator-footer-text{font-size:11px;color:var(--text3);text-align:center;margin-top:20px}
 
 /* ===== RESPONSIVE ===== */
+@media (max-width:1200px){
+  .home-stat-grid{grid-template-columns:repeat(2,1fr)}
+  .home-hero{grid-template-columns:1fr 340px}
+}
 @media (max-width:1100px){
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   .focus-layout{grid-template-columns:1fr}
@@ -459,16 +539,21 @@ code{background:var(--bg4);border-radius:4px;padding:1px 5px;font-family:var(--m
   .analytics-stats{grid-template-columns:repeat(2,1fr)}
   .achievements-grid{grid-template-columns:repeat(2,1fr)}
   .creator-interests{grid-template-columns:1fr}
+  .home-hero{grid-template-columns:1fr 280px}
+  .home-hero-right{display:flex}
+}
+@media (max-width:900px){
   .home-hero{grid-template-columns:1fr}
-  .home-hero-clock{display:none}
+  .home-hero-right{display:none}
+  .home-stat-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:768px){
   .sidebar{position:fixed;left:-220px;width:220px;transition:left 0.3s ease}
   .sidebar.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.5)}
   .home-grid{grid-template-columns:1fr}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
-  .page-content{padding:16px}
-  .topbar{padding:0 16px}
+  .page-content{padding:14px}
+  .topbar{padding:0 14px}
   .topbar-btn-mobile{display:flex}
   .flip-digit{width:54px;height:76px}
   .flip-digit-num{font-size:50px}
@@ -479,6 +564,7 @@ code{background:var(--bg4);border-radius:4px;padding:1px 5px;font-family:var(--m
   .creator-roles{justify-content:center}
   .auth-card{padding:20px}
   .form-row{grid-template-columns:1fr}
+  .home-stat-grid{grid-template-columns:repeat(2,1fr)}
   .focus-stats-bar{grid-template-columns:1fr 1px 1fr 1px 1fr}
   .mode-tabs{flex-wrap:wrap;border-radius:12px}
 }
@@ -778,219 +864,303 @@ function use3DClockAvailable() {
   })()).current;
 }
 
-function Clock3DCanvas({ seconds, mode, height = '320px' }) {
+function Clock3DCanvas({ seconds, mode, height = '320px', showTime = false, liveTime = null }) {
+  // showTime=true → display liveTime wall-clock digits (home page)
+  // showTime=false → display countdown seconds (focus page)
   const mountRef = useRef(null);
   const rafRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0 });
-  const rendererRef = useRef(null);
-  const sceneRef = useRef(null);
-  const cameraRef = useRef(null);
-  const clockGroupRef = useRef(null);
   const startTimeRef = useRef(Date.now());
+
+  // The digits to display (update via ref to avoid re-mounting Three.js)
+  const digitDataRef = useRef({ h1:0,h2:0,m1:0,m2:0 });
+
+  // Compute digits from props each render
+  const computeDigits = () => {
+    if (showTime && liveTime) {
+      const h = liveTime.getHours();
+      const m = liveTime.getMinutes();
+      return { h1:Math.floor(h/10), h2:h%10, m1:Math.floor(m/10), m2:m%10 };
+    }
+    const totalSec = Math.max(0, seconds);
+    const mins = Math.floor(totalSec / 60);
+    const secs = totalSec % 60;
+    return { h1:Math.floor(mins/10), h2:mins%10, m1:Math.floor(secs/10), m2:secs%10 };
+  };
+  digitDataRef.current = computeDigits();
 
   useEffect(() => {
     const el = mountRef.current;
-    if (!el) return;
+    if (!el || typeof THREE === 'undefined') return;
 
-    const W = el.clientWidth || el.offsetWidth || 400;
-    const H = el.clientHeight || el.offsetHeight || 300;
+    const getSize = () => ({
+      w: el.clientWidth || el.offsetWidth || 420,
+      h: el.clientHeight || el.offsetHeight || 300
+    });
 
-    // Scene
+    // ── Scene ──────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    scene.background = null; // transparent
+    scene.background = null;
 
-    // Camera
-    const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
-    camera.position.set(0, 0.3, 3.8);
-    cameraRef.current = camera;
+    const { w, h } = getSize();
+    const camera = new THREE.PerspectiveCamera(38, w/h, 0.1, 100);
+    camera.position.set(0, 0.2, 4.2);
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(W, H);
+    renderer.setSize(w, h);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    rendererRef.current = renderer;
+    renderer.physicallyCorrectLights = true;
     el.appendChild(renderer.domElement);
 
-    // Lighting
-    const ambient = new THREE.AmbientLight(0xfff4e0, 0.6);
+    // ── Lighting ───────────────────────────────────────────────
+    const ambient = new THREE.AmbientLight(0xfff8e8, 0.4);
     scene.add(ambient);
 
-    const key = new THREE.DirectionalLight(0xffd8a0, 2.2);
-    key.position.set(3, 5, 4);
+    // Warm key from upper right
+    const key = new THREE.DirectionalLight(0xffd090, 3.5);
+    key.position.set(4, 6, 5);
     key.castShadow = true;
-    key.shadow.mapSize.width = 1024;
-    key.shadow.mapSize.height = 1024;
+    key.shadow.mapSize.set(2048, 2048);
+    key.shadow.camera.near = 0.5;
+    key.shadow.camera.far = 30;
+    key.shadow.radius = 6;
     scene.add(key);
 
-    const fill = new THREE.DirectionalLight(0x8ab0d0, 0.8);
-    fill.position.set(-4, 2, 2);
+    // Cool fill from left
+    const fill = new THREE.DirectionalLight(0x6080c0, 0.6);
+    fill.position.set(-5, 2, 3);
     scene.add(fill);
 
-    const rim = new THREE.DirectionalLight(0xffa040, 1.0);
-    rim.position.set(0, -2, -4);
+    // Warm rim from behind
+    const rim = new THREE.DirectionalLight(0xff9040, 0.8);
+    rim.position.set(0, -3, -6);
     scene.add(rim);
 
-    // Build a procedural flip-clock model from primitives
-    // (GLB loading requires a server; for file:// we use geometry)
-    const group = new THREE.Group();
-    clockGroupRef.current = group;
-    scene.add(group);
+    // Under glow (warm amber)
+    const under = new THREE.PointLight(0xd4a843, 1.2, 6);
+    under.position.set(0, -1.8, 1.5);
+    scene.add(under);
 
-    // Clock body — cream/ivory casing
+    // ── Materials ──────────────────────────────────────────────
     const bodyMat = new THREE.MeshStandardMaterial({
-      color: 0xf0e8d5,
-      roughness: 0.35,
-      metalness: 0.05,
+      color: 0xe8dfc8,
+      roughness: 0.28,
+      metalness: 0.06,
+      envMapIntensity: 0.5,
     });
-    const body = new THREE.Mesh(
-      new THREE.BoxGeometry(2.4, 1.4, 0.55),
-      bodyMat
-    );
-    body.castShadow = true;
-    body.receiveShadow = true;
-
-    // Round the body visually with corner spheres
-    const cornerMat = new THREE.MeshStandardMaterial({ color: 0xeae0cc, roughness: 0.4 });
-    const cornerR = 0.12;
-    [[-1.1, -0.58], [1.1, -0.58], [-1.1, 0.58], [1.1, 0.58]].forEach(([cx, cy]) => {
-      const corner = new THREE.Mesh(new THREE.SphereGeometry(cornerR, 16, 16), cornerMat);
-      corner.position.set(cx, cy, 0);
-      group.add(corner);
+    const bodyEdgeMat = new THREE.MeshStandardMaterial({
+      color: 0xcfc0a0,
+      roughness: 0.45,
+      metalness: 0.08,
     });
-
-    group.add(body);
-
-    // Digit panels — dark split-flap displays
-    const panelMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1e, roughness: 0.55, metalness: 0.1 });
-    const digitMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d0, roughness: 0.3, metalness: 0.0, emissive: 0x444030, emissiveIntensity: 0.15 });
-
-    function makeDigitPanel(x) {
-      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.82, 0.08), panelMat);
-      panel.position.set(x, 0.03, 0.32);
-      const upper = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.36, 0.02), digitMat);
-      upper.position.set(x, 0.25, 0.37);
-      const lower = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.36, 0.02), digitMat);
-      lower.position.set(x, -0.08, 0.37);
-      const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.5, 12), new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 }));
-      hinge.rotation.z = Math.PI / 2;
-      hinge.position.set(x, 0.085, 0.385);
-      group.add(panel, upper, lower, hinge);
-    }
-
-    makeDigitPanel(-0.75);
-    makeDigitPanel(-0.26);
-    makeDigitPanel(0.26);
-    makeDigitPanel(0.75);
-
-    // Separator dots
-    const dotMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1e, roughness: 0.6 });
-    [-0.12, 0.12].forEach(dy => {
-      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12), dotMat);
-      dot.position.set(0, dy, 0.32);
-      group.add(dot);
+    const panelBgMat = new THREE.MeshStandardMaterial({
+      color: 0x141418,
+      roughness: 0.8,
+      metalness: 0.0,
     });
-
-    // Brand label
-    const brandMat = new THREE.MeshStandardMaterial({ color: 0xb8a880, roughness: 0.8 });
-    const brand = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.08, 0.02), brandMat);
-    brand.position.set(0, -0.55, 0.29);
-    group.add(brand);
-
-    // LED indicator (amber glow)
+    const digitUpperMat = new THREE.MeshStandardMaterial({
+      color: 0x1c1c22,
+      roughness: 0.6,
+      metalness: 0.0,
+      emissive: 0x302c28,
+      emissiveIntensity: 0.08,
+    });
+    const digitLowerMat = new THREE.MeshStandardMaterial({
+      color: 0x242428,
+      roughness: 0.55,
+      metalness: 0.0,
+    });
+    const hingeMat = new THREE.MeshStandardMaterial({ color:0x0a0a0c, roughness:0.7, metalness:0.3 });
     const ledMat = new THREE.MeshStandardMaterial({
       color: 0xff8800,
       emissive: 0xff6600,
-      emissiveIntensity: 1.2,
-      roughness: 0.1,
+      emissiveIntensity: 2.0,
+      roughness: 0.05,
     });
-    const led = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 12), ledMat);
-    led.position.set(0.9, 0.55, 0.3);
-    group.add(led);
 
-    // Add a point light at LED position for glow
-    const ledLight = new THREE.PointLight(0xff7700, 0.8, 1.5);
-    ledLight.position.set(0.9, 0.55, 0.6);
+    // ── Clock body ─────────────────────────────────────────────
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Main body — rounded box shape via bevelled approach
+    const BSIZE = [2.8, 1.55, 0.62];
+    const body = new THREE.Mesh(new THREE.BoxGeometry(...BSIZE, 4, 2, 2), bodyMat);
+    body.castShadow = true;
+    body.receiveShadow = true;
+    group.add(body);
+
+    // Edge trim — slightly smaller box inset with dark band
+    const edgeTrim = new THREE.Mesh(
+      new THREE.BoxGeometry(BSIZE[0]+0.02, BSIZE[1]+0.02, BSIZE[2]-0.04),
+      new THREE.MeshStandardMaterial({ color:0xb0a080, roughness:0.6, metalness:0.1, side:THREE.BackSide })
+    );
+    group.add(edgeTrim);
+
+    // Screen area inset
+    const screen = new THREE.Mesh(
+      new THREE.BoxGeometry(2.5, 1.1, 0.04),
+      panelBgMat
+    );
+    screen.position.set(0, 0.06, 0.32);
+    screen.castShadow = false;
+    group.add(screen);
+
+    // Brand plate at bottom
+    const brand = new THREE.Mesh(
+      new THREE.BoxGeometry(1.0, 0.07, 0.02),
+      new THREE.MeshStandardMaterial({ color:0x9a8860, roughness:0.9 })
+    );
+    brand.position.set(0, -0.64, 0.32);
+    group.add(brand);
+
+    // ── Digit panels ───────────────────────────────────────────
+    const digitPositions = [-0.86, -0.30, 0.30, 0.86];
+
+    function makeDigitPanel(x) {
+      const pw = 0.52; const ph = 0.88; const pz = 0.33;
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.05), panelBgMat);
+      panel.position.set(x, 0.06, pz - 0.01);
+      panel.castShadow = true;
+      group.add(panel);
+
+      // Upper half
+      const upper = new THREE.Mesh(new THREE.BoxGeometry(pw-0.04, ph/2-0.01, 0.03), digitUpperMat);
+      upper.position.set(x, 0.06 + ph/4 + 0.005, pz + 0.01);
+      group.add(upper);
+
+      // Lower half
+      const lower = new THREE.Mesh(new THREE.BoxGeometry(pw-0.04, ph/2-0.01, 0.03), digitLowerMat);
+      lower.position.set(x, 0.06 - ph/4 - 0.005, pz + 0.01);
+      group.add(lower);
+
+      // Hinge line
+      const hinge = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.012, 0.012, pw, 12),
+        hingeMat
+      );
+      hinge.rotation.z = Math.PI/2;
+      hinge.position.set(x, 0.06, pz + 0.04);
+      group.add(hinge);
+
+      // Side hinge caps
+      for (const side of [-1,1]) {
+        const cap = new THREE.Mesh(
+          new THREE.SphereGeometry(0.018, 12, 12),
+          new THREE.MeshStandardMaterial({ color:0x333338, metalness:0.7, roughness:0.3 })
+        );
+        cap.position.set(x + side*(pw/2 - 0.01), 0.06, pz + 0.04);
+        group.add(cap);
+      }
+    }
+
+    digitPositions.forEach(makeDigitPanel);
+
+    // ── Colon separator ────────────────────────────────────────
+    for (const dy of [0.18, -0.06]) {
+      const dot = new THREE.Mesh(
+        new THREE.SphereGeometry(0.055, 16, 16),
+        new THREE.MeshStandardMaterial({
+          color: 0xe8e0d0,
+          emissive: 0xd0c8b8,
+          emissiveIntensity: 0.25,
+          roughness: 0.3,
+        })
+      );
+      dot.position.set(0, 0.06 + dy, 0.38);
+      group.add(dot);
+    }
+
+    // ── LED indicator ──────────────────────────────────────────
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.035, 16, 16), ledMat);
+    led.position.set(1.08, 0.64, 0.32);
+    group.add(led);
+    const ledLight = new THREE.PointLight(0xff7700, 1.0, 1.8);
+    ledLight.position.set(1.08, 0.64, 0.6);
     scene.add(ledLight);
 
-    // Ground shadow plane
+    // Rubber feet
+    for (const [fx,fz] of [[-1.1,-0.27],[1.1,-0.27],[-1.1,0.27],[1.1,0.27]]) {
+      const foot = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.12, 0.06, 12),
+        new THREE.MeshStandardMaterial({ color:0x0a0a0c, roughness:0.95 })
+      );
+      foot.position.set(fx, -0.815, fz);
+      foot.castShadow = true;
+      scene.add(foot);
+    }
+
+    // ── Shadow receiver ────────────────────────────────────────
     const shadowPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(6, 6),
-      new THREE.ShadowMaterial({ opacity: 0.25 })
+      new THREE.PlaneGeometry(10, 10),
+      new THREE.ShadowMaterial({ opacity: 0.35 })
     );
-    shadowPlane.rotation.x = -Math.PI / 2;
-    shadowPlane.position.y = -1.2;
+    shadowPlane.rotation.x = -Math.PI/2;
+    shadowPlane.position.y = -1.0;
     shadowPlane.receiveShadow = true;
     scene.add(shadowPlane);
 
-    // Mouse parallax handler
-    const onMouseMove = (e) => {
+    // ── Mouse parallax ─────────────────────────────────────────
+    const onMouseMove = e => {
       const rect = el.getBoundingClientRect();
       mouseRef.current = {
-        x: ((e.clientX - rect.left) / rect.width - 0.5) * 2,
-        y: -((e.clientY - rect.top) / rect.height - 0.5) * 2,
+        x: ((e.clientX - rect.left)/rect.width - 0.5)*2,
+        y: -((e.clientY - rect.top)/rect.height - 0.5)*2,
       };
     };
     el.addEventListener('mousemove', onMouseMove);
 
-    // Entrance animation
-    group.position.y = -2;
+    // ── Entrance animation ─────────────────────────────────────
+    group.position.y = -2.5;
     group.scale.setScalar(0.01);
     let enterT = 0;
-    const ENTER_DUR = 0.9;
+    const ENTER_DUR = 1.1;
 
-    // Animate loop
+    // ── Render loop ────────────────────────────────────────────
     const animate = () => {
       rafRef.current = requestAnimationFrame(animate);
       const t = (Date.now() - startTimeRef.current) / 1000;
 
-      // Entrance
       if (enterT < ENTER_DUR) {
         enterT += 0.016;
         const p = Math.min(enterT / ENTER_DUR, 1);
-        const ease = 1 - Math.pow(1 - p, 3);
-        group.position.y = -2 + 2 * ease;
+        const ease = 1 - Math.pow(1 - p, 4);
+        group.position.y = -2.5 + 2.5 * ease;
         group.scale.setScalar(0.01 + 0.99 * ease);
       } else {
-        group.position.y = Math.sin(t * 0.6) * 0.04;
+        group.position.y = Math.sin(t * 0.55) * 0.035;
         group.scale.setScalar(1);
       }
 
-      // Slow Y-axis rotation
-      group.rotation.y = Math.sin(t * 0.15) * 0.12;
-
-      // Mouse parallax
-      const tx = mouseRef.current.x * 0.18;
-      const ty = mouseRef.current.y * 0.12;
-      group.rotation.x += (ty - group.rotation.x) * 0.06;
-      group.rotation.y += (tx - group.rotation.y) * 0.06;
+      // Slow Y sway
+      const targetRY = Math.sin(t * 0.12) * 0.09 + mouseRef.current.x * 0.16;
+      const targetRX = mouseRef.current.y * 0.10;
+      group.rotation.y += (targetRY - group.rotation.y) * 0.05;
+      group.rotation.x += (targetRX - group.rotation.x) * 0.05;
 
       // LED pulse
-      ledLight.intensity = 0.8 + Math.sin(t * 3) * 0.3;
+      ledLight.intensity = 1.0 + Math.sin(t * 2.8) * 0.35;
+      under.intensity = 1.2 + Math.sin(t * 0.8) * 0.2;
 
       renderer.render(scene, camera);
     };
     animate();
 
-    // Resize handler — use ResizeObserver so hero & focus both respond correctly
+    // ── Resize ─────────────────────────────────────────────────
     const onResize = () => {
-      const w = el.clientWidth || el.offsetWidth;
-      const h = el.clientHeight || el.offsetHeight;
-      if (!w || !h) return;
-      camera.aspect = w / h;
+      const sz = getSize();
+      if (!sz.w || !sz.h) return;
+      camera.aspect = sz.w / sz.h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(sz.w, sz.h);
     };
     window.addEventListener('resize', onResize);
-    // Also observe the element itself for size changes
     let ro = null;
     if (typeof ResizeObserver !== 'undefined') {
       ro = new ResizeObserver(onResize);
       ro.observe(el);
     }
-    // Initial size correction after mount (element may have been 0 during useEffect)
     requestAnimationFrame(onResize);
 
     return () => {
@@ -999,60 +1169,68 @@ function Clock3DCanvas({ seconds, mode, height = '320px' }) {
       window.removeEventListener('resize', onResize);
       if (ro) ro.disconnect();
       renderer.dispose();
-      if (renderer.domElement.parentNode === el) {
-        el.removeChild(renderer.domElement);
-      }
+      if (renderer.domElement.parentNode === el) el.removeChild(renderer.domElement);
     };
   }, []);
+
+  // Digits display — rendered as an HTML overlay ON TOP of the canvas
+  const digits = digitDataRef.current;
+  const timeStr = `${digits.h1}${digits.h2}:${digits.m1}${digits.m2}`;
 
   return React.createElement('div', {
     ref: mountRef,
     style: {
       width: '100%',
       height: height,
-      borderRadius: '0',
+      position: 'relative',
       overflow: 'hidden',
       cursor: 'grab',
     }
-  });
+  },
+    // Time overlay — large digits layered on the 3D canvas
+    React.createElement('div', {
+      style: {
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 5,
+        pointerEvents: 'none',
+        // Push slightly to match 3D clock face position
+        paddingBottom: '4%',
+      }
+    },
+      React.createElement('div', {
+        style: {
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 'clamp(42px, 8vw, 80px)',
+          fontWeight: 700,
+          color: '#e8e4dc',
+          letterSpacing: '-2px',
+          textShadow: '0 2px 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7)',
+          userSelect: 'none',
+          lineHeight: 1,
+        }
+      }, timeStr)
+    )
+  );
 }
 
 // Wrapper: tries 3D, falls back to 2D flip clock
 function ClockDisplay({ seconds, mode }) {
   const has3D = use3DClockAvailable();
-  const [use3D, setUse3D] = useState(true);
 
-  if (has3D && use3D) {
-    return React.createElement('div', { className: 'flip-clock-wrap', style: { gap: 0 } },
-      React.createElement(Clock3DCanvas, { seconds, mode, height: '300px' }),
-      React.createElement('div', {
-        style: {
-          fontFamily: 'var(--mono)',
-          fontSize: '11px',
-          letterSpacing: '3.5px',
-          textTransform: 'uppercase',
-          color: 'var(--text3)',
-          textAlign: 'center',
-          marginTop: '12px',
-        }
-      }, ({ focus: 'FOCUS', break: 'SHORT BREAK', long: 'LONG BREAK', custom: 'CUSTOM' })[mode] || 'FOCUS'),
-      React.createElement('div', {
-        style: {
-          fontFamily: 'var(--mono)',
-          fontSize: '28px',
-          fontWeight: '700',
-          color: 'var(--accent)',
-          letterSpacing: '4px',
-          textAlign: 'center',
-          marginTop: '8px',
-          background: 'var(--bg3)',
-          border: '1px solid var(--border)',
-          borderRadius: '10px',
-          padding: '12px 28px',
-        }
-      },
-        String(Math.floor(seconds / 60)).padStart(2,'0') + ':' + String(seconds % 60).padStart(2,'0')
-      )
+  if (has3D) {
+    return React.createElement('div', {
+      style: { width:'100%', maxWidth:480, marginBottom:0 }
+    },
+      React.createElement(Clock3DCanvas, {
+        seconds: seconds,
+        mode: mode,
+        height: '300px',
+        showTime: false,
+      })
     );
   }
 
@@ -1663,7 +1841,6 @@ function HomePage({ state, onNavigate, onCompleteTask, onStartFocusTask }) {
   const now = new Date();
   const hour = now.getHours();
   const { profile, streak, xp, studyMinToday, tasks, goals, habits } = state;
-  const greeting = hour<12?'Good morning':hour<17?'Good afternoon':hour<21?'Good evening':'Good night';
   const goalPct = Math.min(100, Math.round(studyMinToday/profile.dailyGoalMin*100));
   const doneTasks = tasks.filter(t=>t.done).length;
   const pendingTasks = tasks.filter(t=>!t.done);
@@ -1675,46 +1852,106 @@ function HomePage({ state, onNavigate, onCompleteTask, onStartFocusTask }) {
   const todayDow = now.getDay()===0?6:now.getDay()-1;
   const habitsDone = habits.filter(h=>h.days[todayDow]).length;
 
+  // Live clock for hero display
+  const [liveTime, setLiveTime] = useState(new Date());
+  useEffect(()=>{ const t=setInterval(()=>setLiveTime(new Date()),1000); return()=>clearInterval(t); },[]);
+
   return (
-    React.createElement('div', null
+    React.createElement('div', { className: "home-page" }
+      /* ═══ HERO SECTION ═══ */
       , React.createElement('div', { className: "home-hero" }
-        , React.createElement('div', { className: "home-hero-text" }
-          , React.createElement('div', { className: "home-hero-greeting" }, greeting)
-          , React.createElement('div', { className: "home-hero-name" }, profile.name, ".")
-          , React.createElement('div', { className: "home-hero-sub" },
-              studyMinToday > 0
-                ? `${formatMinutes(studyMinToday)} studied today. ${goalPct>=100 ? '🎉 Daily goal reached!' : `${profile.dailyGoalMin - studyMinToday}m left.`}`
-                : "Ready to focus? Your clock is set."
+        /* Left: headline + CTA */
+        , React.createElement('div', { className: "home-hero-left" }
+          , React.createElement('div', { className: "hero-badge" }
+            , React.createElement('div', { className: "hero-badge-dot" })
+            , `Focus System · Level ${lvl}`
           )
-          , React.createElement('button', { className: "btn btn-primary", style: {alignSelf:'flex-start'}, onClick: ()=>onNavigate('focus') }
-            , React.createElement(Icons.Play)
-            , "Start focus"
+          , React.createElement('div', { className: "hero-headline" }
+            , "Focus better."
+            , React.createElement('br')
+            , React.createElement('span', null, "Make every minute")
+            , React.createElement('br')
+            , React.createElement('span', { style:{color:'var(--gold)'} }, "count.")
+          )
+          , React.createElement('div', { className: "hero-sub" }
+            , "A gamified study operating system. Track focus sessions, build streaks, earn XP, and reach your goals — every day."
+          )
+          , React.createElement('div', { className: "hero-btns" }
+            , React.createElement('button', { className: "hero-btn-primary", onClick: ()=>onNavigate('focus') }
+              , React.createElement(Icons.Play)
+              , "Start Focus"
+            )
+            , React.createElement('button', { className: "hero-btn-secondary", onClick: ()=>onNavigate('analytics') }
+              , "View Progress"
+              , React.createElement('svg', {viewBox:'0 0 16 16',fill:'none',stroke:'currentColor',strokeWidth:2,width:13,height:13}, React.createElement('path',{d:'M3 8h10M9 4l4 4-4 4'}))
+            )
           )
         )
-        , React.createElement('div', { className: "home-hero-clock" }
-          , React.createElement(Clock3DCanvas, { seconds: 0, mode: 'idle', height: '260px' })
+        /* Right: 3D clock */
+        , React.createElement('div', { className: "home-hero-right" }
+          , React.createElement('div', { className: "clock-floating-labels" }
+            , React.createElement('div', { className: "clock-label clock-label-top" }
+              , React.createElement('span', { className: "clock-label-icon" }, "⚡")
+              , "Focus Mode"
+            )
+            , React.createElement('div', { className: "clock-label clock-label-mid" }
+              , React.createElement('span', { className: "clock-label-icon" }, "🏆")
+              , "Earn XP"
+            )
+            , React.createElement('div', { className: "clock-label clock-label-bot" }
+              , React.createElement('span', { className: "clock-label-icon" }, "🔥")
+              , "Build Streaks"
+            )
+          )
+          , React.createElement(Clock3DCanvas, { seconds: liveTime.getHours()*3600 + liveTime.getMinutes()*60 + liveTime.getSeconds(), mode: 'home', height: '100%', showTime: true, liveTime: liveTime })
         )
       )
-      , React.createElement('div', { className: "stat-grid", __self: this, __source: {fileName: _jsxFileName, lineNumber: 860}}
-        , React.createElement('div', { className: "stat-card", __self: this, __source: {fileName: _jsxFileName, lineNumber: 861}}
-          , React.createElement('div', { className: "stat-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 862}}, "Today's study" )
-          , React.createElement('div', { className: "stat-value", __self: this, __source: {fileName: _jsxFileName, lineNumber: 863}}, studyMinToday>0?formatMinutes(studyMinToday):'0m')
-          , React.createElement('div', { style: {marginTop:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 864}}, React.createElement('div', { className: "progress-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 864}}, React.createElement('div', { className: "progress-fill gold" , style: {width:`${goalPct}%`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 864}})), React.createElement('div', { className: "stat-sub", style: {marginTop:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 864}}, "Goal: " , formatMinutes(profile.dailyGoalMin)))
+
+      /* ═══ DASHBOARD LABEL ═══ */
+      , React.createElement('div', { className: "home-dash-label" }, "Dashboard")
+      /* ═══ STAT CARDS ═══ */
+      , React.createElement('div', { className: "home-stat-grid" }
+        /* Today's Study */
+        , React.createElement('div', { className: "home-stat-card" }
+          , React.createElement('div', { className: "home-stat-icon gold" }, "⏱")
+          , React.createElement('div', { className: "home-stat-label" }, "Today's Study")
+          , React.createElement('div', { className: "home-stat-value" }, studyMinToday>0?formatMinutes(studyMinToday):'0m')
+          , React.createElement('div', { className: "home-stat-sub" }, `Goal: ${formatMinutes(profile.dailyGoalMin)}`)
+          , React.createElement('div', { className: "home-stat-bar" }
+            , React.createElement('div', { className: "home-stat-bar-track" }
+              , React.createElement('div', { className: "home-stat-bar-fill gold", style:{width:`${goalPct}%`} })
+            )
+          )
+          , React.createElement('div', { style:{fontSize:10,color:'var(--text3)',marginTop:4} }, `${goalPct}%`)
         )
-        , React.createElement('div', { className: "stat-card gold" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 866}}
-          , React.createElement('div', { className: "stat-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 867}}, "Streak")
-          , React.createElement('div', { className: "stat-value", __self: this, __source: {fileName: _jsxFileName, lineNumber: 868}}, "🔥 " , streak)
-          , React.createElement('div', { className: "stat-sub", __self: this, __source: {fileName: _jsxFileName, lineNumber: 869}}, "days in a row"   )
+        /* Current Streak */
+        , React.createElement('div', { className: "home-stat-card" }
+          , React.createElement('div', { className: "home-stat-icon gold" }, "🔥")
+          , React.createElement('div', { className: "home-stat-label" }, "Current Streak")
+          , React.createElement('div', { className: "home-stat-value gold" }, streak)
+          , React.createElement('div', { className: "home-stat-sub" }, "days in a row")
         )
-        , React.createElement('div', { className: "stat-card green" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 871}}
-          , React.createElement('div', { className: "stat-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 872}}, "Tasks done" )
-          , React.createElement('div', { className: "stat-value", __self: this, __source: {fileName: _jsxFileName, lineNumber: 873}}, doneTasks, "/", tasks.length)
-          , React.createElement('div', { className: "stat-sub", __self: this, __source: {fileName: _jsxFileName, lineNumber: 874}}, pendingTasks.length, " remaining" )
+        /* Tasks Done */
+        , React.createElement('div', { className: "home-stat-card" }
+          , React.createElement('div', { className: "home-stat-icon green" }, "✓")
+          , React.createElement('div', { className: "home-stat-label" }, "Tasks Done")
+          , React.createElement('div', { className: "home-stat-value" }
+            , React.createElement('span', { style:{color:'var(--green)'} }, doneTasks)
+            , React.createElement('span', { style:{color:'var(--text3)',fontSize:18,fontWeight:400} }, `/${tasks.length}`)
+          )
+          , React.createElement('div', { className: "home-stat-sub" }, `${pendingTasks.length} remaining`)
         )
-        , React.createElement('div', { className: "stat-card", __self: this, __source: {fileName: _jsxFileName, lineNumber: 876}}
-          , React.createElement('div', { className: "stat-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 877}}, "Level " , lvl)
-          , React.createElement('div', { className: "stat-value", style: {color:'var(--gold)'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 878}}, xp.toLocaleString())
-          , React.createElement('div', { style: {marginTop:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 879}}, React.createElement('div', { className: "progress-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 879}}, React.createElement('div', { className: "progress-fill accent" , style: {width:`${xpPct}%`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 879}})), React.createElement('div', { className: "stat-sub", style: {marginTop:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 879}}, xpCur, "/", xpNext, " to Lv."  , lvl+1))
+        /* Level XP */
+        , React.createElement('div', { className: "home-stat-card" }
+          , React.createElement('div', { className: "home-stat-icon purple" }, "★")
+          , React.createElement('div', { className: "home-stat-label" }, `Level ${lvl} XP`)
+          , React.createElement('div', { className: "home-stat-value gold" }, xp.toLocaleString())
+          , React.createElement('div', { className: "home-stat-sub" }, `${xpCur}/${xpNext} to Lv.${lvl+1}`)
+          , React.createElement('div', { className: "home-stat-bar" }
+            , React.createElement('div', { className: "home-stat-bar-track" }
+              , React.createElement('div', { className: "home-stat-bar-fill accent", style:{width:`${xpPct}%`} })
+            )
+          )
         )
       )
       , nextTask && (
@@ -2385,40 +2622,58 @@ function Sidebar({ page, onNavigate, state, mobileOpen }) {
 
   return (
     React.createElement('div', { className: `sidebar${mobileOpen?' open':''}`, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1502}}
-      , React.createElement('div', { className: "sidebar-brand", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1503}}
-        , React.createElement('div', { className: "brand-icon", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1504}}
-          , React.createElement('svg', { viewBox: "0 0 18 18"   , fill: "#0e0e0f", width: "18", height: "18", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1505}}, React.createElement('rect', { x: "2", y: "2", width: "6", height: "9", rx: "1.5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1505}}), React.createElement('rect', { x: "10", y: "7", width: "6", height: "9", rx: "1.5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1505}}), React.createElement('rect', { x: "2", y: "13", width: "6", height: "3", rx: "1.5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1505}}), React.createElement('rect', { x: "10", y: "2", width: "6", height: "3", rx: "1.5", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1505}}))
+      , React.createElement('div', { className: "sidebar-brand" }
+        , React.createElement('div', { className: "brand-icon" }
+          , React.createElement('svg', { viewBox:"0 0 18 18", fill:"#0c0c0d", width:18, height:18 }
+            , React.createElement('rect', {x:"2",y:"2",width:"6",height:"9",rx:"1.5"})
+            , React.createElement('rect', {x:"10",y:"7",width:"6",height:"9",rx:"1.5"})
+            , React.createElement('rect', {x:"2",y:"13",width:"6",height:"3",rx:"1.5"})
+            , React.createElement('rect', {x:"10",y:"2",width:"6",height:"3",rx:"1.5"})
+          )
         )
-        , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1507}}
-          , React.createElement('div', { className: "brand-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1508}}, "FlipClock OS" )
-          , React.createElement('div', { className: "brand-sub", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1509}}, "Study System" )
-        )
-      )
-      , React.createElement('div', { className: "sidebar-user", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1512}}
-        , React.createElement('div', { className: "user-row", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1513}}
-          , React.createElement('div', { className: "user-avatar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1514}}, (state.profile.name||'?')[0].toUpperCase())
-          , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1515}}, React.createElement('div', { className: "user-name", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1515}}, state.profile.name), React.createElement('div', { className: "user-level", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1515}}, "Level " , lvl, " — "  , getLevelTitle(lvl)))
-        )
-        , React.createElement('div', { className: "xp-bar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1517}}
-          , React.createElement('div', { className: "xp-bar-track", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1518}}, React.createElement('div', { className: "xp-bar-fill", style: {width:`${xpPct}%`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1518}}))
-          , React.createElement('div', { className: "xp-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}, xpCur.toLocaleString(), " XP" ), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}, xpNext.toLocaleString(), " XP" ))
+        , React.createElement('div', null
+          , React.createElement('div', { className: "brand-name" }, "FlipClock OS")
+          , React.createElement('div', { className: "brand-sub" }, "Study System")
         )
       )
-      , React.createElement('div', { className: "sidebar-nav", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1522}}
+      , React.createElement('div', { className: "sidebar-user" }
+        , React.createElement('div', { className: "user-row" }
+          , React.createElement('div', { className: "user-avatar" }
+            , (state.profile.name||'?')[0].toUpperCase()
+          )
+          , React.createElement('div', null
+            , React.createElement('div', { className: "user-name" }, state.profile.name)
+            , React.createElement('div', { className: "user-level" }, getLevelTitle(lvl))
+          )
+        )
+        , React.createElement('div', { className: "xp-bar" }
+          , React.createElement('div', { className: "xp-bar-track" }
+            , React.createElement('div', { className: "xp-bar-fill", style: {width:`${xpPct}%`} })
+          )
+          , React.createElement('div', { className: "xp-label" }
+            , React.createElement('span', null, `${xpCur.toLocaleString()} XP`)
+            , React.createElement('span', null, `${xpNext.toLocaleString()} XP`)
+          )
+        )
+      )
+      , React.createElement('div', { className: "sidebar-nav" }
         , nav.map((item,i)=>{
-          if(!item) return React.createElement('div', { key: i, style: {height:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1524}});
+          if(!item) return React.createElement('div', { key: i, style: {height:4} });
           return (
-            React.createElement('div', { key: item.id, className: `nav-item${page===item.id?' active':''}`, onClick: ()=>onNavigate(item.id), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1526}}
-              , React.createElement('span', { className: "nav-icon", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1527}}, item.icon)
-              , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1528}}, item.label)
-              , item.badge>0&&React.createElement('span', { className: "nav-badge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, item.badge)
-              , item.streak>0&&React.createElement('span', { className: "nav-streak", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1530}}, "🔥", item.streak)
+            React.createElement('div', { key: item.id, className: `nav-item${page===item.id?' active':''}`, onClick: ()=>onNavigate(item.id) }
+              , React.createElement('span', { className: "nav-icon" }, item.icon)
+              , React.createElement('span', null, item.label)
+              , item.badge>0 && React.createElement('span', { className: "nav-badge" }, item.badge)
+              , item.streak>0 && React.createElement('span', { className: "nav-streak" }, "🔥", item.streak)
             )
           );
         })
       )
-      , React.createElement('div', { className: "sidebar-footer", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1535}}
-        , React.createElement('div', { className: "streak-display", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1536}}, React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1536}}, "🔥"), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1536}}, state.streak, "-day streak" ))
+      , React.createElement('div', { className: "sidebar-footer" }
+        , React.createElement('div', { className: "streak-display" }
+          , React.createElement('span', null, "🔥")
+          , React.createElement('span', null, `${state.streak}-day streak`)
+        )
       )
     )
   );
@@ -2435,13 +2690,19 @@ function Topbar({ page, onOpenCmd, onNewTask, onToggleMobile }) {
   },[]);
   const titles={home:'Home',focus:'Focus Timer',tasks:'Tasks',goals:'Goals',habits:'Habits',activity:'Activity',analytics:'Analytics',achievements:'Achievements',settings:'Settings',creator:'Creator'};
   return (
-    React.createElement('div', { className: "topbar", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1553}}
-      , React.createElement('button', { className: "topbar-btn topbar-btn-mobile" , onClick: onToggleMobile, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1554}}, React.createElement(Icons.Menu, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1554}} ))
-      , React.createElement('span', { className: "topbar-title", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1555}}, titles[page]||page)
-      , React.createElement('div', { style: {display:'flex',gap:8,alignItems:'center'}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1556}}
-        , React.createElement('span', { className: "topbar-clock", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1557}}, clock)
-        , React.createElement('button', { className: "topbar-btn", onClick: onNewTask, title: "New task (N)"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1558}}, React.createElement(Icons.Plus, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1558}} ))
-        , React.createElement('button', { className: "topbar-btn", onClick: onOpenCmd, title: "Command palette (⌘K)"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1559}}, React.createElement(Icons.Command, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1559}} ))
+    React.createElement('div', { className: "topbar" }
+      , React.createElement('button', { className: "topbar-btn topbar-btn-mobile", onClick: onToggleMobile }
+        , React.createElement(Icons.Menu)
+      )
+      , React.createElement('span', { className: "topbar-title" }, titles[page]||page)
+      , React.createElement('div', { style: {display:'flex',gap:8,alignItems:'center'} }
+        , React.createElement('span', { className: "topbar-clock" }, clock)
+        , React.createElement('button', { className: "topbar-btn", onClick: onNewTask, title: "New task" }
+          , React.createElement(Icons.Plus)
+        )
+        , React.createElement('button', { className: "topbar-btn", onClick: onOpenCmd, title: "Command palette (⌘K)" }
+          , React.createElement(Icons.Command)
+        )
       )
     )
   );
