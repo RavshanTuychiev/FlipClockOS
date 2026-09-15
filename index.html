@@ -1104,157 +1104,295 @@ code{background:var(--bg4);border-radius:4px;padding:1px 5px;font-family:var(--m
   100% { opacity: 1; transform: translate(-50%,-50%) scale(1.08); }
 }
 
-/* PREMIUM CLOCK CHASSIS — brushed steel, large */
-.hero-clock-chassis {
-  background: linear-gradient(145deg, #d8d4cc 0%, #b8b4ac 30%, #c4c0b8 60%, #a8a4a0 100%);
-  border-radius: 18px;
-  padding: 3px;
-  box-shadow:
-    0 32px 80px rgba(0,0,0,0.8),
-    0 8px 24px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.4),
-    inset 0 -1px 0 rgba(0,0,0,0.3);
+
+/* ============================================================ */
+/* PREMIUM HERO CLOCK — hcd (hero clock display) + hfd (flip digit) */
+/* ============================================================ */
+
+/* Outer wrapper */
+.hcd-wrap {
   position: relative;
+  display: inline-block;
 }
 
-.hero-clock-inner {
-  background: #1a1a1c;
-  border-radius: 16px;
-  padding: 28px 36px;
+/* Cream/off-white outer chassis — matches Grayson reference photo */
+.hcd-chassis {
+  background: linear-gradient(160deg, #f2ede4 0%, #e8e2d8 40%, #ddd8ce 100%);
+  border-radius: 22px;
+  padding: 22px 28px 18px;
+  box-shadow:
+    0 40px 90px rgba(0,0,0,0.85),
+    0 12px 30px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 4px rgba(0,0,0,0.15),
+    0 0 0 1.5px #bbb8b0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark inner frame */
+.hcd-frame {
+  background: #111114;
+  border-radius: 14px;
+  padding: 20px 24px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+  gap: 14px;
+  box-shadow:
+    inset 0 3px 12px rgba(0,0,0,0.9),
+    inset 0 1px 3px rgba(0,0,0,0.8);
 }
 
-/* HERO FLIP DIGITS — large, premium */
-.hero-digit-group { display: flex; gap: 8px; }
+/* Hour/minute digit groups */
+.hcd-group {
+  display: flex;
+  gap: 6px;
+}
 
-.hero-flip-digit {
-  width: 100px;
-  height: 140px;
+/* Colon separator */
+.hcd-colon {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 8px;
+  align-items: center;
+}
+.hcd-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3a3a3e;
+  box-shadow: 0 0 6px rgba(200,184,154,0.15);
+}
+
+/* Brand label */
+.hcd-brand {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #8a8070;
+  text-align: right;
+  margin-top: 10px;
+  padding-right: 4px;
+}
+
+/* Ambient glow behind clock */
+.hcd-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px; height: 300px;
+  background: radial-gradient(ellipse, rgba(212,168,67,0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+  animation: hcd-glow-pulse 4s ease-in-out infinite alternate;
+}
+@keyframes hcd-glow-pulse {
+  0%   { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+  100% { opacity: 1;   transform: translate(-50%,-50%) scale(1.08); }
+}
+
+/* ── INDIVIDUAL FLIP DIGIT ── */
+.hfd-digit {
   position: relative;
-  border-radius: 10px;
+  width: 88px;
+  height: 124px;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow:
-    0 6px 24px rgba(0,0,0,0.7),
-    inset 0 1px 0 rgba(255,255,255,0.05);
+    0 6px 20px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  background: #16161a;
+  /* perspective for 3D flip */
+  perspective: 400px;
 }
-.hero-flip-upper {
+
+/* Top half of digit card */
+.hfd-top {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 50%;
-  background: linear-gradient(180deg, #242428 0%, #1e1e22 100%);
-  border-radius: 10px 10px 0 0;
-  border-bottom: 2px solid #0a0a0a;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+  /* Dark gradient — lighter at top */
+  background: linear-gradient(180deg, #282830 0%, #1e1e26 100%);
+}
+.hfd-top-face {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 2px;
+  padding-bottom: 1px;
   overflow: hidden;
-  transform-origin: bottom center;
 }
-.hero-flip-lower {
+/* Shadow on bottom of top half */
+.hfd-top::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.45));
+  pointer-events: none;
+}
+
+/* Bottom half */
+.hfd-bottom {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 50%;
-  background: linear-gradient(180deg, #222226 0%, #1c1c20 100%);
-  border-radius: 0 0 10px 10px;
-  border-top: 1px solid #3a3a3e;
+  overflow: hidden;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #1a1a22 0%, #141418 100%);
+}
+.hfd-bottom-face {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 2px;
+  padding-top: 1px;
   overflow: hidden;
 }
-.hero-digit-num {
-  font-family: var(--mono);
-  font-size: 96px;
-  font-weight: 700;
-  color: #e8e6e2;
-  line-height: 1;
-  position: absolute;
-  letter-spacing: -4px;
-  text-shadow: 0 2px 16px rgba(0,0,0,0.7);
-}
-.hero-flip-upper .hero-digit-num { bottom: -0.01em; }
-.hero-flip-lower .hero-digit-num { top: -0.01em; }
-
-/* Hinge detail */
-.hero-flip-hinge {
-  position: absolute;
-  top: 50%; left: -3px; right: -3px;
-  height: 3px;
-  background: #050505;
-  z-index: 20;
-  transform: translateY(-50%);
-}
-.hero-flip-hinge::before, .hero-flip-hinge::after {
-  content: '';
-  position: absolute;
-  width: 14px; height: 14px;
-  background: #2a2a2e;
-  border-radius: 50%;
-  top: -5.5px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
-}
-.hero-flip-hinge::before { left: 5px; }
-.hero-flip-hinge::after  { right: 5px; }
-
-/* Flip shadows */
-.hero-flip-upper::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 50%;
-  background: linear-gradient(transparent, rgba(0,0,0,0.35));
-  pointer-events: none;
-}
-.hero-flip-lower::before {
+/* Shadow on top of bottom half */
+.hfd-bottom::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 40%;
-  background: linear-gradient(rgba(0,0,0,0.3), transparent);
+  background: linear-gradient(rgba(0,0,0,0.5), transparent);
   pointer-events: none;
   z-index: 1;
 }
 
-/* Hero flip animation */
-@keyframes heroFlipUpper {
-  0%   { transform: rotateX(0deg); filter: brightness(1); }
-  40%  { filter: brightness(0.65); }
-  100% { transform: rotateX(-90deg); filter: brightness(0.5); }
+/* The digit number itself */
+.hfd-num {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 78px;
+  font-weight: 700;
+  color: #eceae4;
+  line-height: 1;
+  position: absolute;
+  text-shadow:
+    0 2px 12px rgba(0,0,0,0.8),
+    0 0 30px rgba(255,255,255,0.05);
+  letter-spacing: -3px;
+  user-select: none;
 }
-.hero-flip-upper.flipping {
-  animation: heroFlipUpper 0.22s ease-in forwards;
-}
+.hfd-top-face .hfd-num    { bottom: 0; left: 50%; transform: translateX(-50%); }
+.hfd-num-bot              { top: 0;    left: 50%; transform: translateX(-50%); }
 
-/* Colon separator */
-.hero-colon {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding-bottom: 12px;
+/* Center hinge line — the iconic mechanical detail */
+.hfd-hinge {
+  position: absolute;
+  top: 50%;
+  left: -2px; right: -2px;
+  height: 3px;
+  background: #060608;
+  transform: translateY(-50%);
+  z-index: 20;
 }
-.hero-colon span {
-  display: block;
-  width: 10px; height: 10px;
+/* Hinge screw dots */
+.hfd-hinge::before,
+.hfd-hinge::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
   border-radius: 50%;
-  background: #3a3a3e;
-  box-shadow: 0 0 8px rgba(200,184,154,0.2);
+  background: radial-gradient(circle at 35% 35%, #3a3a42, #18181e);
+  top: -4.5px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.hfd-hinge::before { left: 4px; }
+.hfd-hinge::after  { right: 4px; }
+
+/* ── FLIP ANIMATIONS ── */
+/* Top flap rotates down (outgoing digit leaving) */
+.hfd-flap-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  transform-origin: bottom center;
+  transform: rotateX(0deg);
+  animation: flap-top-out 0.22s ease-in forwards;
+  background: linear-gradient(180deg, #282830 0%, #1e1e26 100%);
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1px;
+  z-index: 10;
+  backface-visibility: hidden;
+}
+.hfd-flap-top::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 100%);
+  animation: flap-top-shadow 0.22s ease-in forwards;
+}
+@keyframes flap-top-out {
+  0%   { transform: rotateX(0deg); clip-path: inset(0 0 50% 0); }
+  100% { transform: rotateX(-90deg); clip-path: inset(0 0 50% 0); }
+}
+@keyframes flap-top-shadow {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
-/* Clock label */
-.hero-clock-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: #7a7060;
-  text-align: center;
-  margin-top: 10px;
+/* Bottom flap reveals (incoming digit appearing from behind) */
+.hfd-flap-bot {
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 50%;
+  transform-origin: top center;
+  transform: rotateX(90deg);
+  animation: flap-bot-in 0.22s ease-out 0.2s forwards;
+  background: linear-gradient(180deg, #1a1a22 0%, #141418 100%);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1px;
+  z-index: 10;
+  backface-visibility: hidden;
 }
+.hfd-flap-bot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0,0,0,0.5) 0%, transparent 60%);
+  animation: flap-bot-shadow 0.22s ease-out 0.2s forwards;
+}
+@keyframes flap-bot-in {
+  0%   { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+@keyframes flap-bot-shadow {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── RESPONSIVE HERO CLOCK ── */
+@media (max-width: 1100px) {
+  .hfd-digit { width: 72px; height: 102px; }
+  .hfd-num   { font-size: 64px; }
+}
+@media (max-width: 700px) {
+  .hfd-digit { width: 56px; height: 80px; }
+  .hfd-num   { font-size: 50px; }
+  .hcd-frame { padding: 14px 16px; gap: 8px; }
+  .hcd-chassis { padding: 16px 18px 14px; border-radius: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hfd-flap-top, .hfd-flap-bot { animation-duration: 0.01ms !important; }
+  .hcd-glow { animation: none; }
+}
+
 
 /* FLOATING INDICATORS */
 .hero-float-indicators {
@@ -3056,91 +3194,98 @@ function HeroParticles() {
   return React.createElement('canvas', { ref: canvasRef, className: "hero-particles", 'aria-hidden': "true", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1435}} );
 }
 
-function HeroClockDisplay({ seconds }) {
-  // Show live time if no seconds prop passed
-  const [liveTime, setLiveTime] = useState('');
+function HeroFlipDigit({ value }) {
+  const safeVal = (value !== undefined && value !== null) ? String(value) : '0';
+  const [displayed, setDisplayed] = useState(safeVal);
+  const [animating, setAnimating] = useState(false);
+  const prevRef = useRef(safeVal);
+
   useEffect(() => {
-    const update = () => {
-      const d = new Date();
-      const h = String(d.getHours()).padStart(2,'0');
-      const m = String(d.getMinutes()).padStart(2,'0');
-      setLiveTime(`${h}:${m}`);
+    if (!value && value !== 0) return;
+    const v = String(value);
+    if (prevRef.current === v) return;
+    setAnimating(true);
+    const t = setTimeout(() => {
+      setDisplayed(v);
+      setAnimating(false);
+      prevRef.current = v;
+    }, 200);
+    return () => clearTimeout(t);
+  }, [value]);
+
+  return React.createElement('div', { className: 'hfd-digit' },
+    // Top half — shows displayed (outgoing) digit
+    React.createElement('div', { className: 'hfd-top' },
+      React.createElement('div', { className: 'hfd-top-face' },
+        React.createElement('span', { className: 'hfd-num' }, displayed)
+      ),
+      // Animated flap that rotates down over top half
+      animating && React.createElement('div', { className: 'hfd-flap-top' },
+        React.createElement('span', { className: 'hfd-num' }, displayed)
+      )
+    ),
+    // Bottom half — shows incoming (new) digit
+    React.createElement('div', { className: 'hfd-bottom' },
+      React.createElement('div', { className: 'hfd-bottom-face' },
+        React.createElement('span', { className: 'hfd-num hfd-num-bot' }, safeVal)
+      ),
+      // Animated flap that reveals bottom half
+      animating && React.createElement('div', { className: 'hfd-flap-bot' },
+        React.createElement('span', { className: 'hfd-num hfd-num-bot' }, displayed)
+      )
+    ),
+    // Center hinge line
+    React.createElement('div', { className: 'hfd-hinge' })
+  );
+}
+
+function HeroClockDisplay() {
+  const getNow = () => {
+    const d = new Date();
+    return {
+      h1: String(d.getHours()).padStart(2,'0')[0],
+      h2: String(d.getHours()).padStart(2,'0')[1],
+      m1: String(d.getMinutes()).padStart(2,'0')[0],
+      m2: String(d.getMinutes()).padStart(2,'0')[1],
     };
-    update();
-    const t = setInterval(update, 1000);
+  };
+
+  const [digits, setDigits] = useState(getNow);
+
+  useEffect(() => {
+    const t = setInterval(() => setDigits(getNow()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  const display = liveTime;
-  const [h1, h2, , m1, m2] = display.split('');
-
-  return (
-    React.createElement('div', { className: "hero-clock-wrap", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1457}}
-      /* Ambient glow behind clock */
-      , React.createElement('div', { className: "hero-clock-glow", 'aria-hidden': "true", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1459}})
-      /* Premium clock chassis — brushed steel inspired by reference */
-      , React.createElement('div', { className: "hero-clock-chassis", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1461}}
-        , React.createElement('div', { className: "hero-clock-inner", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1462}}
-          , React.createElement('div', { className: "hero-digit-group", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1463}}
-            , React.createElement(HeroFlipDigit, { value: h1 || '0', __self: this, __source: {fileName: _jsxFileName, lineNumber: 1464}} )
-            , React.createElement(HeroFlipDigit, { value: h2 || '0', __self: this, __source: {fileName: _jsxFileName, lineNumber: 1465}} )
-          )
-          , React.createElement('div', { className: "hero-colon", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1467}}
-            , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1468}}), React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1468}})
-          )
-          , React.createElement('div', { className: "hero-digit-group", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1470}}
-            , React.createElement(HeroFlipDigit, { value: m1 || '0', __self: this, __source: {fileName: _jsxFileName, lineNumber: 1471}} )
-            , React.createElement(HeroFlipDigit, { value: m2 || '0', __self: this, __source: {fileName: _jsxFileName, lineNumber: 1472}} )
-          )
+  return React.createElement('div', { className: 'hcd-wrap' },
+    // Outer cream chassis
+    React.createElement('div', { className: 'hcd-chassis' },
+      // Brushed metal frame inner
+      React.createElement('div', { className: 'hcd-frame' },
+        // Hours group
+        React.createElement('div', { className: 'hcd-group' },
+          React.createElement(HeroFlipDigit, { value: digits.h1, key: 'h1' }),
+          React.createElement(HeroFlipDigit, { value: digits.h2, key: 'h2' })
+        ),
+        // Colon
+        React.createElement('div', { className: 'hcd-colon' },
+          React.createElement('div', { className: 'hcd-dot' }),
+          React.createElement('div', { className: 'hcd-dot' })
+        ),
+        // Minutes group
+        React.createElement('div', { className: 'hcd-group' },
+          React.createElement(HeroFlipDigit, { value: digits.m1, key: 'm1' }),
+          React.createElement(HeroFlipDigit, { value: digits.m2, key: 'm2' })
         )
-        , React.createElement('div', { className: "hero-clock-label", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1475}}, "FlipClock OS · Focus Timer"    )
-      )
-
-      /* Floating gamification indicators */
-      , React.createElement('div', { className: "hero-float-indicators", 'aria-hidden': "true", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1479}}
-        , React.createElement('div', { className: "hero-indicator hi-1" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1480}}
-          , React.createElement('span', { className: "hi-icon", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1481}}, "⚡")
-          , React.createElement('span', { className: "hi-text", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1482}}, "Focus Mode" )
-        )
-        , React.createElement('div', { className: "hero-indicator hi-2" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1484}}
-          , React.createElement('span', { className: "hi-icon", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1485}}, "🔥")
-          , React.createElement('span', { className: "hi-text", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1486}}, "Build Streaks" )
-        )
-        , React.createElement('div', { className: "hero-indicator hi-3" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1488}}
-          , React.createElement('span', { className: "hi-icon", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1489}}, "🏆")
-          , React.createElement('span', { className: "hi-text", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1490}}, "Earn XP" )
-        )
-      )
-    )
+      ),
+      // Brand label
+      React.createElement('div', { className: 'hcd-brand' }, 'FlipClock OS')
+    ),
+    // Glow behind
+    React.createElement('div', { className: 'hcd-glow', 'aria-hidden': 'true' })
   );
 }
 
-function HeroFlipDigit({ value }) {
-  const [prev, setPrev] = useState(value);
-  const [flipping, setFlipping] = useState(false);
-  const prevRef = useRef(value);
-
-  useEffect(() => {
-    if (prevRef.current !== value) {
-      setFlipping(true);
-      const t1 = setTimeout(() => { setFlipping(false); setPrev(value); }, 440);
-      prevRef.current = value;
-      return () => clearTimeout(t1);
-    }
-  }, [value]);
-
-  return (
-    React.createElement('div', { className: "hero-flip-digit", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1512}}
-      , React.createElement('div', { className: `hero-flip-upper${flipping ? ' flipping' : ''}`, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1513}}
-        , React.createElement('span', { className: "hero-digit-num", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1514}}, prev)
-      )
-      , React.createElement('div', { className: "hero-flip-lower", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1516}}
-        , React.createElement('span', { className: "hero-digit-num", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1517}}, value)
-      )
-      , React.createElement('div', { className: "hero-flip-hinge", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}})
-    )
-  );
-}
 
 function HeroSection({ state, onNavigate, onStartFocusTask }) {
   const heroRef = useRef(null);
