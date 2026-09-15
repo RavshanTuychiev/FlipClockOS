@@ -4583,353 +4583,344 @@ function AuthProvider({ children }) {
 // ============================================================
 
 // ============================================================
-// LANDING PAGE — cinematic dark hero with inline Three.js 3D clock
+// LANDING PAGE — cinematic dark hero, inline Three.js 3D clock
 // ============================================================
 function LandingPage({ onEnterApp }) {
-  const heroRef    = useRef(null);
-  const leftRef    = useRef(null);
-  const clockAreaRef = useRef(null);
-  const canvasRef  = useRef(null);
-  const rendererRef = useRef(null);
-  const sceneRef   = useRef(null);
+  const canvasRef     = useRef(null);
+  const mouseRef      = useRef({ x:0, y:0 });
+  const parallaxRef   = useRef({ x:0, y:0 });
+  const animFrameRef  = useRef(null);
   const clockGroupRef = useRef(null);
-  const animFrameRef = useRef(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
-  const parallaxRef = useRef({ x: 0, y: 0 });
-  const tRef = useRef(0);
-  const clockLoadedRef = useRef(false);
+  const rendererRef   = useRef(null);
 
   // GSAP entrance
   useEffect(() => {
-    if (!window.gsap || prefersReducedMotion()) return;
-    const tl = gsap.timeline({ delay: 0.2 });
+    if (!window.gsap || prefersReducedMotion()) {
+      // Make everything visible instantly if no GSAP
+      document.querySelectorAll('.lp-pill,.lp-h1-line1,.lp-h1-line2,.lp-h1-line3,.lp-sub,.lp-ctas,.lp-stats,.lp-hero-right,.lp-float-tag')
+        .forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+      return;
+    }
+    const tl = gsap.timeline({ delay: 0.15 });
     tl.fromTo('.lp-pill',
-      { autoAlpha:0, y:-12 }, { autoAlpha:1, y:0, duration:0.5, ease:'power2.out' }
-    ).fromTo('.lp-h1 span, .lp-sub, .lp-ctas, .lp-stats',
-      { autoAlpha:0, y:22 },
-      { autoAlpha:1, y:0, duration:0.6, ease:'power2.out', stagger:0.1 },
+      { autoAlpha:0, y:-10 }, { autoAlpha:1, y:0, duration:0.45, ease:'power2.out' }
+    ).fromTo(['.lp-h1-line1','.lp-h1-line2','.lp-h1-line3','.lp-sub','.lp-ctas','.lp-stats'],
+      { autoAlpha:0, y:20 },
+      { autoAlpha:1, y:0, duration:0.55, ease:'power2.out', stagger:0.1 },
       '<0.1'
-    ).fromTo('.lp-clock-wrap',
-      { autoAlpha:0, scale:0.85, x:24 },
-      { autoAlpha:1, scale:1, x:0, duration:0.75, ease:'back.out(1.2)' },
-      '<0.15'
+    ).fromTo('.lp-hero-right',
+      { autoAlpha:0, scale:0.88, x:20 },
+      { autoAlpha:1, scale:1, x:0, duration:0.7, ease:'back.out(1.15)' },
+      '<0.2'
     ).fromTo('.lp-float-tag',
-      { autoAlpha:0, y:14 },
-      { autoAlpha:1, y:0, duration:0.5, ease:'back.out(1.4)', stagger:0.09 },
-      '<0.3'
+      { autoAlpha:0, y:10 },
+      { autoAlpha:1, y:0, duration:0.4, ease:'back.out(1.4)', stagger:0.09 },
+      '<0.35'
     );
     return () => tl.kill();
   }, []);
 
-  // Three.js inline 3D clock scene
+  // Inline Three.js 3D clock
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !window.THREE) return;
-    const W = canvas.clientWidth || 480;
-    const H = canvas.clientHeight || 400;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:'high-performance' });
-    renderer.setSize(W, H, false);
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     rendererRef.current = renderer;
 
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    const camera = new THREE.PerspectiveCamera(38, W/H, 0.01, 50);
+    const scene   = new THREE.Scene();
+    const camera  = new THREE.PerspectiveCamera(38, 1, 0.01, 50);
     camera.position.set(0, 0.05, 2.8);
 
-    // Lighting rig
+    // 3-point lighting rig
     const key = new THREE.DirectionalLight(0xf5ede0, 3.2);
-    key.position.set(-3,4,3); key.castShadow = true;
-    key.shadow.mapSize.set(1024,1024);
+    key.position.set(-3, 4, 3); key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
     scene.add(key);
-    scene.add(new THREE.DirectionalLight(0xc8d8f0, 0.9).apply(function(){ this.position.set(4,1,2); return this; }(new THREE.DirectionalLight(0xc8d8f0,0.9))));
-    const fill = new THREE.DirectionalLight(0xc8d8f0, 0.9); fill.position.set(4,1,2); scene.add(fill);
-    const rim = new THREE.DirectionalLight(0xd4a843, 1.4); rim.position.set(1,3,-4); scene.add(rim);
+
+    const fill = new THREE.DirectionalLight(0xc8d8f0, 0.9);
+    fill.position.set(4, 1, 2); scene.add(fill);
+
+    const rim = new THREE.DirectionalLight(0xd4a843, 1.4);
+    rim.position.set(1, 3, -4); scene.add(rim);
+
     scene.add(new THREE.AmbientLight(0x1a1820, 0.18));
-    const ledPt = new THREE.PointLight(0xff7010, 0.5, 0.6); ledPt.position.set(0.75,0.24,0.32); scene.add(ledPt);
 
-    // Contact shadow plane
-    const sp = new THREE.Mesh(new THREE.PlaneGeometry(4,4), new THREE.ShadowMaterial({opacity:0.25}));
-    sp.rotation.x = -Math.PI/2; sp.position.y = -0.52; sp.receiveShadow = true;
-    scene.add(sp);
+    const ledPt = new THREE.PointLight(0xff7010, 0.5, 0.6);
+    ledPt.position.set(0.75, 0.24, 0.32); scene.add(ledPt);
 
+    // Shadow plane
+    const shadowPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(4, 4),
+      new THREE.ShadowMaterial({ opacity: 0.25 })
+    );
+    shadowPlane.rotation.x = -Math.PI / 2;
+    shadowPlane.position.y = -0.52;
+    shadowPlane.receiveShadow = true;
+    scene.add(shadowPlane);
+
+    // Clock group
     const clockGroup = new THREE.Group();
     clockGroup.position.y = -1.6;
     scene.add(clockGroup);
     clockGroupRef.current = clockGroup;
 
-    // Load GLB
-    function loadGLB(url, cb) {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = 'arraybuffer';
-      xhr.onload = function() { cb(null, xhr.response); };
-      xhr.onerror = function() { cb(new Error('XHR failed')); };
-      xhr.open('GET', url, true);
-      xhr.send();
+    // Resize handler
+    function resize() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (!w || !h) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
     }
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
 
+    // Parse GLB binary manually (no external loader needed)
     function parseGLB(data) {
       const view = new DataView(data);
       const jlen = view.getUint32(12, true);
-      const js = JSON.parse(new TextDecoder().decode(new Uint8Array(data, 20, jlen)));
+      const gltf = JSON.parse(new TextDecoder().decode(new Uint8Array(data, 20, jlen)));
       const bstart = 20 + jlen;
       const blen = view.getUint32(bstart, true);
       const bin = new Uint8Array(data, bstart + 8, blen);
-      const buffers = [bin.buffer];
 
-      const mats = js.materials.map(m => {
+      const mats = gltf.materials.map(m => {
         const pbr = m.pbrMetallicRoughness || {};
-        const bc = pbr.baseColorFactor || [1,1,1,1];
+        const bc  = pbr.baseColorFactor || [1,1,1,1];
         const mat = new THREE.MeshStandardMaterial({
-          color: new THREE.Color(bc[0],bc[1],bc[2]),
+          color: new THREE.Color(bc[0], bc[1], bc[2]),
           metalness: pbr.metallicFactor || 0,
           roughness: pbr.roughnessFactor !== undefined ? pbr.roughnessFactor : 1,
-          name: m.name || '',
         });
         if (m.emissiveFactor) {
           const ef = m.emissiveFactor;
-          mat.emissive = new THREE.Color(Math.min(ef[0],1), Math.min(ef[1],1), Math.min(ef[2],1));
+          mat.emissive = new THREE.Color(
+            Math.min(ef[0], 1), Math.min(ef[1], 1), Math.min(ef[2], 1)
+          );
           mat.emissiveIntensity = 1.0;
         }
         return mat;
       });
 
       function getAcc(i) {
-        const acc = js.accessors[i];
-        const bv = js.bufferViews[acc.bufferView];
-        const off = (bv.byteOffset||0) + (acc.byteOffset||0);
-        const n = acc.count * {'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4}[acc.type];
-        if (acc.componentType===5126) return new Float32Array(buffers[bv.buffer], off, n);
-        if (acc.componentType===5125) return new Uint32Array(buffers[bv.buffer], off, n);
-        if (acc.componentType===5123) return new Uint16Array(buffers[bv.buffer], off, n);
+        const acc = gltf.accessors[i];
+        const bv  = gltf.bufferViews[acc.bufferView];
+        const off = (bv.byteOffset || 0) + (acc.byteOffset || 0);
+        const n   = acc.count * ({ SCALAR:1, VEC2:2, VEC3:3, VEC4:4 }[acc.type] || 1);
+        if (acc.componentType === 5126) return new Float32Array(bin.buffer, off, n);
+        if (acc.componentType === 5125) return new Uint32Array(bin.buffer, off, n);
+        if (acc.componentType === 5123) return new Uint16Array(bin.buffer, off, n);
         return null;
       }
 
       const root = new THREE.Group();
-      js.meshes.forEach(md => {
+      gltf.meshes.forEach(md => {
         md.primitives.forEach(p => {
           const geo = new THREE.BufferGeometry();
-          geo.setAttribute('position', new THREE.BufferAttribute(getAcc(p.attributes.POSITION), 3));
-          if (p.attributes.NORMAL !== undefined) geo.setAttribute('normal', new THREE.BufferAttribute(getAcc(p.attributes.NORMAL), 3));
-          if (p.attributes.TEXCOORD_0 !== undefined) geo.setAttribute('uv', new THREE.BufferAttribute(getAcc(p.attributes.TEXCOORD_0), 2));
-          if (p.indices !== undefined) geo.setIndex(new THREE.BufferAttribute(getAcc(p.indices), 1));
+          const pos = getAcc(p.attributes.POSITION);
+          if (!pos) return;
+          geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+          if (p.attributes.NORMAL !== undefined) {
+            geo.setAttribute('normal', new THREE.BufferAttribute(getAcc(p.attributes.NORMAL), 3));
+          }
+          if (p.indices !== undefined) {
+            geo.setIndex(new THREE.BufferAttribute(getAcc(p.indices), 1));
+          }
           geo.computeBoundingSphere();
-          const mesh = new THREE.Mesh(geo, mats[p.material]);
-          mesh.castShadow = true; mesh.receiveShadow = true;
+          const mesh = new THREE.Mesh(geo, mats[p.material] || mats[0]);
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
           root.add(mesh);
         });
       });
       return root;
     }
 
-    // Try to load GLB — works when served from same folder
-    loadGLB('grayson-flipclock.glb', function(err, data) {
-      if (err || !data) {
-        // Fallback: build simple clock shape inline if GLB not available
-        buildFallbackClock(clockGroup);
-        clockLoadedRef.current = true;
-        return;
-      }
-      try {
-        const root = parseGLB(data);
-        clockGroup.add(root);
-        clockLoadedRef.current = true;
-      } catch(e) {
-        buildFallbackClock(clockGroup);
-        clockLoadedRef.current = true;
-      }
-    });
-
-    function buildFallbackClock(group) {
-      // Premium CSS-style box clock as fallback
-      const bodyGeo = new THREE.BoxGeometry(1.8, 0.85, 0.32, 2, 2, 2);
-      const bodyMat = new THREE.MeshStandardMaterial({ color:0xf0ece4, roughness:0.22, metalness:0.0 });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
+    // Build fallback clock if GLB unavailable
+    function buildFallback(group) {
+      const white = new THREE.MeshStandardMaterial({ color:0xf0ece4, roughness:0.22 });
+      const black = new THREE.MeshStandardMaterial({ color:0x080808, roughness:0.7  });
+      const body  = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.85, 0.32), white);
       body.castShadow = true; group.add(body);
-
-      const panelMat = new THREE.MeshStandardMaterial({ color:0x080808, roughness:0.7 });
       [-0.44, 0.44].forEach(x => {
-        const pg = new THREE.BoxGeometry(0.74, 0.60, 0.06);
-        const pm = new THREE.Mesh(pg, panelMat);
-        pm.position.set(x, 0.01, 0.165);
-        pm.castShadow = true; group.add(pm);
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.60, 0.06), black);
+        panel.position.set(x, 0.01, 0.17);
+        panel.castShadow = true; group.add(panel);
       });
     }
 
-    // Resize handler
-    function handleResize() {
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      if (!w || !h) return;
-      camera.aspect = w/h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h, false);
-    }
-    const resizeObs = new ResizeObserver(handleResize);
-    resizeObs.observe(canvas);
+    // Attempt to load GLB via XHR
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = () => {
+      try {
+        const root = parseGLB(xhr.response);
+        clockGroup.add(root);
+      } catch(e) { buildFallback(clockGroup); }
+    };
+    xhr.onerror = () => buildFallback(clockGroup);
+    xhr.open('GET', 'grayson-flipclock.glb', true);
+    xhr.send();
 
     // Animation loop
-    const clock3 = new THREE.Clock();
-    let rotY = 0;
+    const clock3  = new THREE.Clock();
+    let rotY      = 0;
     let entranceDone = false;
+
     function animate() {
       animFrameRef.current = requestAnimationFrame(animate);
       const dt = clock3.getDelta();
-      tRef.current += dt;
-      const t = tRef.current;
-
-      const g = clockGroupRef.current;
-      if (!g) return;
+      const t  = clock3.elapsedTime;
+      const g  = clockGroupRef.current;
+      if (!g) { renderer.render(scene, camera); return; }
 
       // Entrance
       if (!entranceDone) {
-        g.position.y += (0 - g.position.y) * 0.055;
-        if (Math.abs(g.position.y) < 0.005) { g.position.y = 0; entranceDone = true; }
+        g.position.y += (0 - g.position.y) * 0.06;
+        if (Math.abs(g.position.y) < 0.003) { g.position.y = 0; entranceDone = true; }
       }
 
       if (!prefersReducedMotion()) {
-        // Gentle auto-rotation
         rotY += dt * 0.12;
         g.rotation.y = Math.sin(rotY * 0.5) * 0.32;
-        // Float
-        g.position.y = (entranceDone ? 0 : g.position.y) + Math.sin(t * Math.PI * 2 * 0.35) * 0.04;
-        // Mouse parallax (smooth)
+        g.position.y = Math.sin(t * Math.PI * 2 * 0.35) * 0.04;
         parallaxRef.current.x += (mouseRef.current.y * 0.16 - parallaxRef.current.x) * 0.055;
         parallaxRef.current.y += (mouseRef.current.x * 0.16 - parallaxRef.current.y) * 0.055;
         g.rotation.x = parallaxRef.current.x;
-        // LED pulse
         ledPt.intensity = 0.4 + Math.sin(t * 4) * 0.12;
       }
-
       renderer.render(scene, camera);
     }
     animate();
 
     return () => {
       cancelAnimationFrame(animFrameRef.current);
-      resizeObs.disconnect();
+      ro.disconnect();
       renderer.dispose();
     };
   }, []);
 
-  // Mouse parallax
   function handleMouseMove(e) {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const r = e.currentTarget.getBoundingClientRect();
     mouseRef.current = {
-      x: ((e.clientX - rect.left) / rect.width  - 0.5) * 2,
-      y: ((e.clientY - rect.top)  / rect.height - 0.5) * 2,
+      x: ((e.clientX - r.left) / r.width  - 0.5) * 2,
+      y: ((e.clientY - r.top)  / r.height - 0.5) * 2,
     };
   }
   function handleMouseLeave() { mouseRef.current = { x:0, y:0 }; }
 
-  const features = [
-    { icon:'⏱️', title:'Focus Timer', desc:'Pomodoro-style sessions with premium flip clock display' },
-    { icon:'⚡', title:'XP & Levels', desc:'Earn experience points and level up your focus skills' },
-    { icon:'🔥', title:'Daily Streaks', desc:'Build powerful consistency with streak tracking' },
-    { icon:'🎯', title:'Goals & Tasks', desc:'Set and achieve meaningful study goals every day' },
-    { icon:'📊', title:'Analytics', desc:'Deep insights into your study patterns and progress' },
-    { icon:'🏆', title:'Achievements', desc:'Unlock badges and milestones as you grow' },
-  ];
+  return React.createElement('div', { className:'lp-root' },
+    // Background glows
+    React.createElement('div', { className:'lp-glow lp-glow-1', 'aria-hidden':'true' }),
+    React.createElement('div', { className:'lp-glow lp-glow-2', 'aria-hidden':'true' }),
 
-  const stats = [
-    { val:'25+', label:'Focus modes' },
-    { val:'10', label:'Level tiers' },
-    { val:'∞', label:'Streaks to build' },
-  ];
+    // ── HERO ──
+    React.createElement('section', { className:'lp-hero', onMouseMove:handleMouseMove, onMouseLeave:handleMouseLeave },
 
-  return (
-    React.createElement('div', { className:'lp-root' },
-      // Particle canvas (ambient background)
-      React.createElement('canvas', { className:'lp-bg-canvas', ref: React.useRef(null),
-        style:{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:0,opacity:0.4} }),
-
-      // Background glows
-      React.createElement('div', { className:'lp-glow lp-glow-1', 'aria-hidden':'true' }),
-      React.createElement('div', { className:'lp-glow lp-glow-2', 'aria-hidden':'true' }),
-
-      // ── HERO ──
-      React.createElement('section', { className:'lp-hero', onMouseMove:handleMouseMove, onMouseLeave:handleMouseLeave },
-        // Left
-        React.createElement('div', { className:'lp-hero-left' },
-          React.createElement('div', { className:'lp-pill' },
-            React.createElement('span', { className:'lp-pill-dot' }),
-            'Gamified Study OS'
+      // Left column
+      React.createElement('div', { className:'lp-hero-left' },
+        React.createElement('div', { className:'lp-pill' },
+          React.createElement('span', { className:'lp-pill-dot' }),
+          ' Gamified Study OS'
+        ),
+        React.createElement('h1', { className:'lp-h1' },
+          React.createElement('span', { className:'lp-h1-line1' }, 'Focus better.'),
+          React.createElement('span', { className:'lp-h1-line2' }, 'Make every'),
+          React.createElement('span', { className:'lp-h1-line3' }, 'minute count.')
+        ),
+        React.createElement('p', { className:'lp-sub' },
+          'A premium productivity operating system. Timer, XP, streaks, achievements and deep analytics — all in one focused experience.'
+        ),
+        React.createElement('div', { className:'lp-ctas' },
+          React.createElement('button', { className:'lp-btn-primary', onClick:onEnterApp },
+            '▶  Start Focusing'
           ),
-          React.createElement('h1', { className:'lp-h1' },
-            React.createElement('span', { className:'lp-h1-line1' }, 'Focus better.'),
-            React.createElement('span', { className:'lp-h1-line2' }, 'Make every'),
-            React.createElement('span', { className:'lp-h1-line3' }, 'minute count.')
-          ),
-          React.createElement('p', { className:'lp-sub' },
-            'A premium productivity operating system. Timer, XP, streaks, achievements and deep analytics — all in one focused experience.'
-          ),
-          React.createElement('div', { className:'lp-ctas' },
-            React.createElement('button', { className:'lp-btn-primary', onClick:onEnterApp },
-              React.createElement('span', null, '▶'), ' Start Focusing'
-            ),
-            React.createElement('button', { className:'lp-btn-secondary', onClick:onEnterApp },
-              'View Dashboard'
-            )
-          ),
-          React.createElement('div', { className:'lp-stats' },
-            stats.map(s => React.createElement('div', { key:s.label, className:'lp-stat' },
-              React.createElement('span', { className:'lp-stat-val' }, s.val),
-              React.createElement('span', { className:'lp-stat-label' }, s.label)
-            ))
+          React.createElement('button', { className:'lp-btn-secondary', onClick:onEnterApp },
+            'View Dashboard'
           )
         ),
-        // Right — 3D clock
-        React.createElement('div', { className:'lp-hero-right' },
-          React.createElement('div', { className:'lp-clock-wrap' },
-            React.createElement('div', { className:'lp-clock-glow', 'aria-hidden':'true' }),
-            React.createElement('canvas', { ref:canvasRef, className:'lp-canvas', style:{width:'100%',height:'460px',display:'block'} }),
-            // Floating tags
-            React.createElement('div', { className:'lp-float-tag lp-ft-1' }, '⚡ +50 XP'),
-            React.createElement('div', { className:'lp-float-tag lp-ft-2' }, '🔥 12 day streak'),
-            React.createElement('div', { className:'lp-float-tag lp-ft-3' }, '🏆 Level 4'),
+        React.createElement('div', { className:'lp-stats' },
+          React.createElement('div', { className:'lp-stat' },
+            React.createElement('span', { className:'lp-stat-val' }, '25+'),
+            React.createElement('span', { className:'lp-stat-label' }, 'Focus modes')
+          ),
+          React.createElement('div', { className:'lp-stat-divider' }),
+          React.createElement('div', { className:'lp-stat' },
+            React.createElement('span', { className:'lp-stat-val' }, '10'),
+            React.createElement('span', { className:'lp-stat-label' }, 'Level tiers')
+          ),
+          React.createElement('div', { className:'lp-stat-divider' }),
+          React.createElement('div', { className:'lp-stat' },
+            React.createElement('span', { className:'lp-stat-val' }, '∞'),
+            React.createElement('span', { className:'lp-stat-label' }, 'Streaks to build')
           )
         )
       ),
 
-      // ── FEATURES ──
-      React.createElement('section', { className:'lp-features' },
-        React.createElement('div', { className:'lp-section-label' }, 'Everything you need'),
-        React.createElement('h2', { className:'lp-section-title' }, 'Built for serious focus'),
-        React.createElement('div', { className:'lp-features-grid' },
-          features.map(f => React.createElement('div', { key:f.title, className:'lp-feature-card' },
-            React.createElement('div', { className:'lp-feature-icon' }, f.icon),
-            React.createElement('div', { className:'lp-feature-title' }, f.title),
-            React.createElement('div', { className:'lp-feature-desc' }, f.desc)
-          ))
+      // Right column — 3D clock canvas
+      React.createElement('div', { className:'lp-hero-right' },
+        React.createElement('div', { className:'lp-clock-wrap' },
+          React.createElement('div', { className:'lp-clock-glow', 'aria-hidden':'true' }),
+          React.createElement('canvas', {
+            ref: canvasRef,
+            className: 'lp-canvas',
+            style: { width:'100%', height:'460px', display:'block' }
+          }),
+          React.createElement('div', { className:'lp-float-tag lp-ft-1' }, '⚡ +50 XP'),
+          React.createElement('div', { className:'lp-float-tag lp-ft-2' }, '🔥 12 day streak'),
+          React.createElement('div', { className:'lp-float-tag lp-ft-3' }, '🏆 Level 4')
         )
-      ),
-
-      // ── CTA SECTION ──
-      React.createElement('section', { className:'lp-cta-section' },
-        React.createElement('div', { className:'lp-cta-glow', 'aria-hidden':'true' }),
-        React.createElement('h2', { className:'lp-cta-title' }, 'Ready to focus?'),
-        React.createElement('p', { className:'lp-cta-sub' }, 'Start your first session in seconds. No setup required.'),
-        React.createElement('button', { className:'lp-btn-primary lp-btn-xl', onClick:onEnterApp },
-          '▶  Launch FlipClock OS'
-        )
-      ),
-
-      // ── FOOTER ──
-      React.createElement('footer', { className:'lp-footer' },
-        React.createElement('div', { className:'lp-footer-brand' },
-          React.createElement('span', { className:'lp-footer-logo' }, '▣'),
-          'FlipClock OS'
-        ),
-        React.createElement('div', { className:'lp-footer-tagline' }, 'Built by Ravshanbek · Uzbekistan')
       )
+    ),
+
+    // ── FEATURES ──
+    React.createElement('section', { className:'lp-features' },
+      React.createElement('div', { className:'lp-section-label' }, 'Everything you need'),
+      React.createElement('h2', { className:'lp-section-title' }, 'Built for serious focus'),
+      React.createElement('div', { className:'lp-features-grid' },
+        ...[
+          { icon:'⏱️', title:'Focus Timer',   desc:'Pomodoro sessions with a premium physical flip clock display.' },
+          { icon:'⚡', title:'XP & Levels',   desc:'Earn XP and level up your focus skills with every session.' },
+          { icon:'🔥', title:'Daily Streaks', desc:'Build consistency with streak tracking that rewards every day.' },
+          { icon:'🎯', title:'Goals & Tasks', desc:'Set meaningful study goals and track every task to completion.' },
+          { icon:'📊', title:'Analytics',     desc:'Deep weekly charts and heatmaps to see your study patterns.' },
+          { icon:'🏆', title:'Achievements',  desc:'Unlock badges and milestones as your focus skills grow.' },
+        ].map(f => React.createElement('div', { key:f.title, className:'lp-feature-card' },
+          React.createElement('div', { className:'lp-feature-icon' }, f.icon),
+          React.createElement('div', { className:'lp-feature-title' }, f.title),
+          React.createElement('div', { className:'lp-feature-desc' }, f.desc)
+        ))
+      )
+    ),
+
+    // ── CTA ──
+    React.createElement('section', { className:'lp-cta-section' },
+      React.createElement('div', { className:'lp-cta-glow', 'aria-hidden':'true' }),
+      React.createElement('h2', { className:'lp-cta-title' }, 'Ready to focus?'),
+      React.createElement('p', { className:'lp-cta-sub' }, 'Start your first session in seconds. No setup required.'),
+      React.createElement('button', { className:'lp-btn-primary lp-btn-xl', onClick:onEnterApp },
+        '▶  Launch FlipClock OS'
+      )
+    ),
+
+    // ── FOOTER ──
+    React.createElement('footer', { className:'lp-footer' },
+      React.createElement('div', { className:'lp-footer-brand' },
+        React.createElement('span', { className:'lp-footer-logo' }, '▣'),
+        ' FlipClock OS'
+      ),
+      React.createElement('div', { className:'lp-footer-tagline' }, 'Built by Ravshanbek · Uzbekistan')
     )
   );
 }
+
 
 function Root() {
   const { user, signOut } = useAuth();
@@ -4986,6 +4977,14 @@ function Root() {
     addToast('Signed out', 'See you next time');
   }
 
+  // Landing page — show FIRST, before any auth/loading check
+  if (showLanding) {
+    return React.createElement('div', null,
+      React.createElement(LandingPage, { onEnterApp: () => setShowLanding(false) }),
+      React.createElement(ToastContainer, { toasts: toasts })
+    );
+  }
+
   if (user === undefined || (user && dataLoading)) {
     return (
       React.createElement('div', { style: { display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'var(--bg)', flexDirection:'column', gap:16 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2974}}
@@ -4996,15 +4995,7 @@ function Root() {
     );
   }
 
-    // Show landing page first
-  if (showLanding) {
-    return React.createElement('div', null,
-      React.createElement(LandingPage, { onEnterApp: () => setShowLanding(false) }),
-      React.createElement(ToastContainer, { toasts: toasts })
-    );
-  }
-
-  if (!user || !userData) {
+    if (!user || !userData) {
     return (
       React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 2984}}
         , showSetup && React.createElement(SetupNotice, { onDismiss: () => setShowSetup(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 2985}} )
