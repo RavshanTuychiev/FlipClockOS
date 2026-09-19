@@ -11,8 +11,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <!-- React 18 -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 
 <!-- GSAP 3 — for primary, secondary, and ambient motion layers -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1704,6 +1704,40 @@ This ensures each user can ONLY read/write their own data. No user can access an
 </head>
 <body>
 <div id="root"></div>
+<div id="load-error" style="display:none;position:fixed;inset:0;background:#0e0e0f;color:#f0f0f2;font-family:Inter,sans-serif;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999">
+  <div style="font-size:32px">⚠️</div>
+  <div style="font-size:18px;font-weight:600">FlipClock OS failed to load</div>
+  <div id="load-error-msg" style="font-size:13px;color:#a0a0a8;max-width:400px;text-align:center"></div>
+  <button onclick="location.reload()" style="margin-top:8px;padding:10px 24px;background:#e8e0cc;color:#0e0e0f;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Reload page</button>
+</div>
+<script>
+(function() {
+  function showError(msg) {
+    var el = document.getElementById('load-error');
+    var ml = document.getElementById('load-error-msg');
+    if (el) { el.style.display='flex'; }
+    if (ml) { ml.textContent = msg; }
+    console.error('FlipClock OS:', msg);
+  }
+  window.addEventListener('error', function(e) {
+    if (e.filename && (e.filename.includes('cdnjs') || e.filename.includes('gstatic'))) {
+      showError('A required library failed to load. Check your internet connection and reload.');
+    }
+  }, true);
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      if (!window.React || !window.ReactDOM) {
+        showError('React failed to load. Check your internet connection and try reloading.');
+        return;
+      }
+      var root = document.getElementById('root');
+      if (root && root.children.length === 0) {
+        showError('App failed to start. Open DevTools (F12 → Console) to see the exact error.');
+      }
+    }, 6000);
+  });
+})();
+</script>
 <script>
 const _jsxFileName = ""; function _nullishCoalesce(lhs, rhsFn) { if (lhs != null) { return lhs; } else { return rhsFn(); } } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }// FlipClock Study OS v3 — Gamified Motion Upgrade
 // GSAP + Premium Motion Design + Coherent Gamification System
