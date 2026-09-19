@@ -1686,6 +1686,21 @@ code{background:var(--bg4);border-radius:4px;padding:1px 5px;font-family:var(--m
   window.FIREBASE_MESSAGING_SENDER_ID= "902283051042";
   window.FIREBASE_APP_ID             = "1:902283051042:web:6f4b60cd4163e9bd3bca7b";
 </script>
+
+<!--
+FIRESTORE SECURITY RULES — paste in Firebase Console → Firestore → Rules:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+
+This ensures each user can ONLY read/write their own data. No user can access another user's document.
+-->
 </head>
 <body>
 <div id="root"></div>
@@ -1814,22 +1829,29 @@ function getLevelTitle(l) { return LEVEL_TITLES[Math.min(l-1,LEVEL_TITLES.length
 // ============================================================
 // FIRESTORE
 // ============================================================
-async function loadUserData(uid) {
+async async function loadUserData(uid) {
   if (!db) return null;
   try { const doc = await db.collection('users').doc(uid).get(); return doc.exists ? doc.data() : null; }
   catch(e) { return null; }
 }
 async function saveUserData(uid, data) {
   if (!db || !uid) return;
-  try { await db.collection('users').doc(uid).set(data, { merge: true }); } catch(e) {}
+  try {
+    const payload = { ...data, _ts: Date.now(), updatedAt: Date.now() };
+    await db.collection('users').doc(uid).set(payload, { merge: true });
+  } catch(e) { console.warn('Firestore save failed:', e.message); }
 }
 let saveTimer = null;
 function debouncedSave(uid, data) {
   clearTimeout(saveTimer);
   // Save to localStorage immediately (instant, always works)
   saveLocal(data);
-  // Then debounce Firestore save
-  saveTimer = setTimeout(() => saveUserData(uid, data), 1500);
+  // Then debounce Firestore save (1.5s — batches rapid changes)
+  saveTimer = setTimeout(() => {
+    saveUserData(uid, data).then(() => {
+      // Uncomment for debugging: console.log('FlipClock OS: Firestore sync OK', new Date().toISOString());
+    });
+  }, 1500);
 }
 
 // ============================================================
@@ -1881,19 +1903,33 @@ function loadLocal() {
 }
 
 function mergeWithLocal(firestoreData) {
-  // If Firestore has data, compare timestamps and use newer
+  // Firestore is ALWAYS the canonical source of truth when authenticated.
+  // localStorage is only used to fill fields missing from Firestore
+  // (e.g. old schema without new fields).
+  if (!firestoreData) return loadLocal();
   const local = loadLocal();
   if (!local) return firestoreData;
-  if (!firestoreData) return local;
-  // Use Firestore as canonical but fill in any missing fields from local
-  const merged = { ...local, ...firestoreData };
-  // For numeric stats, take the maximum (prevents rollback)
-  merged.xp = Math.max(local.xp || 0, firestoreData.xp || 0);
-  merged.totalStudyMin = Math.max(local.totalStudyMin || 0, firestoreData.totalStudyMin || 0);
-  merged.totalSessions = Math.max(local.totalSessions || 0, firestoreData.totalSessions || 0);
-  merged.totalTasksDone = Math.max(local.totalTasksDone || 0, firestoreData.totalTasksDone || 0);
-  merged.streak = Math.max(local.streak || 0, firestoreData.streak || 0);
-  return merged;
+
+  // Check timestamps — if local is meaningfully newer (user worked offline),
+  // take numeric max to avoid rollback. Otherwise Firestore wins entirely.
+  const localTs = local._ts || 0;
+  const cloudTs = firestoreData._ts || firestoreData.updatedAt || 0;
+  const localIsNewer = localTs > cloudTs + 30000; // 30s grace period
+
+  if (localIsNewer) {
+    // Offline session — merge taking max for stats
+    const merged = { ...firestoreData, ...local };
+    merged.xp           = Math.max(local.xp || 0, firestoreData.xp || 0);
+    merged.totalStudyMin= Math.max(local.totalStudyMin || 0, firestoreData.totalStudyMin || 0);
+    merged.totalSessions= Math.max(local.totalSessions || 0, firestoreData.totalSessions || 0);
+    merged.totalTasksDone=Math.max(local.totalTasksDone || 0, firestoreData.totalTasksDone || 0);
+    merged.streak       = Math.max(local.streak || 0, firestoreData.streak || 0);
+    return merged;
+  }
+
+  // Firestore is newer (or same age) → Firestore wins, 
+  // but fill any missing fields from local (schema migrations)
+  return { ...local, ...firestoreData };
 }
 
 // ============================================================
@@ -4478,7 +4514,7 @@ function AppShell({ user, userData, setUserData, onLogout, addToast }) {
         setTimeout(() => setLevelUpData({ level: newLvl, title: getLevelTitle(newLvl) }), 400);
       }
 
-      const final = { ...next, achievements: ach, xp: newXP };
+      const final = { ...next, achievements: ach, xp: newXP, _ts: Date.now() };
       // Always save to localStorage immediately (works offline + prevents data loss)
       saveLocal(final);
       // Also save to Firestore if user is logged in (debounced)
@@ -5076,49 +5112,119 @@ function Root() {
   const [showLanding, setShowLanding] = useState(true); // Start on landing page
   const { toasts, addToast } = useToasts();
 
+  // Ref to hold the Firestore onSnapshot unsubscribe function
+  const unsubscribeRef = React.useRef(null);
+
   useEffect(() => {
+    // Clean up any previous listener
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+      unsubscribeRef.current = null;
+    }
+
     if (!user) {
-      // Not logged in — try loading from localStorage for demo/offline mode
+      // Not logged in — use localStorage for demo/offline mode
       const localData = loadLocal();
-      if (localData && localData.profile) {
-        setUserData(localData);
-      } else {
-        setUserData(null);
-      }
+      setUserData(localData && localData.profile ? localData : null);
+      setDataLoading(false);
       return;
     }
-    // STEP 1: Load localStorage immediately — show UI right away (no flash of LV1)
+
+    // Show loading skeleton — don't flash LV1
+    setDataLoading(true);
+
+    // STEP 1: Pre-hydrate from localStorage so UI shows instantly (no blank)
     const localData = loadLocal();
     if (localData && localData.profile) {
       setUserData(localData);
-      setDataLoading(false);
-    } else {
-      setDataLoading(true);
     }
-    // STEP 2: Load from Firestore in background and merge
-    loadUserData(user.uid).then(firestoreData => {
+
+    // STEP 2: Load once from Firestore to get canonical data
+    loadUserData(user.uid).then(async firestoreData => {
       if (firestoreData) {
+        // Cloud data exists — merge (Firestore wins)
         const merged = mergeWithLocal(firestoreData);
         setUserData(merged);
-        saveLocal(merged); // keep local in sync
-      } else if (!localData || !localData.profile) {
-        // Truly new user
+        saveLocal(merged);
+      } else {
+        // No cloud data yet — check if we should migrate localStorage
+        const local = loadLocal();
+        const hasRealProgress = local && (
+          (local.xp && local.xp > 0) ||
+          (local.totalSessions && local.totalSessions > 0) ||
+          (local.tasks && local.tasks.length > 0)
+        );
         const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Student');
-        const fresh = defaultUserData(name);
-        setUserData(fresh);
-        saveLocal(fresh);
-        saveUserData(user.uid, fresh);
+        if (hasRealProgress) {
+          // MIGRATION: promote localStorage data to Firestore
+          const migrated = {
+            ...local,
+            profile: local.profile || { name, dailyGoalMin: 120 },
+            _migrated: true,
+            _ts: Date.now(),
+            updatedAt: Date.now(),
+          };
+          setUserData(migrated);
+          saveLocal(migrated);
+          await saveUserData(user.uid, migrated);
+          console.log('FlipClock OS: Migrated localStorage → Firestore');
+        } else {
+          // Truly new user — create fresh profile
+          const fresh = defaultUserData(name);
+          setUserData(fresh);
+          saveLocal(fresh);
+          await saveUserData(user.uid, fresh);
+        }
       }
       setDataLoading(false);
-    }).catch(() => {
-      // Firestore failed — localStorage already loaded, carry on
+
+      // STEP 3: Set up real-time Firestore listener for cross-device sync
+      if (!db) return;
+      const unsub = db.collection('users').doc(user.uid).onSnapshot(
+        snap => {
+          if (!snap.exists) return;
+          const cloudData = snap.data();
+          if (!cloudData) return;
+          // Only update if cloud data is newer than what we have locally
+          // Use a flag to avoid infinite loop (our own writes triggering this)
+          const cloudTs = cloudData._ts || 0;
+          const localTs  = loadLocal()?._ts || 0;
+          if (cloudTs > localTs + 5000) {
+            // Cloud is meaningfully newer — update UI (another device wrote)
+            setUserData(prev => {
+              const merged = mergeWithLocal(cloudData);
+              saveLocal(merged);
+              return merged;
+            });
+          }
+        },
+        err => { console.warn('Firestore listener error:', err.message); }
+      );
+      unsubscribeRef.current = unsub;
+    }).catch(err => {
+      console.warn('Firestore load failed:', err.message);
+      // Offline — localStorage already shown, just stop loading
       setDataLoading(false);
     });
+
+    return () => {
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+    };
   }, [user]);
 
   async function handleLogout() {
+    // Unsubscribe from Firestore listener
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+      unsubscribeRef.current = null;
+    }
     await signOut();
     setUserData(null);
+    // Clear local cache so next user on same device starts clean
+    try { localStorage.removeItem(LS_KEY); } catch(e) {}
     addToast('Signed out', 'See you next time');
   }
 
@@ -5130,13 +5236,13 @@ function Root() {
     );
   }
 
-  if (user === undefined || (user && dataLoading)) {
-    return (
-      React.createElement('div', { style: { display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'var(--bg)', flexDirection:'column', gap:16 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2974}}
-        , React.createElement('div', { style: { width:40, height:40, border:'2px solid var(--border2)', borderTopColor:'var(--accent2)', borderRadius:'50%', animation:'spin 0.8s linear infinite' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2975}})
-        , React.createElement('div', { style: { fontSize:13, color:'var(--text3)' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 2976}}, "Loading FlipClock OS…"  )
-        , React.createElement('style', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 2977}}, `@keyframes spin{to{transform:rotate(360deg)}}`)
-      )
+  if (user === undefined || (user && dataLoading && !userData)) {
+    return React.createElement('div', {
+      style: { display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'var(--bg)', flexDirection:'column', gap:16 }
+    },
+      React.createElement('div', { style:{ width:40, height:40, border:'2px solid var(--border2)', borderTopColor:'var(--accent2)', borderRadius:'50%', animation:'spin 0.8s linear infinite' } }),
+      React.createElement('div', { style:{ fontSize:13, color:'var(--text3)' } }, 'Loading your profile…'),
+      React.createElement('style', null, '@keyframes spin{to{transform:rotate(360deg)}}')
     );
   }
 
