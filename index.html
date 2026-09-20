@@ -113,7 +113,7 @@ a:hover{text-decoration:underline}
 .stat-card.green .stat-value{color:var(--green)}
 
 /* ===== FLIP CLOCK ===== */
-.flip-clock-wrap{display:flex;flex-direction:column;align-items:center;gap:24px}
+.flip-clock-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;width:100%}
 .flip-clock-body{background:linear-gradient(145deg,#f5f0e8,#e8e0d0);border-radius:22px;padding:30px 40px 26px;box-shadow:0 24px 70px rgba(0,0,0,0.75),inset 0 1px 0 rgba(255,255,255,0.6),0 0 0 2px #ccc0a0;position:relative}
 .flip-clock-body::before{content:'';position:absolute;inset:8px;border-radius:15px;border:2px solid #1a1a1a;pointer-events:none;z-index:0}
 .flip-clock-digits{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
@@ -143,7 +143,7 @@ a:hover{text-decoration:underline}
 /* ===== FOCUS ===== */
 /* ===== FOCUS PAGE — PREMIUM ===== */
 .focus-layout{display:grid;grid-template-columns:1fr 288px;gap:28px;align-items:start}
-.focus-left{display:flex;flex-direction:column;align-items:center;gap:0}
+.focus-left{display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
 .mode-tabs{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:40px;padding:4px;gap:2px;margin-bottom:28px}
 .mode-tab{padding:7px 18px;border-radius:30px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;transition:all 0.18s;letter-spacing:0.2px;white-space:nowrap}
 .mode-tab.active{background:var(--bg);color:var(--text1);box-shadow:0 1px 6px rgba(0,0,0,0.5),0 0 0 1px var(--border)}
@@ -194,16 +194,17 @@ a:hover{text-decoration:underline}
 .home-greeting p{font-size:13px;color:var(--text2);margin-top:4px}
 .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
 /* Home hero */
-.home-hero{display:grid;grid-template-columns:1fr 420px;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;min-height:340px}
+.home-hero{display:grid;grid-template-columns:1fr 440px;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;min-height:400px}
 .home-hero-text{padding:28px 28px;display:flex;flex-direction:column;justify-content:center;gap:0}
 .home-hero-greeting{font-size:11px;color:var(--text3);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:10px}
 .home-hero-name{font-size:26px;font-weight:600;letter-spacing:-0.5px;color:var(--text1);line-height:1.2;margin-bottom:8px}
 .home-hero-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px}
 .home-hero-clock{
-  background:transparent;
+  background:linear-gradient(135deg,#0a0a0e 0%,#111118 100%);
   display:flex;align-items:center;justify-content:center;
-  overflow:hidden;min-height:340px;
+  overflow:hidden;min-height:400px;
   position:relative;
+  border-radius:0 var(--radius-lg) var(--radius-lg) 0;
 }
 .home-hero-clock::before{
   content:'';position:absolute;
@@ -802,363 +803,317 @@ function use3DClockAvailable() {
 }
 
 function Clock3DCanvas({ seconds = 0, mode = 'idle', height = '320px', running = false }) {
-  const mountRef     = useRef(null);
-  const rafRef       = useRef(null);
-  const mouseRef     = useRef({ x: 0, y: 0 });
-  const sceneRef     = useRef(null);
-  const rendererRef  = useRef(null);
-  const cameraRef    = useRef(null);
-  const clockGroupRef= useRef(null);
-  const startTimeRef = useRef(Date.now());
-  const prevSecsRef  = useRef(-1);
-  // Each digit panel: { upperTex, lowerTex, upperCtx, lowerCtx,
-  //                     upperMesh, lowerMesh, flapMesh, flapMat,
-  //                     currentDigit, flipping, flipT, nextDigit }
-  const panelsRef    = useRef([]);
-  const ledLightRef  = useRef(null);
+  const mountRef      = useRef(null);
+  const rafRef        = useRef(null);
+  const mouseRef      = useRef({ x: 0, y: 0 });
+  const rendererRef   = useRef(null);
+  const cameraRef     = useRef(null);
+  const clockGroupRef = useRef(null);
+  const startRef      = useRef(Date.now());
+  const prevSecsRef   = useRef(-1);
+  // Panel objects: { upperTex, lowerTex, flapTex, upperCtx, lowerCtx, flapCtx,
+  //                  flapGroup, currentDigit, nextDigit, flipping, flipT, _switched }
+  const panelsRef     = useRef([]);
+  const ledLightRef   = useRef(null);
 
-  // ── CANVAS TEXTURE HELPERS ──────────────────────────────────
-  function makeDigitCanvas(digit, isUpper) {
-    const W = 256, H = 256;
-    const cv = document.createElement('canvas');
-    cv.width = W; cv.height = H;
-    const ctx = cv.getContext('2d');
-
-    // Panel background
-    ctx.fillStyle = isUpper ? '#23232e' : '#1c1c26';
-    ctx.fillRect(0, 0, W, H);
-
-    // Subtle inner shadow at split edge
-    const grad = ctx.createLinearGradient(0, isUpper ? H*0.7 : 0, 0, isUpper ? H : H*0.3);
-    grad.addColorStop(0, isUpper ? 'rgba(0,0,0,0.0)' : 'rgba(0,0,0,0.35)');
-    grad.addColorStop(1, isUpper ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
-
-    // Digit — large, bold, slightly warm white
-    ctx.fillStyle = '#e8e2d4';
-    ctx.font = 'bold 188px "Helvetica Neue",Arial,sans-serif';
+  // ── DRAW A DIGIT ONTO A 512×512 CANVAS ─────────────────
+  // digit: '0'-'9', ctx: CanvasRenderingContext2D
+  // bgTop: dark color for upper half bg, bgBot for lower
+  // This draws the FULL digit centered — UV offset/repeat crops to half
+  function drawDigit(ctx, digit, bgDark) {
+    const S = 512;
+    ctx.clearRect(0, 0, S, S);
+    // Background
+    ctx.fillStyle = bgDark || '#222230';
+    ctx.fillRect(0, 0, S, S);
+    // Subtle gradient overlay (darker at split edge)
+    const g = ctx.createLinearGradient(0, S*0.42, 0, S*0.58);
+    g.addColorStop(0, 'rgba(0,0,0,0.28)');
+    g.addColorStop(0.5, 'rgba(0,0,0,0.08)');
+    g.addColorStop(1, 'rgba(0,0,0,0.0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, S, S);
+    // Digit — large, centered, warm white
+    ctx.fillStyle = '#e4dfd5';
+    ctx.font = 'bold 320px "Helvetica Neue",Arial,sans-serif';
     ctx.textAlign = 'center';
-    ctx.textBaseline = isUpper ? 'bottom' : 'top';
-    // Draw at center, offset so only the correct half is visible
-    const x = W / 2;
-    const y = isUpper ? H + 4 : -4;
-    ctx.fillText(digit, x, y);
-
-    return cv;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(digit, S / 2, S / 2 + 8); // +8 optical center adjustment
   }
 
-  function updateDigitTexture(panel, digit, isFlipping) {
-    if (!isFlipping) {
-      // Normal update — repaint upper and lower with new digit
-      const uc = panel.upperCtx;
-      const W = uc.canvas.width, H = uc.canvas.height;
-      // Upper half
-      uc.fillStyle = '#23232e';
-      uc.fillRect(0,0,W,H);
-      const ug = uc.createLinearGradient(0,H*0.7,0,H);
-      ug.addColorStop(0,'rgba(0,0,0,0)'); ug.addColorStop(1,'rgba(0,0,0,0.35)');
-      uc.fillStyle=ug; uc.fillRect(0,0,W,H);
-      uc.fillStyle='#e8e2d4';
-      uc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-      uc.textAlign='center'; uc.textBaseline='bottom';
-      uc.fillText(digit, W/2, H+4);
-      panel.upperTex.needsUpdate = true;
-
-      const lc = panel.lowerCtx;
-      lc.fillStyle = '#1c1c26';
-      lc.fillRect(0,0,W,H);
-      const lg = lc.createLinearGradient(0,0,0,H*0.3);
-      lg.addColorStop(0,'rgba(0,0,0,0.35)'); lg.addColorStop(1,'rgba(0,0,0,0)');
-      lc.fillStyle=lg; lc.fillRect(0,0,W,H);
-      lc.fillStyle='#e8e2d4';
-      lc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-      lc.textAlign='center'; lc.textBaseline='top';
-      lc.fillText(digit, W/2, -4);
-      panel.lowerTex.needsUpdate = true;
-    }
-  }
-
-  // ── SETUP ─────────────────────────────────────────────────
+  // ── SET UP THE SCENE (runs once on mount) ────────────────
   useEffect(() => {
     const el = mountRef.current;
     if (!el || !window.THREE) return;
 
-    let W = el.clientWidth  || el.offsetWidth  || 480;
-    let H = el.clientHeight || el.offsetHeight || 320;
+    // Get element dimensions — use offsetWidth/Height which work before paint
+    // Try multiple fallbacks; ResizeObserver will correct it afterward
+    let W = el.offsetWidth  || el.clientWidth  || 480;
+    let H = el.offsetHeight || el.clientHeight || 380;
 
-    // Scene
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    const camera = new THREE.PerspectiveCamera(38, W/H, 0.1, 100);
-    camera.position.set(0, 0.05, 4.0);
-    cameraRef.current = camera;
-
-    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:'high-performance' });
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.0;
     rendererRef.current = renderer;
     el.appendChild(renderer.domElement);
 
-    // ── LIGHTING ──────────────────────────────────────────
-    scene.add(new THREE.AmbientLight(0xfff4e0, 0.55));
-    const key = new THREE.DirectionalLight(0xffd8a0, 2.6);
-    key.position.set(2.5, 5, 4); key.castShadow = true;
-    key.shadow.mapSize.set(2048, 2048);
-    key.shadow.camera.near = 0.5; key.shadow.camera.far = 20;
-    scene.add(key);
-    const fill = new THREE.DirectionalLight(0x9ab8d8, 0.65);
-    fill.position.set(-3, 2, 2); scene.add(fill);
-    const rim = new THREE.DirectionalLight(0xffa040, 0.85);
-    rim.position.set(0.5, -1.5, -3); scene.add(rim);
+    // Camera
+    const camera = new THREE.PerspectiveCamera(36, W / H, 0.1, 100);
+    camera.position.set(0, 0.06, 4.6);
+    cameraRef.current = camera;
 
-    // ── CLOCK GROUP ───────────────────────────────────────
+    // Scene
+    const scene = new THREE.Scene();
+
+    // ── LIGHTS ──────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0xfff6e8, 0.6));
+    const key = new THREE.DirectionalLight(0xffecc0, 2.8);
+    key.position.set(2, 5, 4); key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0x90b8d8, 0.7);
+    fill.position.set(-3, 1.5, 2); scene.add(fill);
+    const rim = new THREE.DirectionalLight(0xff9050, 0.7);
+    rim.position.set(0.5, -1, -3); scene.add(rim);
+
+    // ── CLOCK GROUP ─────────────────────────────────────
     const group = new THREE.Group();
     clockGroupRef.current = group;
     scene.add(group);
 
-    // === OUTER BODY ===
-    // Cream/ivory plastic housing — 2.8 wide × 1.6 tall × 0.56 deep
-    const BW=2.8, BH=1.6, BD=0.56;
-    const bodyMat = new THREE.MeshStandardMaterial({ color:0xf0e8d4, roughness:0.28, metalness:0.04 });
+    // BODY — cream plastic, 3.0 × 1.7 × 0.58
+    const BW = 3.0, BH = 1.7, BD = 0.58;
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf2ead8, roughness: 0.30, metalness: 0.03 });
     const body = new THREE.Mesh(new THREE.BoxGeometry(BW, BH, BD), bodyMat);
     body.castShadow = true; body.receiveShadow = true;
     group.add(body);
 
-    // Rounded corner spheres (visual rounding at 8 corners)
-    const cMat = new THREE.MeshStandardMaterial({ color:0xe6dcc8, roughness:0.38 });
-    const cr = 0.16;
-    for (const [cx,cy,cz] of [[-1.27,-0.73,-0.24],[ 1.27,-0.73,-0.24],[-1.27, 0.73,-0.24],[ 1.27, 0.73,-0.24],
-                               [-1.27,-0.73, 0.24],[ 1.27,-0.73, 0.24],[-1.27, 0.73, 0.24],[ 1.27, 0.73, 0.24]]) {
-      const c = new THREE.Mesh(new THREE.SphereGeometry(cr,16,16), cMat);
-      c.position.set(cx,cy,cz); group.add(c);
+    // Rounded corners (8 spheres at body corners)
+    const cMat = new THREE.MeshStandardMaterial({ color: 0xe8dcc8, roughness: 0.40 });
+    const CR = 0.18;
+    for (const [cx,cy] of [[-1.34,-0.78],[1.34,-0.78],[-1.34,0.78],[1.34,0.78]]) {
+      for (const cz of [-BD/2+CR, BD/2-CR]) {
+        const c = new THREE.Mesh(new THREE.SphereGeometry(CR, 18, 18), cMat);
+        c.position.set(cx, cy, cz); group.add(c);
+      }
     }
 
-    // Dark bezel recess
-    const bezelMat = new THREE.MeshStandardMaterial({ color:0x141416, roughness:0.92 });
-    const bezel = new THREE.Mesh(new THREE.BoxGeometry(BW*0.93, BH*0.86, 0.07), bezelMat);
-    bezel.position.z = BD/2 - 0.015; group.add(bezel);
+    // Bezel (dark inset around display area)
+    const bezelMat = new THREE.MeshStandardMaterial({ color: 0x101012, roughness: 0.95 });
+    const bezel = new THREE.Mesh(new THREE.BoxGeometry(BW * 0.91, BH * 0.84, 0.06), bezelMat);
+    bezel.position.z = BD / 2 - 0.012; group.add(bezel);
 
-    // === 4 DIGIT PANELS ===
-    // Layout: MM:SS → 4 panels at x=-0.96, -0.32, 0.32, 0.96
-    // Each panel: 0.52w × 0.92h
-    const PW=0.52, PH=0.92, PD=0.08;
-    const PANEL_XS = [-0.96, -0.32, 0.32, 0.96];
-    const PANEL_Y  = 0.04;
-    const PANEL_Z  = BD/2 + 0.025;
+    // ── 4 DIGIT PANELS ──────────────────────────────────
+    // Positions: MM:SS → [-0.99, -0.33, 0.33, 0.99]
+    const PW = 0.56, PH = 1.0, PD = 0.09;
+    const PANEL_XS = [-0.99, -0.33, 0.33, 0.99];
+    const PY = 0.05;
+    const PZ = BD / 2 + 0.028;
 
-    const panelHousingMat = new THREE.MeshStandardMaterial({ color:0x0e0e12, roughness:0.72, metalness:0.06 });
-    const hingeMat = new THREE.MeshStandardMaterial({ color:0x282832, metalness:0.82, roughness:0.22 });
+    const houseMat = new THREE.MeshStandardMaterial({ color: 0x0c0c10, roughness: 0.78, metalness: 0.05 });
+    const hingeMat = new THREE.MeshStandardMaterial({ color: 0x242430, metalness: 0.85, roughness: 0.20 });
+    const panels   = [];
 
-    const panels = [];
+    PANEL_XS.forEach((px) => {
+      // Housing box
+      const house = new THREE.Mesh(new THREE.BoxGeometry(PW + 0.05, PH + 0.05, PD), houseMat);
+      house.position.set(px, PY, PZ); group.add(house);
 
-    PANEL_XS.forEach((px, i) => {
-      // Panel housing (the black surround)
-      const housing = new THREE.Mesh(new THREE.BoxGeometry(PW+0.04, PH+0.04, PD), panelHousingMat);
-      housing.position.set(px, PANEL_Y, PANEL_Z); group.add(housing);
-      housing.castShadow = true;
+      // ── CANVAS TEXTURES (512×512, full digit) ─────────
+      const mkTex = (bg) => {
+        const cv  = document.createElement('canvas');
+        cv.width  = 512; cv.height = 512;
+        const ctx = cv.getContext('2d');
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, 512, 512);
+        const tex = new THREE.CanvasTexture(cv);
+        tex.flipY = false; // canvas Y is top-down; Three UVs bottom-up — disable flipY for match
+        return { tex, ctx, cv };
+      };
 
-      // ── UPPER HALF ──────────────────────────────────
-      // Canvas texture for upper digit half
-      const upperCv  = document.createElement('canvas');
-      upperCv.width  = 256; upperCv.height = 256;
-      const upperCtx = upperCv.getContext('2d');
-      const upperTex = new THREE.CanvasTexture(upperCv);
-      upperTex.flipY  = false;
+      // Upper half — shows TOP half of digit
+      // UV trick: offset.y = 0.5 (start from middle), repeat.y = 0.5 (show half)
+      const upT = mkTex('#23232e');
+      upT.tex.offset.set(0, 0.5);   // start at vertical midpoint
+      upT.tex.repeat.set(1, 0.5);   // show only top half
+      upT.tex.wrapS = THREE.ClampToEdgeWrapping;
+      upT.tex.wrapT = THREE.ClampToEdgeWrapping;
+      const upMat  = new THREE.MeshStandardMaterial({ map: upT.tex, roughness: 0.42 });
+      const upMesh = new THREE.Mesh(new THREE.PlaneGeometry(PW - 0.03, PH / 2 - 0.02), upMat);
+      upMesh.position.set(px, PY + PH / 4 + 0.005, PZ + PD / 2 + 0.003);
+      group.add(upMesh);
 
-      const upperMat = new THREE.MeshStandardMaterial({
-        map: upperTex,
-        roughness:0.4, metalness:0.0,
-      });
-      const upperMesh = new THREE.Mesh(new THREE.PlaneGeometry(PW-0.02, PH/2-0.01), upperMat);
-      upperMesh.position.set(px, PANEL_Y + PH/4 + 0.005, PANEL_Z + PD/2 + 0.002);
-      group.add(upperMesh);
+      // Lower half — shows BOTTOM half of digit
+      // UV: offset.y = 0, repeat.y = 0.5
+      const loT = mkTex('#1c1c28');
+      loT.tex.offset.set(0, 0);
+      loT.tex.repeat.set(1, 0.5);
+      loT.tex.wrapS = THREE.ClampToEdgeWrapping;
+      loT.tex.wrapT = THREE.ClampToEdgeWrapping;
+      const loMat  = new THREE.MeshStandardMaterial({ map: loT.tex, roughness: 0.42 });
+      const loMesh = new THREE.Mesh(new THREE.PlaneGeometry(PW - 0.03, PH / 2 - 0.02), loMat);
+      loMesh.position.set(px, PY - PH / 4 - 0.005, PZ + PD / 2 + 0.003);
+      group.add(loMesh);
 
-      // ── LOWER HALF ──────────────────────────────────
-      const lowerCv  = document.createElement('canvas');
-      lowerCv.width  = 256; lowerCv.height = 256;
-      const lowerCtx = lowerCv.getContext('2d');
-      const lowerTex = new THREE.CanvasTexture(lowerCv);
-      lowerTex.flipY  = false;
+      // Flap — top half, rotates down around hinge pivot
+      // Uses same upper texture initially (top half)
+      const flT = mkTex('#23232e');
+      flT.tex.offset.set(0, 0.5);
+      flT.tex.repeat.set(1, 0.5);
+      flT.tex.wrapS = THREE.ClampToEdgeWrapping;
+      flT.tex.wrapT = THREE.ClampToEdgeWrapping;
+      const flMat  = new THREE.MeshStandardMaterial({ map: flT.tex, roughness: 0.38, side: THREE.DoubleSide });
+      const flMesh = new THREE.Mesh(new THREE.PlaneGeometry(PW - 0.03, PH / 2 - 0.02), flMat);
+      // Offset mesh up so its bottom edge sits at the pivot (y=0 in flapGroup)
+      flMesh.position.y = (PH / 2 - 0.02) / 2;
 
-      const lowerMat = new THREE.MeshStandardMaterial({
-        map: lowerTex,
-        roughness:0.4, metalness:0.0,
-      });
-      const lowerMesh = new THREE.Mesh(new THREE.PlaneGeometry(PW-0.02, PH/2-0.01), lowerMat);
-      lowerMesh.position.set(px, PANEL_Y - PH/4 - 0.005, PANEL_Z + PD/2 + 0.002);
-      group.add(lowerMesh);
-
-      // ── FLIP FLAP (upper half that rotates down) ──
-      // This is a separate mesh that animates over the upper half
-      const flapCv  = document.createElement('canvas');
-      flapCv.width  = 256; flapCv.height = 256;
-      const flapCtx = flapCv.getContext('2d');
-      const flapTex = new THREE.CanvasTexture(flapCv);
-      flapTex.flipY  = false;
-
-      const flapMat = new THREE.MeshStandardMaterial({
-        map: flapTex,
-        roughness:0.38, metalness:0.0,
-        side: THREE.DoubleSide,
-      });
-      // Flap pivot is at the hinge center (middle of panel)
       const flapGroup = new THREE.Group();
-      flapGroup.position.set(px, PANEL_Y, PANEL_Z + PD/2 + 0.003);
+      flapGroup.position.set(px, PY, PZ + PD / 2 + 0.004);
+      flapGroup.add(flMesh);
       group.add(flapGroup);
 
-      const flapMesh = new THREE.Mesh(new THREE.PlaneGeometry(PW-0.02, PH/2-0.01), flapMat);
-      // Offset upward by half-height so pivot is at bottom edge of flap
-      flapMesh.position.y = (PH/2 - 0.01) / 2;
-      flapGroup.add(flapMesh);
-      flapGroup.rotation.x = 0; // animated: 0 → -PI
-
-      // ── HINGE BAR ──────────────────────────────────
+      // Hinge bar
       const hinge = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.014, 0.014, PW+0.02, 12),
+        new THREE.CylinderGeometry(0.013, 0.013, PW + 0.02, 14),
         hingeMat
       );
-      hinge.rotation.z = Math.PI/2;
-      hinge.position.set(px, PANEL_Y, PANEL_Z + PD/2 + 0.012);
+      hinge.rotation.z = Math.PI / 2;
+      hinge.position.set(px, PY, PZ + PD / 2 + 0.014);
       group.add(hinge);
 
-      // ── HINGE PINS ─────────────────────────────────
-      const pinMat = new THREE.MeshStandardMaterial({ color:0x222228, metalness:0.65, roughness:0.35 });
-      [-PW/2-0.015, PW/2+0.015].forEach(ox => {
-        const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.03,10), pinMat);
-        pin.rotation.x = Math.PI/2;
-        pin.position.set(px+ox, PANEL_Y, PANEL_Z+PD/2+0.012);
+      // Hinge pins
+      const pinMat = new THREE.MeshStandardMaterial({ color: 0x1e1e28, metalness: 0.70, roughness: 0.30 });
+      for (const ox of [-(PW/2+0.016), PW/2+0.016]) {
+        const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.032, 10), pinMat);
+        pin.rotation.x = Math.PI / 2;
+        pin.position.set(px + ox, PY, PZ + PD / 2 + 0.014);
         group.add(pin);
-      });
+      }
 
-      // ── DARK GAP LINE at hinge ──────────────────────
-      const gapMat = new THREE.MeshStandardMaterial({ color:0x050508, roughness:0.95 });
-      const gap = new THREE.Mesh(new THREE.BoxGeometry(PW+0.02, 0.012, 0.012), gapMat);
-      gap.position.set(px, PANEL_Y, PANEL_Z + PD/2 + 0.002);
+      // Gap line at hinge
+      const gapMat = new THREE.MeshStandardMaterial({ color: 0x040406, roughness: 0.98 });
+      const gap    = new THREE.Mesh(new THREE.BoxGeometry(PW + 0.06, 0.013, 0.016), gapMat);
+      gap.position.set(px, PY, PZ + PD / 2 + 0.003);
       group.add(gap);
 
       panels.push({
-        upperTex, lowerTex, flapTex,
-        upperCtx, lowerCtx, flapCtx,
-        upperMesh, lowerMesh, flapGroup,
-        currentDigit: '0',
-        nextDigit: '0',
+        upT, loT, flT,      // {tex, ctx, cv}
+        flapGroup,
+        currentDigit: ' ',  // painted on first seconds update
+        nextDigit: ' ',
         flipping: false,
         flipT: 0,
+        _switched: false,
       });
     });
     panelsRef.current = panels;
 
-    // ── SEPARATOR DOTS (colon) ──────────────────────────
-    const dotMat = new THREE.MeshStandardMaterial({ color:0x0e0e12, roughness:0.7 });
-    [-0.14, 0.14].forEach(dy => {
-      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.062, 14, 14), dotMat);
-      dot.position.set(0, PANEL_Y + dy, PANEL_Z + 0.04);
+    // ── COLON DOTS ──────────────────────────────────────
+    const dotMat = new THREE.MeshStandardMaterial({ color: 0x0c0c10, roughness: 0.72 });
+    for (const dy of [-0.16, 0.16]) {
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.068, 14, 14), dotMat);
+      dot.position.set(0, PY + dy, PZ + 0.04);
       group.add(dot);
-    });
+    }
 
-    // ── BRAND PLAQUE ──────────────────────────────────
-    const bMat = new THREE.MeshStandardMaterial({ color:0xa89860, roughness:0.8 });
-    const brand = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.09, 0.02), bMat);
-    brand.position.set(0.3, -BH/2+0.13, BD/2-0.01); group.add(brand);
+    // ── BRAND PLAQUE ────────────────────────────────────
+    const bMat = new THREE.MeshStandardMaterial({ color: 0xa89058, roughness: 0.82 });
+    group.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 0.02), bMat),
+      { position: new THREE.Vector3(0.28, -BH/2+0.14, BD/2-0.01) }));
 
-    // ── LED AMBER ──────────────────────────────────────
-    const ledMat = new THREE.MeshStandardMaterial({ color:0xff8800, emissive:0xff6600, emissiveIntensity:1.5, roughness:0.08 });
-    const led = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), ledMat);
-    led.position.set(1.06, BH/2-0.12, BD/2-0.02); group.add(led);
-    const ledL = new THREE.PointLight(0xff7700, 1.1, 2.0);
-    ledL.position.set(1.06, BH/2-0.12, BD/2+0.2); scene.add(ledL);
+    // ── LED ─────────────────────────────────────────────
+    const ledMat = new THREE.MeshStandardMaterial({ color:0xff8800, emissive:0xff6600, emissiveIntensity:1.6, roughness:0.07 });
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.046, 12, 12), ledMat);
+    led.position.set(1.14, BH/2-0.13, BD/2-0.02); group.add(led);
+    const ledL = new THREE.PointLight(0xff7700, 1.2, 2.2);
+    ledL.position.set(1.14, BH/2-0.13, BD/2+0.25); scene.add(ledL);
     ledLightRef.current = ledL;
 
-    // ── GROUND SHADOW ──────────────────────────────────
-    const sp = new THREE.Mesh(new THREE.PlaneGeometry(8,8), new THREE.ShadowMaterial({ opacity:0.22 }));
-    sp.rotation.x = -Math.PI/2; sp.position.y = -BH/2-0.6; sp.receiveShadow = true;
+    // ── GROUND SHADOW ────────────────────────────────────
+    const sp = new THREE.Mesh(
+      new THREE.PlaneGeometry(9, 9),
+      new THREE.ShadowMaterial({ opacity: 0.20 })
+    );
+    sp.rotation.x = -Math.PI / 2;
+    sp.position.y  = -BH / 2 - 0.55;
+    sp.receiveShadow = true;
     scene.add(sp);
 
-    // ── MOUSE PARALLAX ─────────────────────────────────
+    // ── MOUSE PARALLAX ───────────────────────────────────
     const onMM = e => {
       const r = el.getBoundingClientRect();
       mouseRef.current = {
-        x:  ((e.clientX-r.left)/r.width  - 0.5)*2,
-        y: -((e.clientY-r.top) /r.height - 0.5)*2,
+        x:  ((e.clientX - r.left) / r.width  - 0.5) * 2,
+        y: -((e.clientY - r.top)  / r.height - 0.5) * 2,
       };
     };
     el.addEventListener('mousemove', onMM);
 
-    // ── ENTRANCE ────────────────────────────────────────
-    group.position.y = -3;
+    // Entrance state
+    group.position.y = -3.0;
     group.scale.setScalar(0.01);
-    let enterT = 0;
-    let targetRY = 0, currentRY = 0;
+    let enterP = 0, targetRY = 0, currentRY = 0;
 
-    // ── ANIMATE LOOP ────────────────────────────────────
+    // ── ANIMATE LOOP ─────────────────────────────────────
     const animate = () => {
       rafRef.current = requestAnimationFrame(animate);
-      const t = (Date.now() - startTimeRef.current) / 1000;
+      const t = (Date.now() - startRef.current) / 1000;
 
       // Entrance
-      if (enterT < 1.0) {
-        enterT += 0.014;
-        const p = Math.min(enterT, 1);
-        const ease = 1 - Math.pow(1-p, 3);
-        group.position.y = -3 + 3*ease;
-        group.scale.setScalar(0.01 + 0.99*ease);
+      if (enterP < 1) {
+        enterP = Math.min(enterP + 0.014, 1);
+        const e3 = 1 - Math.pow(1 - enterP, 3);
+        group.position.y = -3 + 3 * e3;
+        group.scale.setScalar(0.01 + 0.99 * e3);
       } else {
-        group.position.y = Math.sin(t*0.52)*0.04;
+        group.position.y = Math.sin(t * 0.50) * 0.038;
         group.scale.setScalar(1);
       }
 
-      // Rotation: gentle idle bob + mouse parallax
-      targetRY = Math.sin(t*0.13)*0.10 + mouseRef.current.x*0.13;
-      currentRY += (targetRY - currentRY) * 0.05;
-      group.rotation.y = currentRY;
-      group.rotation.x += (mouseRef.current.y*0.11 - group.rotation.x)*0.05;
+      // Rotation: idle bob + mouse parallax
+      targetRY = Math.sin(t * 0.12) * 0.09 + mouseRef.current.x * 0.12;
+      currentRY += (targetRY - currentRY) * 0.048;
+      group.rotation.y  = currentRY;
+      group.rotation.x += (mouseRef.current.y * 0.10 - group.rotation.x) * 0.048;
 
-      // ── DIGIT FLIP ANIMATION ──────────────────────────
+      // ── FLIP ANIMATION ───────────────────────────────
       panelsRef.current.forEach(p => {
         if (!p.flipping) return;
-        p.flipT = Math.min(p.flipT + 0.10, 1); // ~10 frames total = ~167ms at 60fps
+        p.flipT = Math.min(p.flipT + 0.09, 1); // ~0.18s at 60fps
 
-        const angle = -Math.PI * p.flipT;
+        // Ease in-out for the rotation
+        const angle = -Math.PI * (1 - Math.pow(1 - p.flipT, 2));
         p.flapGroup.rotation.x = angle;
 
-        // At the halfway point, switch the flap texture to the new digit (back face)
+        // At midpoint: switch flap to back face (new digit, mirrored)
         if (p.flipT >= 0.5 && !p._switched) {
           p._switched = true;
-          // Paint the back of the flap with the next digit (flipped vertically)
-          const fc = p.flapCtx, W = 256, H = 256;
-          fc.clearRect(0,0,W,H);
-          fc.fillStyle = '#23232e';
-          fc.fillRect(0,0,W,H);
-          const fg = fc.createLinearGradient(0,H*0.7,0,H);
-          fg.addColorStop(0,'rgba(0,0,0,0)'); fg.addColorStop(1,'rgba(0,0,0,0.4)');
-          fc.fillStyle=fg; fc.fillRect(0,0,W,H);
-          fc.fillStyle='#e8e2d4';
-          fc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-          fc.textAlign='center'; fc.textBaseline='bottom';
-          // Back face is mirrored horizontally (flip)
-          fc.save(); fc.scale(-1,1); fc.fillText(p.nextDigit, -W/2, H+4); fc.restore();
-          p.flapTex.needsUpdate = true;
+          // Back of flap shows top half of NEXT digit, horizontally mirrored
+          const { ctx, cv, tex } = p.flT;
+          const S = 512;
+          ctx.clearRect(0, 0, S, S);
+          ctx.save();
+          ctx.scale(-1, 1);
+          ctx.translate(-S, 0);
+          drawDigit(ctx, p.nextDigit, '#232330');
+          ctx.restore();
+          // Use bottom half for back (it will appear as top when flipped)
+          tex.offset.set(0, 0);
+          tex.repeat.set(1, 0.5);
+          tex.needsUpdate = true;
 
-          // Also update lower panel to show the new digit
-          const lc = p.lowerCtx;
-          lc.fillStyle = '#1c1c26';
-          lc.fillRect(0,0,W,H);
-          const lg = lc.createLinearGradient(0,0,0,H*0.3);
-          lg.addColorStop(0,'rgba(0,0,0,0.4)'); lg.addColorStop(1,'rgba(0,0,0,0)');
-          lc.fillStyle=lg; lc.fillRect(0,0,W,H);
-          lc.fillStyle='#e8e2d4';
-          lc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-          lc.textAlign='center'; lc.textBaseline='top';
-          lc.fillText(p.nextDigit, W/2, -4);
-          p.lowerTex.needsUpdate = true;
+          // Update lower half to next digit immediately
+          drawDigit(p.loT.ctx, p.nextDigit, '#1c1c28');
+          p.loT.tex.offset.set(0, 0);
+          p.loT.tex.repeat.set(1, 0.5);
+          p.loT.tex.needsUpdate = true;
         }
 
-        // Done flipping
+        // Done
         if (p.flipT >= 1) {
           p.flipping  = false;
           p.flipT     = 0;
@@ -1166,52 +1121,44 @@ function Clock3DCanvas({ seconds = 0, mode = 'idle', height = '320px', running =
           p.flapGroup.rotation.x = 0;
           p.currentDigit = p.nextDigit;
 
-          // Update upper panel to show new digit
-          const uc = p.upperCtx, W = 256, H = 256;
-          uc.fillStyle = '#23232e';
-          uc.fillRect(0,0,W,H);
-          const ug = uc.createLinearGradient(0,H*0.7,0,H);
-          ug.addColorStop(0,'rgba(0,0,0,0)'); ug.addColorStop(1,'rgba(0,0,0,0.4)');
-          uc.fillStyle=ug; uc.fillRect(0,0,W,H);
-          uc.fillStyle='#e8e2d4';
-          uc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-          uc.textAlign='center'; uc.textBaseline='bottom';
-          uc.fillText(p.currentDigit, W/2, H+4);
-          p.upperTex.needsUpdate = true;
+          // Update upper half to new digit
+          drawDigit(p.upT.ctx, p.currentDigit, '#23232e');
+          p.upT.tex.offset.set(0, 0.5);
+          p.upT.tex.repeat.set(1, 0.5);
+          p.upT.tex.needsUpdate = true;
 
-          // Reset flap texture to current digit (front face again)
-          const fc = p.flapCtx;
-          fc.fillStyle = '#23232e';
-          fc.fillRect(0,0,W,H);
-          const fgd=fc.createLinearGradient(0,H*0.7,0,H);
-          fgd.addColorStop(0,'rgba(0,0,0,0)'); fgd.addColorStop(1,'rgba(0,0,0,0.4)');
-          fc.fillStyle=fgd; fc.fillRect(0,0,W,H);
-          fc.fillStyle='#e8e2d4';
-          fc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-          fc.textAlign='center'; fc.textBaseline='bottom';
-          fc.fillText(p.currentDigit, W/2, H+4);
-          p.flapTex.needsUpdate = true;
+          // Reset flap to upper face (new digit, normal)
+          drawDigit(p.flT.ctx, p.currentDigit, '#23232e');
+          p.flT.tex.offset.set(0, 0.5);
+          p.flT.tex.repeat.set(1, 0.5);
+          p.flT.tex.needsUpdate = true;
         }
       });
 
       // LED pulse
-      if (ledLightRef.current) ledLightRef.current.intensity = 1.1 + Math.sin(t*3.0)*0.38;
+      if (ledLightRef.current) {
+        ledLightRef.current.intensity = 1.2 + Math.sin(t * 3.1) * 0.38;
+      }
 
       renderer.render(scene, camera);
     };
     animate();
 
-    // ── RESIZE ──────────────────────────────────────────
+    // ── RESIZE ───────────────────────────────────────────
     const onResize = () => {
-      const w = el.clientWidth||el.offsetWidth;
-      const h = el.clientHeight||el.offsetHeight;
-      if (!w||!h) return;
-      camera.aspect = w/h; camera.updateProjectionMatrix();
-      renderer.setSize(w,h);
+      const w = el.clientWidth || el.offsetWidth;
+      const h = el.clientHeight || el.offsetHeight;
+      if (!w || !h) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
     };
     window.addEventListener('resize', onResize);
     let ro = null;
-    if (typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(onResize); ro.observe(el); }
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(onResize);
+      ro.observe(el);
+    }
     requestAnimationFrame(onResize);
 
     return () => {
@@ -1224,98 +1171,70 @@ function Clock3DCanvas({ seconds = 0, mode = 'idle', height = '320px', running =
     };
   }, []);
 
-  // ── INITIAL DIGIT PAINT ────────────────────────────────
-  // Paint digits once after mount (panels start empty)
+  // ── PAINT DIGITS WHEN SECONDS CHANGE ─────────────────
   useEffect(() => {
     const panels = panelsRef.current;
     if (!panels.length) return;
 
-    function paintDigit(panel, digit) {
-      const W=256, H=256;
-      // Upper
-      const uc = panel.upperCtx;
-      uc.fillStyle='#23232e'; uc.fillRect(0,0,W,H);
-      const ug=uc.createLinearGradient(0,H*0.7,0,H);
-      ug.addColorStop(0,'rgba(0,0,0,0)'); ug.addColorStop(1,'rgba(0,0,0,0.4)');
-      uc.fillStyle=ug; uc.fillRect(0,0,W,H);
-      uc.fillStyle='#e8e2d4';
-      uc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-      uc.textAlign='center'; uc.textBaseline='bottom';
-      uc.fillText(digit, W/2, H+4);
-      panel.upperTex.needsUpdate=true;
-      // Lower
-      const lc = panel.lowerCtx;
-      lc.fillStyle='#1c1c26'; lc.fillRect(0,0,W,H);
-      const lg=lc.createLinearGradient(0,0,0,H*0.3);
-      lg.addColorStop(0,'rgba(0,0,0,0.4)'); lg.addColorStop(1,'rgba(0,0,0,0)');
-      lc.fillStyle=lg; lc.fillRect(0,0,W,H);
-      lc.fillStyle='#e8e2d4';
-      lc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-      lc.textAlign='center'; lc.textBaseline='top';
-      lc.fillText(digit, W/2, -4);
-      panel.lowerTex.needsUpdate=true;
-      // Flap (same as upper front)
-      const fc = panel.flapCtx;
-      fc.fillStyle='#23232e'; fc.fillRect(0,0,W,H);
-      const fgr=fc.createLinearGradient(0,H*0.7,0,H);
-      fgr.addColorStop(0,'rgba(0,0,0,0)'); fgr.addColorStop(1,'rgba(0,0,0,0.4)');
-      fc.fillStyle=fgr; fc.fillRect(0,0,W,H);
-      fc.fillStyle='#e8e2d4';
-      fc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-      fc.textAlign='center'; fc.textBaseline='bottom';
-      fc.fillText(digit, W/2, H+4);
-      panel.flapTex.needsUpdate=true;
-      panel.currentDigit=digit;
-    }
-
-    const mm = String(Math.floor(seconds/60)).padStart(2,'0');
-    const ss = String(seconds%60).padStart(2,'0');
-    [mm[0],mm[1],ss[0],ss[1]].forEach((d,i) => paintDigit(panels[i], d));
-    prevSecsRef.current = seconds;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // mount only — uses seconds value at mount time (correct)
-
-  // ── DIGIT UPDATE ON EVERY SECOND ──────────────────────
-  useEffect(() => {
-    const panels = panelsRef.current;
-    if (!panels.length) return;
-    if (!running) return; // no flip animation when paused/stopped
-    if (seconds === prevSecsRef.current) return;
-    prevSecsRef.current = seconds;
-
-    const mm = String(Math.floor(seconds/60)).padStart(2,'0');
-    const ss = String(seconds%60).padStart(2,'0');
-    const digits = [mm[0],mm[1],ss[0],ss[1]];
+    const mm = String(Math.floor(Math.max(0, seconds) / 60)).padStart(2, '0');
+    const ss = String(Math.max(0, seconds) % 60).padStart(2, '0');
+    const digits = [mm[0], mm[1], ss[0], ss[1]];
 
     digits.forEach((d, i) => {
       const p = panels[i];
+
+      // First paint (currentDigit is ' ') — just paint, no flip
+      if (p.currentDigit === ' ') {
+        drawDigit(p.upT.ctx, d, '#23232e');
+        p.upT.tex.offset.set(0, 0.5); p.upT.tex.repeat.set(1, 0.5);
+        p.upT.tex.needsUpdate = true;
+
+        drawDigit(p.loT.ctx, d, '#1c1c28');
+        p.loT.tex.offset.set(0, 0); p.loT.tex.repeat.set(1, 0.5);
+        p.loT.tex.needsUpdate = true;
+
+        drawDigit(p.flT.ctx, d, '#23232e');
+        p.flT.tex.offset.set(0, 0.5); p.flT.tex.repeat.set(1, 0.5);
+        p.flT.tex.needsUpdate = true;
+
+        p.currentDigit = d;
+        return;
+      }
+
+      // Already showing correct digit
       if (d === p.currentDigit || p.flipping) return;
+
+      // Start flip animation (only when timer is actually running)
+      if (!running) {
+        // Timer paused/stopped — update digit silently without animation
+        drawDigit(p.upT.ctx, d, '#23232e');
+        p.upT.tex.offset.set(0, 0.5); p.upT.tex.repeat.set(1, 0.5); p.upT.tex.needsUpdate = true;
+        drawDigit(p.loT.ctx, d, '#1c1c28');
+        p.loT.tex.offset.set(0, 0); p.loT.tex.repeat.set(1, 0.5); p.loT.tex.needsUpdate = true;
+        drawDigit(p.flT.ctx, d, '#23232e');
+        p.flT.tex.offset.set(0, 0.5); p.flT.tex.repeat.set(1, 0.5); p.flT.tex.needsUpdate = true;
+        p.currentDigit = d;
+        return;
+      }
       p.nextDigit = d;
       p.flipping  = true;
       p.flipT     = 0;
       p._switched = false;
 
-      // Paint the flap front with the OLD digit (what's about to flip away)
-      const fc=p.flapCtx, W=256, H=256;
-      fc.fillStyle='#23232e'; fc.fillRect(0,0,W,H);
-      const fg=fc.createLinearGradient(0,H*0.7,0,H);
-      fg.addColorStop(0,'rgba(0,0,0,0)'); fg.addColorStop(1,'rgba(0,0,0,0.4)');
-      fc.fillStyle=fg; fc.fillRect(0,0,W,H);
-      fc.fillStyle='#e8e2d4';
-      fc.font='bold 188px "Helvetica Neue",Arial,sans-serif';
-      fc.textAlign='center'; fc.textBaseline='bottom';
-      fc.fillText(p.currentDigit, W/2, H+4);
-      p.flapTex.needsUpdate=true;
+      // Paint flap front with OLD digit (what's leaving)
+      drawDigit(p.flT.ctx, p.currentDigit, '#23232e');
+      p.flT.tex.offset.set(0, 0.5); p.flT.tex.repeat.set(1, 0.5);
+      p.flT.tex.needsUpdate = true;
 
-      // Play flip sound (staggered slightly per digit for realism)
-      if (running) setTimeout(() => playFlipTick(0.25), i*18);
+      // Staggered flip sound
+      if (running) setTimeout(() => playFlipTick(0.25), i * 20);
     });
   }, [seconds, running]);
 
   return React.createElement('div', {
     ref: mountRef,
-    style: { width:'100%', height, overflow:'hidden', cursor:'grab' }
+    style: { width: '100%', height, overflow: 'hidden', cursor: 'grab', display: 'block',
+             minWidth: '200px', boxSizing: 'border-box' }
   });
 }
 
@@ -1327,7 +1246,7 @@ function ClockDisplay({ seconds, mode, running = false }) {
 
   if (has3D && use3D) {
     return React.createElement('div', { className: 'flip-clock-wrap', style: { gap: 0 } },
-      React.createElement(Clock3DCanvas, { seconds, mode, height: '300px', running }),
+      React.createElement(Clock3DCanvas, { seconds, mode, height: '380px', running }),
       React.createElement('div', {
         style: {
           fontFamily: 'var(--mono)',
@@ -2005,7 +1924,7 @@ function HomePage({ state, onNavigate, onCompleteTask, onStartFocusTask }) {
           )
         )
         , React.createElement('div', { className: "home-hero-clock" }
-          , React.createElement(Clock3DCanvas, { seconds: homeClockSeconds, mode: 'idle', height: '280px', running: true })
+          , React.createElement(Clock3DCanvas, { seconds: homeClockSeconds, mode: 'idle', height: '380px', running: true })
         )
       )
       , React.createElement('div', { className: "stat-grid"}
