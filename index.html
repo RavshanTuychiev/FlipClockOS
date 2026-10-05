@@ -1061,6 +1061,22 @@ img{max-width:100%;display:block}
         </div>
       </div>
       <div class="nav-group">
+        <div class="nav-group-label">New Features</div>
+        <div class="nav-item" data-page="gamification" role="button" tabindex="0" aria-label="Gamification">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg></span>
+          <span class="nav-label">Gamification</span>
+        </div>
+        <div class="nav-item" data-page="schedule" role="button" tabindex="0" aria-label="Time Blocking">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg></span>
+          <span class="nav-label">Time Blocks</span>
+        </div>
+        <div class="nav-item" data-page="planner" role="button" tabindex="0" aria-label="AI Daily Planner">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 110 20 10 10 0 010-20z"/><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span>
+          <span class="nav-label">AI Planner</span>
+          <span class="nav-chip" style="background:var(--blue-dim);color:var(--blue)">AI</span>
+        </div>
+      </div>
+      <div class="nav-group">
         <div class="nav-group-label">System</div>
         <div class="nav-item" data-page="settings" role="button" tabindex="0" aria-label="Settings">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>
@@ -1644,6 +1660,202 @@ img{max-width:100%;display:block}
       </div>
       <!-- /settings -->
 
+      <!-- ==================== GAMIFICATION PAGE ==================== -->
+      <div class="page" id="page-gamification">
+        <!-- Player Profile Hero -->
+        <div class="gam-hero-card" id="gamPlayerHero">
+          <div class="gam-hero-bg"></div>
+          <div class="gam-hero-content">
+            <div class="gam-avatar" id="gamAvatarDisplay">S</div>
+            <div class="gam-hero-info">
+              <div class="gam-player-name" id="gamPlayerName">Student</div>
+              <div class="gam-player-class" id="gamPlayerClass">Novice Scholar</div>
+              <div class="gam-xp-row">
+                <div class="gam-xp-bar-wrap">
+                  <div class="gam-xp-bar-track"><div class="gam-xp-bar-fill" id="gamXpFill" style="width:0%"></div></div>
+                  <div class="gam-xp-labels"><span id="gamXpCur">0 XP</span><span id="gamXpNext">/ 200 XP</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="gam-hero-stats">
+              <div class="gam-hero-stat"><div class="gam-hero-stat-val" id="gamLevel">1</div><div class="gam-hero-stat-label">Level</div></div>
+              <div class="gam-hero-stat"><div class="gam-hero-stat-val text-gold" id="gamStreak">0</div><div class="gam-hero-stat-label">Streak</div></div>
+              <div class="gam-hero-stat"><div class="gam-hero-stat-val green" id="gamTotalTasks">0</div><div class="gam-hero-stat-label">Tasks</div></div>
+              <div class="gam-hero-stat"><div class="gam-hero-stat-val" id="gamFocusHrs">0h</div><div class="gam-hero-stat-label">Focus Hrs</div></div>
+              <div class="gam-hero-stat"><div class="gam-hero-stat-val" id="gamQuestsDone">0</div><div class="gam-hero-stat-label">Quests</div></div>
+              <div class="gam-hero-stat"><div class="gam-hero-stat-val gold" id="gamAchCount">0</div><div class="gam-hero-stat-label">Badges</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout: Skills + Quests -->
+        <div class="gam-main-grid">
+          <!-- SKILL TREE -->
+          <div>
+            <div class="card">
+              <div class="card-header"><span class="card-title">⚡ Skill Tree</span><button class="btn btn-ghost btn-sm" onclick="renderSkillTree()">Refresh</button></div>
+              <div id="skillTreeGrid" class="skill-tree-grid"></div>
+            </div>
+            <!-- Recent unlocks -->
+            <div class="card" style="margin-top:12px">
+              <div class="card-header"><span class="card-title">🏆 Titles Unlocked</span></div>
+              <div id="titlesGrid" class="titles-grid"></div>
+            </div>
+          </div>
+
+          <!-- QUESTS PANEL -->
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">📜 Quests</span>
+                <div style="display:flex;gap:6px">
+                  <button class="btn btn-gold btn-sm" onclick="generateDailyQuests()">Refresh Daily</button>
+                  <button class="btn btn-primary btn-sm" onclick="openQuestModal()">+ Custom</button>
+                </div>
+              </div>
+              <div class="quest-filter-tabs" id="questFilterTabs">
+                <button class="quest-tab active" data-qf="active" onclick="setQuestFilter('active',this)">Active</button>
+                <button class="quest-tab" data-qf="daily" onclick="setQuestFilter('daily',this)">Daily</button>
+                <button class="quest-tab" data-qf="weekly" onclick="setQuestFilter('weekly',this)">Weekly</button>
+                <button class="quest-tab" data-qf="main" onclick="setQuestFilter('main',this)">Main</button>
+                <button class="quest-tab" data-qf="done" onclick="setQuestFilter('done',this)">Done</button>
+              </div>
+              <div id="questList" class="quest-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /gamification -->
+
+      <!-- ==================== SCHEDULE / TIME BLOCKING PAGE ==================== -->
+      <div class="page" id="page-schedule">
+        <div class="schedule-toolbar">
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn btn-ghost btn-sm" onclick="schedPrev()" aria-label="Previous">←</button>
+            <button class="btn btn-secondary btn-sm" onclick="schedToday()">Today</button>
+            <button class="btn btn-ghost btn-sm" onclick="schedNext()" aria-label="Next">→</button>
+            <span class="sched-title" id="schedTitle">Week</span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <div class="sched-view-tabs">
+              <button class="sched-view-tab active" data-view="week" onclick="setSchedView('week',this)">Week</button>
+              <button class="sched-view-tab" data-view="day" onclick="setSchedView('day',this)">Day</button>
+              <button class="sched-view-tab" data-view="agenda" onclick="setSchedView('agenda',this)">Agenda</button>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openBlockModal()">+ Block</button>
+          </div>
+        </div>
+
+        <!-- Conflict alert -->
+        <div id="schedConflictAlert" style="display:none" class="conflict-alert">
+          ⚠️ <span id="schedConflictMsg">Overlapping time blocks detected</span>
+          <button class="btn btn-ghost btn-sm" onclick="this.parentNode.style.display='none'">Dismiss</button>
+        </div>
+
+        <!-- Week view -->
+        <div id="schedWeekView" class="sched-week-view">
+          <div class="sched-week-header" id="schedWeekHeader"></div>
+          <div class="sched-week-body">
+            <div class="sched-time-col" id="schedTimeCol"></div>
+            <div class="sched-week-cols" id="schedWeekCols"></div>
+          </div>
+        </div>
+
+        <!-- Day view -->
+        <div id="schedDayView" class="sched-day-view" style="display:none">
+          <div class="sched-day-header" id="schedDayHeader"></div>
+          <div class="sched-day-body">
+            <div class="sched-time-col" id="schedDayTimeCol"></div>
+            <div class="sched-day-col" id="schedDayCol"></div>
+          </div>
+        </div>
+
+        <!-- Agenda view -->
+        <div id="schedAgendaView" style="display:none">
+          <div id="schedAgendaList" class="agenda-list"></div>
+        </div>
+      </div>
+      <!-- /schedule -->
+
+      <!-- ==================== AI DAILY PLANNER PAGE ==================== -->
+      <div class="page" id="page-planner">
+        <!-- Daily overview hero (inspired by ref image 1) -->
+        <div class="planner-hero">
+          <div class="planner-hero-left">
+            <div class="planner-date-badge"><span id="plannerDateNum"></span><span id="plannerDateMon"></span></div>
+            <div>
+              <div class="planner-hero-label">Your daily plan</div>
+              <div class="planner-hero-title" id="plannerHeroTitle">Stay on Track Today</div>
+              <div class="planner-hero-sub" id="plannerHeroSub">Generate a smart schedule based on your tasks and goals</div>
+            </div>
+          </div>
+          <div class="planner-hero-actions">
+            <button class="btn btn-primary" onclick="generatePlan()" id="btnGeneratePlan">
+              <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21 5,3"/></svg>
+              Generate Plan
+            </button>
+            <button class="btn btn-ghost" onclick="clearPlan()">Clear</button>
+          </div>
+        </div>
+
+        <!-- Stats cards (ref image 1 style) -->
+        <div class="planner-stats-row">
+          <div class="planner-stat-card deep-work">
+            <div class="ps-label">Deep Work Time</div>
+            <div class="ps-value" id="psDeepWork">0h 0m</div>
+          </div>
+          <div class="planner-stat-card attention">
+            <div class="ps-label">Tasks Scheduled</div>
+            <div class="ps-value" id="psScheduled">0</div>
+            <div class="ps-sub">of <span id="psTotal">0</span> pending</div>
+          </div>
+          <div class="planner-stat-card focus-stability">
+            <div class="ps-label">Focus Score</div>
+            <div class="ps-value" id="psFocusScore">—</div>
+            <div class="ps-sub" id="psFocusSub">Run analysis</div>
+          </div>
+        </div>
+
+        <!-- Summary row -->
+        <div class="planner-summary-bar" id="plannerSummaryBar" style="display:none">
+          <div class="psb-item"><span class="psb-label">Total planned</span><span class="psb-val" id="psbTotal">—</span></div>
+          <div class="psb-div"></div>
+          <div class="psb-item"><span class="psb-label">Available time</span><span class="psb-val" id="psbAvail">—</span></div>
+          <div class="psb-div"></div>
+          <div class="psb-item"><span class="psb-label">Focus blocks</span><span class="psb-val" id="psbFocus">—</span></div>
+          <div class="psb-div"></div>
+          <div class="psb-item"><span class="psb-label">Breaks</span><span class="psb-val" id="psbBreaks">—</span></div>
+          <div class="psb-div"></div>
+          <div class="psb-item"><span class="psb-label">High priority</span><span class="psb-val" id="psbHigh">—</span></div>
+        </div>
+
+        <!-- Daily Timeline (ref image 1) -->
+        <div class="card" style="margin-top:14px">
+          <div class="card-header">
+            <span class="card-title">📅 Daily Timeline</span>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-secondary btn-sm" id="btnApplyPlan" onclick="applyPlan()" style="display:none">✅ Apply Plan</button>
+              <button class="btn btn-ghost btn-sm" id="btnEditPlan" onclick="editPlan()" style="display:none">Edit</button>
+              <button class="btn btn-ghost btn-sm" onclick="optimizeSchedule()">⚡ Optimize</button>
+            </div>
+          </div>
+          <div class="planner-timeline" id="plannerTimeline">
+            <div class="empty-state" style="padding:32px 0">
+              <div class="empty-state-icon">🤖</div>
+              <div class="empty-state-title">No plan generated yet</div>
+              <div class="empty-state-sub">Click "Generate Plan" to build your smart daily schedule</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="card" style="margin-top:12px" id="plannerSuggestionsCard" style="display:none">
+          <div class="card-header"><span class="card-title">💡 Planning Insights</span></div>
+          <div id="plannerSuggestions" class="planner-suggestions"></div>
+        </div>
+      </div>
+      <!-- /planner -->
+
     </div><!-- /page-content -->
   </div><!-- /main-area -->
 </div><!-- /app -->
@@ -2062,6 +2274,21 @@ let APP = {
   nextNoteId: 1,
   // Current focus task
   currentFocusTask: null,
+  // ── NEW: Gamification ──
+  skills: {},           // { skillKey: { level, xp } }
+  quests: [],           // quest objects
+  questsDone: 0,
+  titles: [],           // earned title strings
+  activeTitle: '',
+  nextQuestId: 1,
+  lastQuestRefresh: null,
+  // ── NEW: Time Blocking ──
+  timeBlocks: [],
+  nextBlockId: 1,
+  // ── NEW: AI Planner ──
+  plannerPlan: [],      // generated plan items
+  plannerApplied: false,
+  plannerSettings: { workStart:'08:00', workEnd:'22:00', breakEvery:90, breakLen:10 },
 };
 
 // ================================================================
@@ -2116,6 +2343,18 @@ const STORE = {
     if (!APP.heatmap || typeof APP.heatmap !== 'object') APP.heatmap = {};
     if (!APP.subjectData || typeof APP.subjectData !== 'object') APP.subjectData = {};
     if (!APP.weeklyData || APP.weeklyData.length !== 7) APP.weeklyData = [0,0,0,0,0,0,0];
+    // ── New feature migration (safe — never overwrites if already present) ──
+    if (!APP.skills || typeof APP.skills !== 'object') APP.skills = {};
+    if (!Array.isArray(APP.quests)) APP.quests = [];
+    if (typeof APP.questsDone !== 'number') APP.questsDone = 0;
+    if (!Array.isArray(APP.titles)) APP.titles = [];
+    if (typeof APP.activeTitle !== 'string') APP.activeTitle = '';
+    if (typeof APP.nextQuestId !== 'number') APP.nextQuestId = 1;
+    if (!Array.isArray(APP.timeBlocks)) APP.timeBlocks = [];
+    if (typeof APP.nextBlockId !== 'number') APP.nextBlockId = 1;
+    if (!Array.isArray(APP.plannerPlan)) APP.plannerPlan = [];
+    if (typeof APP.plannerApplied !== 'boolean') APP.plannerApplied = false;
+    if (!APP.plannerSettings || typeof APP.plannerSettings !== 'object') APP.plannerSettings = { workStart:'08:00', workEnd:'22:00', breakEvery:90, breakLen:10 };
     return true;
   }
 };
@@ -3775,7 +4014,8 @@ const PAGE_TITLES = {
   dashboard:'Dashboard', focus:'Focus Timer', tasks:'Tasks',
   goals:'Goals', habits:'Habits', calendar:'Calendar',
   notes:'Notes', analytics:'Analytics', achievements:'Achievements',
-  settings:'Settings'
+  settings:'Settings',
+  gamification:'Gamification', schedule:'Time Blocking', planner:'AI Daily Planner'
 };
 
 function navigateTo(pageId) {
@@ -3800,6 +4040,9 @@ function navigateTo(pageId) {
     case 'achievements': renderAchievements(); break;
     case 'settings': syncSettingsUI(); break;
     case 'focus': updateFocusPanel(); break;
+    case 'gamification': renderGamification(); break;
+    case 'schedule': renderSchedule(); break;
+    case 'planner': renderPlanner(); break;
   }
 }
 
@@ -4022,6 +4265,11 @@ const CMD_LIST = [
   {label:'Open Settings',     icon:'settings', shortcut:'S', action:()=>navigateTo('settings')},
   {label:'Export Data',       icon:'export',   shortcut:'',  action:()=>exportData()},
   {label:'Reset Timer',       icon:'reset',    shortcut:'R', action:()=>resetTimer()},
+  {label:'Open Gamification', icon:'trophy',   shortcut:'', action:()=>navigateTo('gamification')},
+  {label:'Open Time Blocking',icon:'task',     shortcut:'', action:()=>navigateTo('schedule')},
+  {label:'Open AI Planner',   icon:'focus',    shortcut:'', action:()=>navigateTo('planner')},
+  {label:'New Time Block',    icon:'task',     shortcut:'', action:()=>{ navigateTo('schedule'); openBlockModal(); }},
+  {label:'Generate Daily Plan',icon:'focus',   shortcut:'', action:()=>{ navigateTo('planner'); generatePlan(); }},
 ];
 const CMD_ICONS = {
   home:'<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>',
@@ -4262,6 +4510,10 @@ function refreshAll() {
   updateTimerUI();
   syncSettingsUI();
   updatePomDots();
+  // New features — only render if their page is active to avoid cost
+  if (document.getElementById('page-gamification').classList.contains('active')) renderGamification();
+  if (document.getElementById('page-schedule').classList.contains('active')) renderSchedule();
+  if (document.getElementById('page-planner').classList.contains('active')) renderPlanner();
 }
 
 // ================================================================
@@ -4334,6 +4586,1493 @@ function refreshAll() {
   }
 })();
 
+// ================================================================
+// ════════════════════════════════════════════════════════════════
+//  FEATURE MODULE 1: ADVANCED GAMIFICATION ENGINE
+// ════════════════════════════════════════════════════════════════
+// ================================================================
+
+// ── Skill Definitions ──────────────────────────────────────────
+const SKILLS_DEF = [
+  { key:'intelligence',  name:'Intelligence',   icon:'🧠', color:'#5294e0', desc:'Earned by completing study tasks',         maxLevel:50 },
+  { key:'discipline',    name:'Discipline',     icon:'⚔️', color:'#e05252', desc:'Earned by maintaining daily streaks',      maxLevel:50 },
+  { key:'focus',         name:'Focus',          icon:'🎯', color:'#d4a843', desc:'Earned by completing focus sessions',      maxLevel:50 },
+  { key:'consistency',   name:'Consistency',    icon:'🔄', color:'#52c878', desc:'Earned by completing habits',              maxLevel:50 },
+  { key:'knowledge',     name:'Knowledge',      icon:'📚', color:'#9b52e0', desc:'Earned by completing tasks with depth',    maxLevel:50 },
+  { key:'time_mgmt',     name:'Time Mgmt',      icon:'⏱️', color:'#e07820', desc:'Earned by using the scheduler and planner',maxLevel:50 },
+];
+
+const SKILL_XP_PER_LEVEL = 100; // 100 skill-XP per skill level
+
+function getSkill(key) {
+  if (!APP.skills[key]) APP.skills[key] = { level:1, xp:0 };
+  return APP.skills[key];
+}
+
+function addSkillXP(key, amount) {
+  const sk = getSkill(key);
+  const def = SKILLS_DEF.find(s => s.key === key);
+  if (!def || sk.level >= def.maxLevel) return;
+  sk.xp += amount;
+  while (sk.xp >= SKILL_XP_PER_LEVEL && sk.level < def.maxLevel) {
+    sk.xp -= SKILL_XP_PER_LEVEL;
+    sk.level++;
+    addToast(`${def.icon} ${def.name} Lv.${sk.level}`, 'Skill level up!', 'gold', 4000);
+  }
+  STORE.saveApp();
+}
+
+// Called from existing hooks — safe additions to existing functions
+const _origToggleTask = window.toggleTask; // safety ref (not needed — we patch inline)
+
+// Hook into existing awardXP to also add skill XP
+const _origAwardXP = awardXP;
+window.awardXPWithSkills = function(amount, reason, skills) {
+  _origAwardXP(amount, reason);
+  if (skills) skills.forEach(([key, pts]) => addSkillXP(key, pts));
+};
+
+// Award skill XP when focus session completes (appended after existing logic)
+const _origOnFocusComplete = onFocusSessionComplete;
+window._gamHookFocus = function(mins) {
+  addSkillXP('focus',      Math.round(mins * 1.2));
+  addSkillXP('discipline', Math.round(mins * 0.5));
+  addSkillXP('time_mgmt',  Math.round(mins * 0.3));
+  updateQuestProgress('focus_mins', mins);
+  updateQuestProgress('session_count', 1);
+  checkTitles();
+  renderGamification();
+};
+
+// Patch task toggle to add skill XP
+const _origToggle = window.toggleTask;
+function toggleTask(id) {
+  const before = APP.tasks.find(t=>t.id===id);
+  _origToggle && _origToggle(id) || (window.__origToggleTask && window.__origToggleTask(id));
+  const after = APP.tasks.find(t=>t.id===id);
+  if (after && after.done) {
+    addSkillXP('intelligence', 15);
+    addSkillXP('discipline',   10);
+    addSkillXP('knowledge',    12);
+    updateQuestProgress('task_count', 1);
+    checkTitles();
+  }
+}
+
+// Habit toggle skill hook
+const _origToggleDay = window.toggleHabitDay;
+function toggleHabitDay(habitId, dayIdx) {
+  const hBefore = APP.habits.find(h=>h.id===habitId);
+  const wasDone = hBefore ? hBefore.days[dayIdx] : false;
+  _origToggleDay && _origToggleDay(habitId, dayIdx);
+  const hAfter = APP.habits.find(h=>h.id===habitId);
+  if (hAfter && hAfter.days[dayIdx] && !wasDone) {
+    addSkillXP('consistency', 20);
+    addSkillXP('discipline',  10);
+    updateQuestProgress('habit_count', 1);
+    checkTitles();
+  }
+}
+
+// ── Quest System ────────────────────────────────────────────────
+const QUEST_TEMPLATES = {
+  daily: [
+    { title:'Daily Scholar',    desc:'Complete 3 study tasks today',        type:'task_count',   target:3,  xp:80,  diff:'C', cat:'daily' },
+    { title:'Focus Champion',   desc:'Accumulate 60 minutes of focus today',type:'focus_mins',   target:60, xp:100, diff:'C', cat:'daily' },
+    { title:'Habit Warrior',    desc:'Complete all your habits today',       type:'habit_all',    target:1,  xp:60,  diff:'D', cat:'daily' },
+    { title:'Deep Work',        desc:'Complete a 50-minute focus session',   type:'session_deep', target:1,  xp:120, diff:'B', cat:'daily' },
+    { title:'Early Riser',      desc:'Log any study before 9 AM',           type:'early_study',  target:1,  xp:70,  diff:'D', cat:'daily' },
+    { title:'Task Blitz',       desc:'Complete 5 tasks today',              type:'task_count',   target:5,  xp:130, diff:'B', cat:'daily' },
+    { title:'Consistent',       desc:'Log 2 focus sessions today',          type:'session_count',target:2,  xp:90,  diff:'C', cat:'daily' },
+  ],
+  weekly: [
+    { title:'Week Warrior',     desc:'Study every day this week',           type:'streak_days',  target:7,  xp:250, diff:'A', cat:'weekly' },
+    { title:'Task Master',      desc:'Complete 20 tasks this week',         type:'task_count',   target:20, xp:300, diff:'A', cat:'weekly' },
+    { title:'Focus Monk',       desc:'Accumulate 5 hours of focus',         type:'focus_mins',   target:300,xp:350, diff:'A', cat:'weekly' },
+    { title:'Habit Keeper',     desc:'Complete habits 5 days in a row',     type:'streak_days',  target:5,  xp:200, diff:'B', cat:'weekly' },
+  ],
+  main: [
+    { title:'Century Tasks',    desc:'Complete 100 tasks total',            type:'total_tasks',  target:100, xp:500, diff:'S', cat:'main' },
+    { title:'10 Hours Focus',   desc:'Accumulate 10 hours of total study',  type:'total_focus',  target:600, xp:400, diff:'A', cat:'main' },
+    { title:'Streak Legend',    desc:'Maintain a 30-day study streak',      type:'streak_total', target:30,  xp:600, diff:'S', cat:'main' },
+    { title:'50 Sessions',      desc:'Complete 50 focus sessions',          type:'total_sessions',target:50, xp:400, diff:'A', cat:'main' },
+  ],
+};
+
+function generateDailyQuests(force = false) {
+  const today = localDateStr();
+  if (!force && APP.lastQuestRefresh === today) return; // already refreshed today
+  // Remove expired daily quests
+  APP.quests = APP.quests.filter(q => q.cat !== 'daily' || q.done);
+  // Add 3 random daily quests
+  const pool = [...QUEST_TEMPLATES.daily];
+  const picks = [];
+  while (picks.length < 3 && pool.length > 0) {
+    const idx = Math.floor(Math.random() * pool.length);
+    const tmpl = pool.splice(idx, 1)[0];
+    // Don't duplicate existing active quests
+    if (!APP.quests.some(q => q.title === tmpl.title && !q.done)) {
+      picks.push({
+        ...tmpl,
+        id: APP.nextQuestId++,
+        progress: 0,
+        done: false,
+        createdAt: new Date().toISOString(),
+        expiresAt: today + 'T23:59:59',
+      });
+    }
+  }
+  // Add main quests if not present
+  QUEST_TEMPLATES.main.forEach(tmpl => {
+    if (!APP.quests.some(q => q.title === tmpl.title)) {
+      APP.quests.push({
+        ...tmpl,
+        id: APP.nextQuestId++,
+        progress: 0,
+        done: false,
+        createdAt: new Date().toISOString(),
+        expiresAt: null,
+      });
+    }
+  });
+  // Add weekly quests if not present
+  QUEST_TEMPLATES.weekly.forEach(tmpl => {
+    if (!APP.quests.some(q => q.title === tmpl.title && !q.done)) {
+      APP.quests.push({
+        ...tmpl,
+        id: APP.nextQuestId++,
+        progress: 0,
+        done: false,
+        createdAt: new Date().toISOString(),
+        expiresAt: null,
+      });
+    }
+  });
+  APP.quests.push(...picks);
+  APP.lastQuestRefresh = today;
+  STORE.saveApp();
+  if (force) addToast('Daily quests refreshed! 📜', '3 new quests available', 'gold');
+  renderGamification();
+}
+
+function updateQuestProgress(type, amount) {
+  let changed = false;
+  APP.quests.forEach(q => {
+    if (q.done) return;
+    let matches = false;
+    switch(q.type) {
+      case 'task_count':   matches = type === 'task_count'; break;
+      case 'focus_mins':   matches = type === 'focus_mins'; break;
+      case 'session_count':matches = type === 'session_count'; break;
+      case 'session_deep': matches = type === 'session_count' && amount >= 1; break;
+      case 'habit_count':  matches = type === 'habit_count'; break;
+      case 'habit_all':    matches = type === 'habit_count'; break;
+      case 'streak_days':  matches = false; break; // checked separately
+      case 'total_tasks':  matches = type === 'task_count'; break;
+      case 'total_focus':  matches = type === 'focus_mins'; break;
+      case 'total_sessions':matches = type === 'session_count'; break;
+      case 'streak_total': q.progress = APP.streak; matches = false; break;
+      case 'early_study':  matches = type === 'session_count' && new Date().getHours() < 9; break;
+    }
+    if (matches) { q.progress = Math.min(q.target, (q.progress || 0) + amount); changed = true; }
+    // Auto-complete
+    if (!q.done && q.progress >= q.target) {
+      q.done = true;
+      APP.questsDone++;
+      awardXP(q.xp, `Quest: ${q.title}`);
+      addSkillXP('discipline', Math.round(q.xp * 0.3));
+      addActivity(`Quest complete: ${q.title}`, 'achievement', q.xp);
+      addToast(`📜 Quest Complete!`, `${q.title} · +${q.xp} XP`, 'gold', 5000);
+      checkTitles();
+    }
+  });
+  // Update main quest totals
+  APP.quests.forEach(q => {
+    if (q.done) return;
+    if (q.type === 'total_tasks') { q.progress = APP.tasks.filter(t=>t.done).length; if (q.progress >= q.target) { q.done=true; APP.questsDone++; awardXP(q.xp, `Quest: ${q.title}`); addToast(`📜 Quest Complete!`,q.title,'gold',5000); } }
+    if (q.type === 'total_focus') { q.progress = APP.studyMinTotal||0; if (q.progress >= q.target) { q.done=true; APP.questsDone++; awardXP(q.xp, `Quest: ${q.title}`); addToast(`📜 Quest Complete!`,q.title,'gold',5000); } }
+    if (q.type === 'total_sessions') { q.progress = APP.sessionsTotal||0; if (q.progress >= q.target) { q.done=true; APP.questsDone++; awardXP(q.xp, `Quest: ${q.title}`); addToast(`📜 Quest Complete!`,q.title,'gold',5000); } }
+    if (q.type === 'streak_total') { q.progress = APP.streak||0; if (q.progress >= q.target) { q.done=true; APP.questsDone++; awardXP(q.xp, `Quest: ${q.title}`); addToast(`📜 Quest Complete!`,q.title,'gold',5000); } }
+  });
+  if (changed) STORE.saveApp();
+}
+
+function saveCustomQuest() {
+  const title = (getValue('questTitle')||'').trim();
+  if (!title) { addToast('Title required','','red'); return; }
+  const quest = {
+    id: APP.nextQuestId++,
+    title,
+    desc: (getValue('questDesc')||'').trim(),
+    cat: getValue('questCategory') || 'main',
+    diff: getValue('questDifficulty') || 'C',
+    xp: parseInt(getValue('questXP'))||50,
+    target: parseInt(getValue('questTarget'))||1,
+    progress: 0,
+    done: false,
+    type: 'manual',
+    createdAt: new Date().toISOString(),
+    expiresAt: null,
+  };
+  APP.quests.unshift(quest);
+  STORE.saveApp();
+  closeModal('questModalBd');
+  renderGamification();
+  addToast('Quest created! 📜', quest.title, 'gold');
+}
+
+function openQuestModal() { openModal('questModalBd'); }
+
+function completeQuest(id) {
+  const q = APP.quests.find(x=>x.id===id);
+  if (!q || q.done) return;
+  q.done = true;
+  q.progress = q.target;
+  APP.questsDone++;
+  awardXP(q.xp, `Quest: ${q.title}`);
+  addSkillXP('discipline', Math.round(q.xp*0.3));
+  addActivity(`Quest complete: ${q.title}`, 'achievement', q.xp);
+  addToast('📜 Quest Complete!', `${q.title} · +${q.xp} XP`, 'gold', 5000);
+  STORE.saveApp();
+  checkTitles();
+  renderGamification();
+}
+
+function deleteQuest(id) {
+  APP.quests = APP.quests.filter(q => q.id !== id);
+  STORE.saveApp();
+  renderGamification();
+}
+
+// ── Titles (earned through progression) ─────────────────────────
+const TITLES_DEF = [
+  { title:'Novice Scholar',  check: s => true },
+  { title:'Task Finisher',   check: s => s.tasks.filter(t=>t.done).length >= 5 },
+  { title:'Focus Initiate',  check: s => (s.sessionsTotal||0) >= 5 },
+  { title:'Streak Starter',  check: s => (s.streak||0) >= 3 },
+  { title:'Quest Hunter',    check: s => (s.questsDone||0) >= 3 },
+  { title:'Deep Worker',     check: s => (s.studyMinTotal||0) >= 120 },
+  { title:'Scholar',         check: s => getLevel(s.xp) >= 3 },
+  { title:'Discipline Master',check: s => (s.streak||0) >= 7 },
+  { title:'Focus Expert',    check: s => (s.sessionsTotal||0) >= 20 },
+  { title:'Knowledge Seeker',check: s => s.tasks.filter(t=>t.done).length >= 25 },
+  { title:'10-Hour Scholar', check: s => (s.studyMinTotal||0) >= 600 },
+  { title:'Quest Master',    check: s => (s.questsDone||0) >= 10 },
+  { title:'Legendary Streak',check: s => (s.bestStreak||0) >= 30 },
+  { title:'Study OS Champion',check: s => getLevel(s.xp) >= 8 },
+];
+
+function checkTitles() {
+  let changed = false;
+  TITLES_DEF.forEach(td => {
+    try {
+      if (!APP.titles.includes(td.title) && td.check(APP)) {
+        APP.titles.push(td.title);
+        if (!APP.activeTitle) APP.activeTitle = td.title;
+        addToast(`🎖️ Title Unlocked!`, td.title, 'gold', 5000);
+        changed = true;
+      }
+    } catch(e) {}
+  });
+  if (changed) { STORE.saveApp(); renderGamification(); }
+}
+
+// ── Quest filter state ──────────────────────────────────────────
+let activeQuestFilter = 'active';
+function setQuestFilter(f, btn) {
+  activeQuestFilter = f;
+  document.querySelectorAll('.quest-tab').forEach(t=>t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderQuestList();
+}
+
+// ── Main render ─────────────────────────────────────────────────
+function renderGamification() {
+  // Ensure quests exist
+  generateDailyQuests();
+  // Hero
+  const lvl = getLevel(APP.xp);
+  const xpCur = APP.xp - xpForLevel(lvl);
+  const xpNext = xpForNextLevel(lvl) - xpForLevel(lvl);
+  const xpPct = Math.min(100, Math.round(xpCur/xpNext*100));
+  setText('gamPlayerName', APP.name || 'Student');
+  setText('gamPlayerClass', APP.activeTitle || getLevelTitle(lvl));
+  setText('gamLevel', lvl);
+  setText('gamStreak', `🔥 ${APP.streak||0}`);
+  setText('gamTotalTasks', APP.tasks.filter(t=>t.done).length);
+  setText('gamFocusHrs', `${Math.round((APP.studyMinTotal||0)/60*10)/10}h`);
+  setText('gamQuestsDone', APP.questsDone||0);
+  setText('gamAchCount', Object.keys(APP.achievements).filter(k=>APP.achievements[k]).length);
+  const av = document.getElementById('gamAvatarDisplay');
+  if (av) av.textContent = (APP.name||'S')[0].toUpperCase();
+  setStyle('gamXpFill','width',`${xpPct}%`);
+  setText('gamXpCur', `${xpCur.toLocaleString()} XP`);
+  setText('gamXpNext', `/ ${xpNext.toLocaleString()} XP`);
+  renderSkillTree();
+  renderQuestList();
+  renderTitles();
+}
+
+function renderSkillTree() {
+  const el = document.getElementById('skillTreeGrid');
+  if (!el) return;
+  el.innerHTML = '';
+  SKILLS_DEF.forEach(def => {
+    const sk = getSkill(def.key);
+    const xpPct = Math.min(100, Math.round(sk.xp / SKILL_XP_PER_LEVEL * 100));
+    const div = document.createElement('div');
+    div.className = 'skill-item';
+    div.innerHTML = `
+      <div class="skill-header">
+        <div class="skill-name-row">
+          <span class="skill-icon">${def.icon}</span>
+          <span class="skill-name">${def.name}</span>
+          <span class="skill-level-badge">Lv.${sk.level}</span>
+        </div>
+        <span class="skill-xp-text">${sk.xp}/${SKILL_XP_PER_LEVEL} XP</span>
+      </div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="width:${xpPct}%;background:${def.color}"></div></div>
+      <div class="skill-desc">${def.desc}</div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderQuestList() {
+  const el = document.getElementById('questList');
+  if (!el) return;
+  const f = activeQuestFilter;
+  let quests = APP.quests.filter(q => {
+    if (f === 'done')   return q.done;
+    if (f === 'active') return !q.done;
+    if (f === 'daily')  return q.cat === 'daily' && !q.done;
+    if (f === 'weekly') return q.cat === 'weekly' && !q.done;
+    if (f === 'main')   return q.cat === 'main' && !q.done;
+    return true;
+  });
+  if (quests.length === 0) {
+    el.innerHTML = `<div class="empty-state" style="padding:20px"><div class="empty-state-icon">📜</div><div class="empty-state-title">No quests here</div><div class="empty-state-sub">Check other tabs or refresh daily quests</div></div>`;
+    return;
+  }
+  el.innerHTML = '';
+  quests.slice(0, 20).forEach(q => {
+    const pct = Math.min(100, Math.round((q.progress||0)/q.target*100));
+    const div = document.createElement('div');
+    div.className = `quest-item${q.done?' done':''}`;
+    div.innerHTML = `
+      <div class="quest-header">
+        <div>
+          <div class="quest-title">${escHtml(q.title)}${q.done?'<span style="color:var(--green);margin-left:6px;font-size:12px">✓</span>':''}</div>
+          ${q.desc?`<div class="quest-desc">${escHtml(q.desc)}</div>`:''}
+        </div>
+        <span class="quest-rank-badge rank-${q.diff||'C'}">${q.diff||'C'}-RANK</span>
+      </div>
+      <div class="quest-footer">
+        <div class="quest-progress-wrap">
+          <div class="quest-prog-label">${q.progress||0} / ${q.target}</div>
+          <div class="quest-prog-bar"><div class="quest-prog-fill" style="width:${pct}%"></div></div>
+        </div>
+        <span class="quest-cat-chip">${q.cat}</span>
+        <span class="quest-xp">+${q.xp} XP</span>
+        ${!q.done && q.type==='manual' ? `
+          <div class="quest-actions">
+            <button class="quest-complete-btn" onclick="completeQuest(${q.id})">Complete</button>
+            <button class="quest-del-btn" onclick="deleteQuest(${q.id})">✕</button>
+          </div>` : ''}
+        ${!q.done && q.type!=='manual' ? `
+          <div class="quest-actions">
+            <button class="quest-del-btn" onclick="deleteQuest(${q.id})">✕</button>
+          </div>` : ''}
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderTitles() {
+  const el = document.getElementById('titlesGrid');
+  if (!el) return;
+  if (APP.titles.length === 0) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--text-muted)">Complete quests and level up to earn titles.</div>';
+    return;
+  }
+  el.innerHTML = APP.titles.map(t =>
+    `<div class="title-badge${t===APP.activeTitle?' active':''}" onclick="setActiveTitle('${escHtml(t)}')" title="Click to activate">${escHtml(t)}</div>`
+  ).join('');
+}
+
+function setActiveTitle(title) {
+  APP.activeTitle = title;
+  STORE.saveApp();
+  renderGamification();
+  updateSidebarStats();
+  addToast('Title set!', title, 'gold');
+}
+
+// Hook focus session completion
+const _baseOnFocusComplete = onFocusSessionComplete;
+window.onFocusSessionComplete = function(mins) {
+  _baseOnFocusComplete(mins);
+  window._gamHookFocus(mins);
+};
+
+// ================================================================
+// ════════════════════════════════════════════════════════════════
+//  FEATURE MODULE 2: SMART TIME BLOCKING
+// ════════════════════════════════════════════════════════════════
+// ================================================================
+
+// ── State ───────────────────────────────────────────────────────
+let schedView = 'week';
+let schedDate = new Date(); // current reference date (start of displayed period)
+let editingBlockId = null;
+const HOUR_HEIGHT = 60; // px per hour in timeline
+const SCHED_START_HOUR = 6;
+const SCHED_END_HOUR   = 23;
+const SCHED_TOTAL_HOURS = SCHED_END_HOUR - SCHED_START_HOUR;
+
+// ── Utility ─────────────────────────────────────────────────────
+function timeToMinutes(t) {
+  if (!t) return 0;
+  const [h,m] = t.split(':').map(Number);
+  return h*60 + (m||0);
+}
+function minutesToTime(m) {
+  return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+}
+function blockColor(cat) {
+  const map = { focus:'tb-cat-focus', study:'tb-cat-study', break:'tb-cat-break', exercise:'tb-cat-exercise', review:'tb-cat-review', other:'tb-cat-other' };
+  return map[cat] || 'tb-cat-other';
+}
+function blockCatColor(cat) {
+  const map = { focus:'var(--gold)', study:'var(--blue)', break:'var(--green)', exercise:'var(--orange)', review:'var(--purple)', other:'var(--border-strong)' };
+  return map[cat] || 'var(--border-strong)';
+}
+function getWeekStart(d) {
+  const dt = new Date(d);
+  const dow = dt.getDay() === 0 ? 6 : dt.getDay() - 1; // Mon=0
+  dt.setDate(dt.getDate() - dow);
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+
+// ── Conflict detection ──────────────────────────────────────────
+function detectConflicts(blocks) {
+  const conflicts = [];
+  for (let i=0; i<blocks.length; i++) {
+    for (let j=i+1; j<blocks.length; j++) {
+      const a=blocks[i], b=blocks[j];
+      if (a.date !== b.date) continue;
+      const aS=timeToMinutes(a.start), aE=timeToMinutes(a.end);
+      const bS=timeToMinutes(b.start), bE=timeToMinutes(b.end);
+      if (aS < bE && aE > bS) conflicts.push([a.id, b.id]);
+    }
+  }
+  return conflicts;
+}
+
+function checkBlockConflict(dateStr, startT, endT, excludeId) {
+  const sMin = timeToMinutes(startT), eMin = timeToMinutes(endT);
+  return APP.timeBlocks.filter(b => b.date===dateStr && b.id!==excludeId)
+    .find(b => { const bS=timeToMinutes(b.start),bE=timeToMinutes(b.end); return sMin<bE && eMin>bS; });
+}
+
+// ── Open / save block modal ──────────────────────────────────────
+function openBlockModal(blockId=null, prefillDate=null, prefillStart=null) {
+  editingBlockId = blockId;
+  const today = localDateStr();
+  const form = { title:'', date: prefillDate||today, category:'focus', start: prefillStart||'09:00', end:'10:00', priority:'medium', linkedTask:'', notes:'' };
+  if (blockId) {
+    const b = APP.timeBlocks.find(x=>x.id===blockId);
+    if (b) Object.assign(form, b);
+    setText('blockModalTitle','Edit Time Block');
+    setText('blockSaveBtn','Save Changes');
+  } else {
+    setText('blockModalTitle','New Time Block');
+    setText('blockSaveBtn','Add Block');
+  }
+  // Populate linked task dropdown
+  const taskSel = document.getElementById('blockLinkedTask');
+  if (taskSel) {
+    taskSel.innerHTML = '<option value="">None</option>' +
+      APP.tasks.filter(t=>!t.done).map(t=>`<option value="${t.id}"${form.linkedTask==t.id?' selected':''}>${escHtml(t.title.slice(0,40))}</option>`).join('');
+  }
+  setValue('blockTitle', form.title);
+  setValue('blockDate', form.date);
+  setValue('blockCategory', form.category);
+  setValue('blockStart', form.start);
+  setValue('blockEnd', form.end);
+  setValue('blockPriority', form.priority);
+  setValue('blockNotes', form.notes||'');
+  hide('blockTitleErr');
+  hide('blockConflictWarn');
+  openModal('blockModalBd');
+  // Live conflict preview
+  ['blockStart','blockEnd','blockDate'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.oninput = previewBlockConflict;
+  });
+  setTimeout(()=>focus('blockTitle'), 60);
+}
+
+function previewBlockConflict() {
+  const date  = getValue('blockDate');
+  const start = getValue('blockStart');
+  const end   = getValue('blockEnd');
+  if (!date || !start || !end) return;
+  if (timeToMinutes(start) >= timeToMinutes(end)) { show('blockConflictWarn'); setText('blockConflictMsg','End time must be after start time.'); return; }
+  const conflict = checkBlockConflict(date, start, end, editingBlockId);
+  if (conflict) { show('blockConflictWarn'); setText('blockConflictMsg',`Overlaps with: "${conflict.title}" (${conflict.start}–${conflict.end})`); }
+  else hide('blockConflictWarn');
+}
+
+function saveBlock() {
+  const title = (getValue('blockTitle')||'').trim();
+  if (!title) { show('blockTitleErr'); focus('blockTitle'); return; }
+  const date  = getValue('blockDate');
+  const start = getValue('blockStart');
+  const end   = getValue('blockEnd');
+  if (timeToMinutes(start) >= timeToMinutes(end)) { addToast('End time must be after start time','','red'); return; }
+  // Conflict check — warn but allow override
+  const conflict = checkBlockConflict(date, start, end, editingBlockId);
+  if (conflict) {
+    const proceed = confirm(`⚠️ This block overlaps with "${conflict.title}" (${conflict.start}–${conflict.end}).\n\nAdd anyway?`);
+    if (!proceed) return;
+  }
+  const block = {
+    title,
+    date:  date || localDateStr(),
+    start, end,
+    category: getValue('blockCategory') || 'focus',
+    priority: getValue('blockPriority') || 'medium',
+    linkedTask: getValue('blockLinkedTask') || '',
+    notes: (getValue('blockNotes')||'').trim(),
+    done: false,
+    createdAt: new Date().toISOString(),
+  };
+  if (editingBlockId) {
+    const idx = APP.timeBlocks.findIndex(b=>b.id===editingBlockId);
+    if (idx !== -1) APP.timeBlocks[idx] = { ...APP.timeBlocks[idx], ...block };
+    addToast('Block updated');
+  } else {
+    block.id = APP.nextBlockId++;
+    APP.timeBlocks.push(block);
+    addToast('Block added', `${start}–${end}`, 'blue');
+    addSkillXP('time_mgmt', 5);
+  }
+  STORE.saveApp();
+  closeModal('blockModalBd');
+  renderSchedule();
+  // Also show conflict summary
+  const allConflicts = detectConflicts(APP.timeBlocks);
+  const alertEl = document.getElementById('schedConflictAlert');
+  if (alertEl) {
+    if (allConflicts.length > 0) { alertEl.style.display='flex'; setText('schedConflictMsg',`${allConflicts.length} overlapping block${allConflicts.length>1?'s':''} detected`); }
+    else alertEl.style.display='none';
+  }
+}
+
+function deleteBlock(id) {
+  APP.timeBlocks = APP.timeBlocks.filter(b=>b.id!==id);
+  STORE.saveApp();
+  renderSchedule();
+  addToast('Block deleted');
+}
+
+function toggleBlock(id) {
+  const b = APP.timeBlocks.find(x=>x.id===id);
+  if (!b) return;
+  b.done = !b.done;
+  STORE.saveApp();
+  renderSchedule();
+  if (b.done) { addSkillXP('time_mgmt', 8); addToast('Block complete! ✅', b.title, 'green'); }
+}
+
+function startFocusFromBlock(id) {
+  const b = APP.timeBlocks.find(x=>x.id===id);
+  if (!b) return;
+  if (b.linkedTask) {
+    const task = APP.tasks.find(t=>t.id==b.linkedTask);
+    if (task) { APP.currentFocusTask = task; STORE.saveApp(); }
+  }
+  navigateTo('focus');
+  addToast('Focus started from block', b.title);
+}
+
+// ── Navigation ──────────────────────────────────────────────────
+function schedPrev() {
+  if (schedView==='week') schedDate = addDays(schedDate, -7);
+  else schedDate = addDays(schedDate, -1);
+  renderSchedule();
+}
+function schedNext() {
+  if (schedView==='week') schedDate = addDays(schedDate, 7);
+  else schedDate = addDays(schedDate, 1);
+  renderSchedule();
+}
+function schedToday() { schedDate = new Date(); renderSchedule(); }
+
+function setSchedView(view, btn) {
+  schedView = view;
+  document.querySelectorAll('.sched-view-tab').forEach(t=>t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('schedWeekView').style.display = view==='week' ? '' : 'none';
+  document.getElementById('schedDayView').style.display  = view==='day'  ? '' : 'none';
+  document.getElementById('schedAgendaView').style.display = view==='agenda' ? '' : 'none';
+  renderSchedule();
+}
+
+// ── Main render ─────────────────────────────────────────────────
+function renderSchedule() {
+  const allConflicts = detectConflicts(APP.timeBlocks);
+  const conflictIds = new Set(allConflicts.flat());
+  const alertEl = document.getElementById('schedConflictAlert');
+  if (alertEl) {
+    if (allConflicts.length > 0) { alertEl.style.display='flex'; setText('schedConflictMsg',`${allConflicts.length} overlapping block${allConflicts.length>1?'s':''} detected`); }
+    else alertEl.style.display='none';
+  }
+  if (schedView==='week') renderWeekView(conflictIds);
+  else if (schedView==='day') renderDayView(conflictIds);
+  else renderAgendaView();
+}
+
+function renderWeekView(conflictIds) {
+  const weekStart = getWeekStart(schedDate);
+  const today = localDateStr();
+  // Title
+  const weekEnd = addDays(weekStart, 6);
+  setText('schedTitle', `${MONTHS[weekStart.getMonth()]} ${weekStart.getFullYear()}`);
+  // Header
+  const header = document.getElementById('schedWeekHeader');
+  if (!header) return;
+  header.innerHTML = '<div class="sched-time-corner" style="width:52px;padding:8px 4px;"></div>';
+  for (let i=0; i<7; i++) {
+    const d = addDays(weekStart, i);
+    const dStr = localDateStr(d);
+    const isToday = dStr === today;
+    const numEl = `<div class="sched-wdh-num${isToday?' today-num':''}">${d.getDate()}</div>`;
+    header.innerHTML += `<div class="sched-week-day-head"><div class="sched-wdh-name">${DAYS_SHORT[i]}</div>${numEl}</div>`;
+  }
+  // Time column
+  const timeCol = document.getElementById('schedTimeCol');
+  if (timeCol) {
+    timeCol.innerHTML = '';
+    timeCol.style.position = 'relative';
+    timeCol.style.minHeight = `${SCHED_TOTAL_HOURS * HOUR_HEIGHT}px`;
+    for (let h=SCHED_START_HOUR; h<=SCHED_END_HOUR; h++) {
+      const label = document.createElement('div');
+      label.className = 'sched-hour-label';
+      label.style.top = `${(h-SCHED_START_HOUR)*HOUR_HEIGHT}px`;
+      label.textContent = h===12?'12 PM':h<12?`${h} AM`:h===24?'12 AM':`${h-12} PM`;
+      timeCol.appendChild(label);
+    }
+  }
+  // Day columns
+  const cols = document.getElementById('schedWeekCols');
+  if (!cols) return;
+  cols.innerHTML = '';
+  cols.style.minHeight = `${SCHED_TOTAL_HOURS * HOUR_HEIGHT}px`;
+  for (let i=0; i<7; i++) {
+    const d = addDays(weekStart, i);
+    const dStr = localDateStr(d);
+    const col = document.createElement('div');
+    col.className = 'sched-day-col-grid';
+    col.style.minHeight = `${SCHED_TOTAL_HOURS * HOUR_HEIGHT}px`;
+    col.style.position = 'relative';
+    // Hour lines
+    for (let h=0; h<SCHED_TOTAL_HOURS; h++) {
+      const line = document.createElement('div');
+      line.className = 'sched-hour-line';
+      line.style.top = `${h*HOUR_HEIGHT}px`;
+      col.appendChild(line);
+      const half = document.createElement('div');
+      half.className = 'sched-half-line';
+      half.style.top = `${h*HOUR_HEIGHT + HOUR_HEIGHT/2}px`;
+      col.appendChild(half);
+    }
+    // Now indicator
+    if (dStr === today) {
+      const now = new Date();
+      const nowMins = now.getHours()*60 + now.getMinutes();
+      const nowOffset = (nowMins - SCHED_START_HOUR*60) / 60 * HOUR_HEIGHT;
+      if (nowOffset >= 0 && nowOffset <= SCHED_TOTAL_HOURS*HOUR_HEIGHT) {
+        const nowLine = document.createElement('div');
+        nowLine.className = 'sched-now-line';
+        nowLine.style.top = `${nowOffset}px`;
+        col.appendChild(nowLine);
+      }
+    }
+    // Click to add block
+    col.addEventListener('click', (e) => {
+      if (e.target !== col && !e.target.classList.contains('sched-hour-line') && !e.target.classList.contains('sched-half-line')) return;
+      const rect = col.getBoundingClientRect();
+      const relY = e.clientY - rect.top + col.parentElement.parentElement.scrollTop;
+      const clickedHour = SCHED_START_HOUR + relY / HOUR_HEIGHT;
+      const h = Math.floor(clickedHour);
+      const m = Math.round((clickedHour - h) / 0.5) * 30;
+      const startStr = minutesToTime(h*60 + (m>=60?30:m));
+      const endStr   = minutesToTime(h*60 + (m>=60?90:m+60));
+      openBlockModal(null, dStr, startStr);
+    });
+    // Render blocks for this day
+    const dayBlocks = APP.timeBlocks.filter(b => b.date === dStr);
+    dayBlocks.forEach(b => {
+      const startMins = timeToMinutes(b.start);
+      const endMins   = timeToMinutes(b.end);
+      const top    = (startMins - SCHED_START_HOUR*60) / 60 * HOUR_HEIGHT;
+      const height = Math.max(20, (endMins - startMins) / 60 * HOUR_HEIGHT - 2);
+      if (top < 0) return; // outside view
+      const el = document.createElement('div');
+      el.className = `time-block ${blockColor(b.category)}${conflictIds.has(b.id)?' tb-conflict':''}${b.done?' tb-done':''}`;
+      el.style.top    = `${top}px`;
+      el.style.height = `${height}px`;
+      el.style.opacity = b.done ? '0.55' : '1';
+      el.innerHTML = `
+        <div class="tb-title">${escHtml(b.title)}</div>
+        ${height>24?`<div class="tb-time">${b.start}–${b.end}</div>`:''}
+        <div class="tb-actions">
+          <button class="tb-action-btn" onclick="event.stopPropagation();openBlockModal(${b.id})" title="Edit">✏</button>
+          <button class="tb-action-btn" onclick="event.stopPropagation();toggleBlock(${b.id})" title="${b.done?'Unmark':'Done'}">${b.done?'↩':'✓'}</button>
+          <button class="tb-action-btn" onclick="event.stopPropagation();deleteBlock(${b.id})" title="Delete">✕</button>
+          ${(b.category==='focus'||b.category==='study')&&!b.done?`<button class="tb-action-btn" onclick="event.stopPropagation();startFocusFromBlock(${b.id})" title="Start focus">▶</button>`:''}
+        </div>`;
+      el.onclick = (ev) => { if (!ev.target.classList.contains('tb-action-btn')) openBlockModal(b.id); };
+      col.appendChild(el);
+    });
+    cols.appendChild(col);
+  }
+}
+
+function renderDayView(conflictIds) {
+  const dStr = localDateStr(schedDate);
+  const dayHeader = document.getElementById('schedDayHeader');
+  if (dayHeader) {
+    dayHeader.innerHTML = `<span class="sched-day-title">${schedDate.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</span>`;
+  }
+  setText('schedTitle', schedDate.toLocaleDateString('en-US',{month:'long',day:'numeric'}));
+  const timeCol = document.getElementById('schedDayTimeCol');
+  const dayCol  = document.getElementById('schedDayCol');
+  if (!timeCol || !dayCol) return;
+  timeCol.innerHTML = '';
+  timeCol.style.cssText = 'width:52px;flex-shrink:0;border-right:1px solid var(--border-subtle);position:relative;min-height:'+SCHED_TOTAL_HOURS*HOUR_HEIGHT+'px';
+  dayCol.innerHTML = '';
+  dayCol.style.cssText = 'flex:1;position:relative;min-height:'+SCHED_TOTAL_HOURS*HOUR_HEIGHT+'px';
+  for (let h=SCHED_START_HOUR; h<=SCHED_END_HOUR; h++) {
+    const label = document.createElement('div');
+    label.className = 'sched-hour-label';
+    label.style.top = `${(h-SCHED_START_HOUR)*HOUR_HEIGHT}px`;
+    label.textContent = h===12?'12 PM':h<12?`${h} AM`:h===24?'12 AM':`${h-12} PM`;
+    timeCol.appendChild(label);
+    const line = document.createElement('div');
+    line.className='sched-hour-line'; line.style.top=`${(h-SCHED_START_HOUR)*HOUR_HEIGHT}px`;
+    dayCol.appendChild(line);
+  }
+  // Now indicator
+  if (dStr === localDateStr()) {
+    const now = new Date();
+    const off = (now.getHours()*60+now.getMinutes() - SCHED_START_HOUR*60)/60*HOUR_HEIGHT;
+    if (off>=0) { const nl=document.createElement('div');nl.className='sched-now-line';nl.style.top=`${off}px`;dayCol.appendChild(nl); }
+  }
+  dayCol.addEventListener('click', e=>{
+    if (e.target!==dayCol&&!e.target.classList.contains('sched-hour-line')) return;
+    const rect=dayCol.getBoundingClientRect();
+    const relY=e.clientY-rect.top+dayCol.parentElement.scrollTop;
+    const clickedHour=SCHED_START_HOUR+relY/HOUR_HEIGHT;
+    const h=Math.floor(clickedHour),m=Math.round((clickedHour-h)/0.5)*30;
+    openBlockModal(null,dStr,minutesToTime(h*60+(m>=60?30:m)));
+  });
+  APP.timeBlocks.filter(b=>b.date===dStr).forEach(b=>{
+    const sM=timeToMinutes(b.start),eM=timeToMinutes(b.end);
+    const top=(sM-SCHED_START_HOUR*60)/60*HOUR_HEIGHT;
+    const height=Math.max(22,(eM-sM)/60*HOUR_HEIGHT-2);
+    if (top<0) return;
+    const el=document.createElement('div');
+    el.className=`time-block ${blockColor(b.category)}${conflictIds&&conflictIds.has(b.id)?' tb-conflict':''}`;
+    el.style.cssText=`top:${top}px;height:${height}px;left:4px;right:4px;opacity:${b.done?0.55:1}`;
+    el.innerHTML=`<div class="tb-title">${escHtml(b.title)}</div><div class="tb-time">${b.start}–${b.end}</div>
+      <div class="tb-actions">
+        <button class="tb-action-btn" onclick="event.stopPropagation();openBlockModal(${b.id})">✏</button>
+        <button class="tb-action-btn" onclick="event.stopPropagation();toggleBlock(${b.id})">${b.done?'↩':'✓'}</button>
+        <button class="tb-action-btn" onclick="event.stopPropagation();deleteBlock(${b.id})">✕</button>
+      </div>`;
+    el.onclick=(ev)=>{ if(!ev.target.classList.contains('tb-action-btn')) openBlockModal(b.id); };
+    dayCol.appendChild(el);
+  });
+}
+
+function renderAgendaView() {
+  const el = document.getElementById('schedAgendaList');
+  if (!el) return;
+  // Show next 14 days
+  const groups = {};
+  for (let i=0; i<14; i++) {
+    const d = addDays(new Date(), i);
+    const dStr = localDateStr(d);
+    const blocks = APP.timeBlocks.filter(b=>b.date===dStr).sort((a,b)=>a.start.localeCompare(b.start));
+    if (blocks.length > 0) groups[dStr] = { d, blocks };
+  }
+  setText('schedTitle','Next 14 Days');
+  if (Object.keys(groups).length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-title">No blocks in the next 14 days</div><div class="empty-state-sub">Click "+ Block" to schedule some time</div></div>';
+    return;
+  }
+  el.innerHTML = '';
+  Object.entries(groups).forEach(([dStr, {d, blocks}]) => {
+    const group = document.createElement('div');
+    group.className = 'agenda-group';
+    group.innerHTML = `<div class="agenda-group-label">${d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})}</div>`;
+    blocks.forEach(b => {
+      const item = document.createElement('div');
+      item.className = 'agenda-item';
+      item.style.borderLeftColor = blockCatColor(b.category);
+      item.innerHTML = `
+        <div class="agenda-time">${b.start}–${b.end}</div>
+        <div class="agenda-info"><div class="agenda-title">${escHtml(b.title)}${b.done?' ✓':''}</div><div class="agenda-cat">${b.category} · ${b.priority}</div></div>
+        <div class="agenda-actions">
+          <button class="task-action-btn" onclick="openBlockModal(${b.id})" aria-label="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="task-action-btn danger" onclick="deleteBlock(${b.id})" aria-label="Delete"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+        </div>`;
+      group.appendChild(item);
+    });
+    el.appendChild(group);
+  });
+}
+
+// ================================================================
+// ════════════════════════════════════════════════════════════════
+//  FEATURE MODULE 3: AI DAILY PLANNER (rule-based, offline-first)
+// ════════════════════════════════════════════════════════════════
+// ================================================================
+
+let plannerGenerated = false;
+
+function renderPlanner() {
+  const now = new Date();
+  const dayNum = document.getElementById('plannerDateNum');
+  const dayMon = document.getElementById('plannerDateMon');
+  if (dayNum) dayNum.textContent = now.getDate();
+  if (dayMon) dayMon.textContent = MONTHS[now.getMonth()].slice(0,3).toUpperCase();
+  // Hero title
+  const h = now.getHours();
+  const greet = h<12?'Stay on Track Today':h<17?'Afternoon Push 💪':'Evening Study Session 🌙';
+  setText('plannerHeroTitle', greet);
+  // Stats
+  const todayBlocks = APP.timeBlocks.filter(b=>b.date===localDateStr());
+  const totalFocusMin = todayBlocks.reduce((a,b)=>{ if(b.category!=='break'){ return a+(timeToMinutes(b.end)-timeToMinutes(b.start)); } return a; },0);
+  const deepWorkMin = todayBlocks.filter(b=>b.category==='focus'||b.category==='study').reduce((a,b)=>a+(timeToMinutes(b.end)-timeToMinutes(b.start)),0);
+  setText('psDeepWork', fmtMins(deepWorkMin));
+  setText('psScheduled', todayBlocks.length);
+  setText('psTotal', APP.tasks.filter(t=>!t.done).length);
+  // Focus score
+  const score = calcFocusScore();
+  setText('psFocusScore', score > 0 ? score : '—');
+  setText('psFocusSub', score > 0 ? (score>=80?'Excellent 🔥':score>=60?'Good 💪':score>=40?'Building 📈':'Getting started') : 'Run analysis');
+  if (APP.plannerPlan.length > 0) renderPlanTimeline();
+  updatePlannerSummary();
+}
+
+function calcFocusScore() {
+  const goal = APP.settings.dailyGoalMin || 120;
+  const studyPct = Math.min(100, Math.round((APP.studyMinToday||0)/goal*100));
+  const sessCnt = APP.sessionsToday || 0;
+  const taskDone = APP.tasks.filter(t=>{ const d=t.doneAt; return d&&d.startsWith(localDateStr()); }).length;
+  const habits = APP.habits.filter(h=>h.days[localDayOfWeek()]).length;
+  const habitRate = APP.habits.length>0 ? Math.round(habits/APP.habits.length*100) : 0;
+  if (studyPct===0 && sessCnt===0 && taskDone===0) return 0;
+  return Math.round(studyPct*0.35 + Math.min(100,sessCnt/4*100)*0.25 + Math.min(100,taskDone/5*100)*0.25 + habitRate*0.15);
+}
+
+function updatePlannerSummary() {
+  const plan = APP.plannerPlan;
+  if (plan.length === 0) { hide('plannerSummaryBar'); return; }
+  show('plannerSummaryBar');
+  let focusMins=0, breakMins=0, highPri=0;
+  plan.forEach(p => {
+    const dur = timeToMinutes(p.end) - timeToMinutes(p.start);
+    if (p.type==='break') breakMins += dur;
+    else { focusMins += dur; if(p.priority==='high'||p.priority==='urgent') highPri++; }
+  });
+  const ws = timeToMinutes(APP.plannerSettings.workStart||'08:00');
+  const we = timeToMinutes(APP.plannerSettings.workEnd||'22:00');
+  const avail = we - ws;
+  setText('psbTotal', fmtMins(focusMins));
+  setText('psbAvail', fmtMins(avail));
+  setText('psbFocus', plan.filter(p=>p.type!=='break').length + ' blocks');
+  setText('psbBreaks', plan.filter(p=>p.type==='break').length + ' breaks');
+  setText('psbHigh', highPri + ' tasks');
+  const applyBtn = document.getElementById('btnApplyPlan');
+  const editBtn  = document.getElementById('btnEditPlan');
+  if (applyBtn) applyBtn.style.display = APP.plannerApplied ? 'none' : '';
+  if (editBtn)  editBtn.style.display  = '';
+}
+
+// ── Core planning engine (rule-based, no API needed) ────────────
+function generatePlan() {
+  const btn = document.getElementById('btnGeneratePlan');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Planning…'; }
+  // Slight delay for UX feel
+  setTimeout(() => {
+    try { _runPlanEngine(); }
+    catch(e) { addToast('Planning error', e.message, 'red'); }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21 5,3"/></svg> Regenerate'; }
+  }, 600);
+}
+
+function _runPlanEngine() {
+  const today = localDateStr();
+  const settings = APP.plannerSettings;
+  const workStartMin = timeToMinutes(settings.workStart || '08:00');
+  const workEndMin   = timeToMinutes(settings.workEnd   || '22:00');
+  const breakEvery   = parseInt(settings.breakEvery) || 90;
+  const breakLen     = parseInt(settings.breakLen)   || 10;
+
+  // Gather pending tasks, sorted by priority then due date
+  const prioVal = {urgent:4, high:3, medium:2, low:1};
+  const pending = APP.tasks.filter(t=>!t.done).sort((a,b)=>{
+    const pd = (prioVal[b.priority]||1) - (prioVal[a.priority]||1);
+    if (pd!==0) return pd;
+    if (!a.due && !b.due) return 0;
+    if (!a.due) return 1; if (!b.due) return -1;
+    return a.due.localeCompare(b.due);
+  });
+
+  // Existing blocks today (already scheduled = occupied time)
+  const existingBlocks = APP.timeBlocks.filter(b=>b.date===today)
+    .map(b=>({ start:timeToMinutes(b.start), end:timeToMinutes(b.end) }))
+    .sort((a,b)=>a.start-b.start);
+
+  // Build free slot list
+  const freeSlots = [];
+  let cursor = workStartMin;
+  existingBlocks.forEach(b=>{
+    if (b.start > cursor) freeSlots.push({ start:cursor, end:b.start });
+    cursor = Math.max(cursor, b.end);
+  });
+  if (cursor < workEndMin) freeSlots.push({ start:cursor, end:workEndMin });
+
+  const plan = [];
+  let focusSinceBreak = 0;
+
+  freeSlots.forEach(slot => {
+    let ptr = slot.start;
+    while (ptr < slot.end && pending.length > 0) {
+      // Insert break if needed
+      if (focusSinceBreak >= breakEvery) {
+        const bEnd = Math.min(ptr + breakLen, slot.end);
+        if (bEnd > ptr) {
+          plan.push({ type:'break', title:'☕ Break', start:minutesToTime(ptr), end:minutesToTime(bEnd), priority:'low', taskId:null });
+          ptr = bEnd; focusSinceBreak = 0;
+        }
+        continue;
+      }
+      // Take next task
+      const task = pending.shift();
+      const dur   = Math.min(task.dur || 45, slot.end - ptr);
+      if (dur < 10) { pending.unshift(task); break; } // can't fit even 10 min
+      const tEnd  = ptr + dur;
+      plan.push({
+        type:'task', title:task.title, start:minutesToTime(ptr), end:minutesToTime(tEnd),
+        priority:task.priority, taskId:task.id, category:task.category,
+        estimatedDur:task.dur||45, actualDur:dur,
+      });
+      ptr = tEnd;
+      focusSinceBreak += dur;
+    }
+  });
+
+  APP.plannerPlan = plan;
+  APP.plannerApplied = false;
+  STORE.saveApp();
+  plannerGenerated = true;
+  renderPlanTimeline();
+  updatePlannerSummary();
+  renderPlannerSuggestions();
+  addToast('Plan generated! 🤖', `${plan.length} items scheduled`, 'blue');
+}
+
+function renderPlanTimeline() {
+  const el = document.getElementById('plannerTimeline');
+  if (!el) return;
+  const plan = APP.plannerPlan;
+  if (plan.length === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:32px 0"><div class="empty-state-icon">🤖</div><div class="empty-state-title">No plan generated yet</div><div class="empty-state-sub">Click "Generate Plan" to build your smart daily schedule</div></div>';
+    return;
+  }
+  el.innerHTML = '';
+  const nowMin = new Date().getHours()*60 + new Date().getMinutes();
+  plan.forEach((item, idx) => {
+    const sMin = timeToMinutes(item.start);
+    const eMin = timeToMinutes(item.end);
+    const isNow = sMin <= nowMin && eMin > nowMin;
+    const isPast = eMin <= nowMin;
+    const slot = document.createElement('div');
+    slot.className = 'timeline-slot';
+    const dotClass = item.type==='break'?'break-dot':isPast?'done':isNow?'active':'';
+    slot.innerHTML = `
+      <div class="tl-time">${item.start}</div>
+      <div class="tl-dot-col">
+        <div class="tl-dot ${dotClass}"></div>
+        ${idx<plan.length-1?'<div class="tl-line"></div>':''}
+      </div>
+      <div class="tl-content">
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+          <div class="tl-title">${escHtml(item.title)}</div>
+          ${item.type!=='break'?`<span class="tl-ai-badge">AI</span>`:''}
+          ${item.priority&&item.type!=='break'?`<span class="tl-priority ${item.priority}">${item.priority}</span>`:''}
+          ${isPast?'<span style="font-size:10px;color:var(--text-muted)">done</span>':''}
+          ${isNow?'<span style="font-size:10px;color:var(--gold);font-weight:700">NOW</span>':''}
+        </div>
+        <div class="tl-meta">${item.start}–${item.end} · ${fmtMins(eMin-sMin)}${item.category?` · ${item.category}`:''}</div>
+      </div>
+      ${item.type==='break'?`<span class="tl-break-badge">Break</span>`:`<button class="tl-focus-btn" onclick="startPlanFocus(${idx})">▶ Focus</button>`}`;
+    el.appendChild(slot);
+  });
+}
+
+function startPlanFocus(idx) {
+  const item = APP.plannerPlan[idx];
+  if (!item || item.type==='break') return;
+  if (item.taskId) {
+    const task = APP.tasks.find(t=>t.id==item.taskId);
+    if (task) { APP.currentFocusTask = task; STORE.saveApp(); }
+  }
+  navigateTo('focus');
+  addToast('Focus started!', item.title);
+}
+
+function applyPlan() {
+  if (APP.plannerPlan.length === 0) { addToast('No plan to apply','Generate a plan first','red'); return; }
+  const conf = confirm(`Apply this plan? This will add ${APP.plannerPlan.filter(p=>p.type!=='break').length} time blocks to your schedule for today.\n\nExisting blocks will NOT be affected.`);
+  if (!conf) return;
+  const today = localDateStr();
+  APP.plannerPlan.forEach(item => {
+    const conflict = checkBlockConflict(today, item.start, item.end, null);
+    if (conflict) return; // skip conflicts
+    APP.timeBlocks.push({
+      id: APP.nextBlockId++,
+      title: item.title,
+      date:  today,
+      start: item.start,
+      end:   item.end,
+      category: item.type==='break' ? 'break' : (item.category||'focus'),
+      priority: item.priority || 'medium',
+      linkedTask: item.taskId || '',
+      notes: 'Added by AI Planner',
+      done: false,
+      createdAt: new Date().toISOString(),
+    });
+    addSkillXP('time_mgmt', 3);
+  });
+  APP.plannerApplied = true;
+  STORE.saveApp();
+  updatePlannerSummary();
+  addToast('Plan applied! ✅', `${APP.plannerPlan.length} blocks added to schedule`, 'green');
+  addActivity('AI Planner applied daily schedule', 'focus', 0);
+}
+
+function clearPlan() {
+  if (APP.plannerPlan.length === 0) return;
+  if (!confirm('Clear the current plan?')) return;
+  APP.plannerPlan = [];
+  APP.plannerApplied = false;
+  STORE.saveApp();
+  renderPlanner();
+  addToast('Plan cleared');
+}
+
+function editPlan() {
+  addToast('Edit mode', 'Modify blocks directly in the Time Blocking view', 'blue');
+  navigateTo('schedule');
+}
+
+function optimizeSchedule() {
+  // Re-sort plan: urgent first, then by deadline
+  if (APP.plannerPlan.length === 0) { generatePlan(); return; }
+  const prioVal = {urgent:4,high:3,medium:2,low:1};
+  const tasks   = APP.plannerPlan.filter(p=>p.type==='task').sort((a,b)=>(prioVal[b.priority]||1)-(prioVal[a.priority]||1));
+  const breaks  = APP.plannerPlan.filter(p=>p.type==='break');
+  // Re-interleave
+  const all = [...APP.plannerPlan].sort((a,b)=>a.start.localeCompare(b.start));
+  let ti=0, bi=0, ptr=0;
+  const reordered=[];
+  all.forEach(item => { reordered.push(item.type==='break'?breaks[bi++]||item : tasks[ti++]||item); });
+  APP.plannerPlan = reordered.slice(0, all.length);
+  STORE.saveApp();
+  renderPlanTimeline();
+  addToast('Schedule optimized! ⚡', 'High-priority tasks moved first', 'gold');
+}
+
+function renderPlannerSuggestions() {
+  const card = document.getElementById('plannerSuggestionsCard');
+  const el   = document.getElementById('plannerSuggestions');
+  if (!card || !el) return;
+  card.style.display = '';
+  const sug = [];
+  // Deadline warnings
+  const overdue = APP.tasks.filter(t=>!t.done && t.due && isOverdue(t.due));
+  if (overdue.length > 0) sug.push({ icon:'🚨', text:`${overdue.length} task${overdue.length>1?'s':''} overdue: ${overdue.map(t=>t.title).slice(0,2).join(', ')}. Consider prioritizing these today.` });
+  // Streak encouragement
+  if ((APP.streak||0) > 0) sug.push({ icon:'🔥', text:`You're on a ${APP.streak}-day streak! Keep it going — even 25 minutes counts.` });
+  // Habit reminder
+  const todayIdx = localDayOfWeek();
+  const missedHabits = APP.habits.filter(h=>!h.days[todayIdx]);
+  if (missedHabits.length > 0 && new Date().getHours() > 18) sug.push({ icon:'🔄', text:`${missedHabits.length} habit${missedHabits.length>1?'s':''} not yet completed today: ${missedHabits.map(h=>h.name).join(', ')}.` });
+  // No plan yet suggestion
+  const plan = APP.plannerPlan;
+  if (plan.length === 0) sug.push({ icon:'💡', text:'Generate a plan to automatically schedule your tasks based on priority and deadlines.' });
+  // Too many tasks
+  const pending = APP.tasks.filter(t=>!t.done).length;
+  if (pending > 10) sug.push({ icon:'📋', text:`You have ${pending} pending tasks. Consider breaking them into smaller milestones or archiving older ones.` });
+  // Good job
+  if (APP.studyMinToday >= (APP.settings.dailyGoalMin||120)) sug.push({ icon:'🎉', text:`You've hit your daily study goal of ${fmtMins(APP.settings.dailyGoalMin||120)}! Consider reviewing what you've learned today.` });
+  // Focus score
+  const score = calcFocusScore();
+  if (score > 0 && score < 40) sug.push({ icon:'📈', text:'Your focus score is low today. Starting with even one 25-minute session will significantly improve it.' });
+  if (sug.length === 0) sug.push({ icon:'✅', text:'Everything looks great! Your schedule is well-planned for today.' });
+  el.innerHTML = sug.map(s=>`<div class="suggestion-item"><span class="suggestion-icon">${s.icon}</span><span class="suggestion-text">${escHtml(s.text)}</span></div>`).join('');
+}
+
+// ── Boot hooks for new features ──────────────────────────────────
+// Run after BOOT() completes
+setTimeout(() => {
+  try {
+    // Ensure skill structure for existing users
+    SKILLS_DEF.forEach(s => getSkill(s.key));
+    // Generate daily quests on load
+    generateDailyQuests();
+    // Check titles on load
+    checkTitles();
+    // Sync main quest progress with real data
+    updateQuestProgress('_sync', 0);
+    STORE.saveApp();
+  } catch(e) { console.warn('[New features boot]', e.message); }
+}, 800);
+
 </script>
+<!-- ==================== TIME BLOCK MODAL ==================== -->
+<div class="modal-backdrop" id="blockModalBd">
+  <div class="modal" role="dialog" aria-label="Time Block" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title" id="blockModalTitle">New Time Block</span>
+      <button class="modal-close" onclick="closeModal('blockModalBd')" aria-label="Close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input type="text" class="form-input" id="blockTitle" placeholder="e.g. Deep Work — SAT Math" maxlength="200">
+        <div class="form-error" id="blockTitleErr" style="display:none">Title required</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" id="blockDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="blockCategory">
+            <option value="focus">🎯 Focus</option>
+            <option value="study">📚 Study</option>
+            <option value="break">☕ Break</option>
+            <option value="exercise">💪 Exercise</option>
+            <option value="review">🔄 Review</option>
+            <option value="other">📌 Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Start Time</label>
+          <input type="time" class="form-input" id="blockStart" value="09:00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">End Time</label>
+          <input type="time" class="form-input" id="blockEnd" value="10:00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select class="form-select" id="blockPriority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Link Task (optional)</label>
+          <select class="form-select" id="blockLinkedTask">
+            <option value="">None</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <input type="text" class="form-input" id="blockNotes" placeholder="Optional notes…" maxlength="300">
+      </div>
+      <div id="blockConflictWarn" style="display:none;background:var(--red-dim);border:1px solid rgba(224,82,82,0.3);border-radius:var(--r-sm);padding:10px 12px;font-size:12px;color:var(--red);margin-top:8px">
+        ⚠️ <span id="blockConflictMsg">This block overlaps with another scheduled block.</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('blockModalBd')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBlock()" id="blockSaveBtn">Add Block</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== QUEST MODAL ==================== -->
+<div class="modal-backdrop" id="questModalBd">
+  <div class="modal" role="dialog" aria-label="Custom Quest">
+    <div class="modal-header">
+      <span class="modal-title">Create Custom Quest</span>
+      <button class="modal-close" onclick="closeModal('questModalBd')" aria-label="Close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Quest Title *</label>
+        <input type="text" class="form-input" id="questTitle" placeholder="e.g. Complete 3 focus sessions" maxlength="200">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-input" id="questDesc" placeholder="What needs to be done?" maxlength="300">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="questCategory">
+            <option value="daily">📅 Daily</option>
+            <option value="weekly">📆 Weekly</option>
+            <option value="main">⭐ Main</option>
+            <option value="focus">🎯 Focus Challenge</option>
+            <option value="habit">🔄 Habit Challenge</option>
+            <option value="study">📚 Study Challenge</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Difficulty</label>
+          <select class="form-select" id="questDifficulty">
+            <option value="E">E — Easy</option>
+            <option value="D">D — Normal</option>
+            <option value="C" selected>C — Medium</option>
+            <option value="B">B — Hard</option>
+            <option value="A">A — Very Hard</option>
+            <option value="S">S — Legendary</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">XP Reward</label>
+          <input type="number" class="form-input" id="questXP" min="10" max="1000" value="50">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Count</label>
+          <input type="number" class="form-input" id="questTarget" min="1" value="1">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('questModalBd')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCustomQuest()">Create Quest</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ================================================================
+   NEW FEATURE STYLES — Gamification, Schedule, Planner
+   Uses existing CSS variables — zero conflicts
+   ================================================================ */
+
+/* ---- GAMIFICATION ---- */
+.gam-hero-card{position:relative;background:linear-gradient(135deg,var(--bg-card) 0%,#1a1a20 100%);border:1px solid var(--border-strong);border-radius:var(--r-xl);overflow:hidden;padding:24px;margin-bottom:16px}
+.gam-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(212,168,67,0.08) 0%,transparent 60%);pointer-events:none}
+.gam-hero-content{position:relative;z-index:1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.gam-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent-warm),var(--gold));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#0e0e0f;flex-shrink:0;border:2px solid rgba(212,168,67,0.4);box-shadow:0 0 20px rgba(212,168,67,0.2)}
+.gam-hero-info{flex:1;min-width:200px}
+.gam-player-name{font-size:22px;font-weight:700;color:var(--text-primary);letter-spacing:-0.5px}
+.gam-player-class{font-size:12px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.gam-xp-row{display:flex;align-items:center;gap:10px}
+.gam-xp-bar-wrap{flex:1;max-width:300px}
+.gam-xp-bar-track{height:8px;background:var(--border-strong);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.gam-xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),#f0c040);border-radius:4px;transition:width 0.7s ease;box-shadow:0 0 8px rgba(212,168,67,0.4)}
+.gam-xp-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.gam-hero-stats{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto}
+.gam-hero-stat{text-align:center;min-width:48px}
+.gam-hero-stat-val{font-size:20px;font-weight:700;color:var(--text-primary);line-height:1}
+.gam-hero-stat-val.text-gold{color:var(--gold)}
+.gam-hero-stat-val.green{color:var(--green)}
+.gam-hero-stat-val.gold{color:var(--gold)}
+.gam-hero-stat-label{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
+.gam-main-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.gam-main-grid{grid-template-columns:1fr}}
+
+.skill-tree-grid{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.skill-item{background:var(--bg-elevated);border-radius:var(--r-sm);padding:11px 13px}
+.skill-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.skill-name-row{display:flex;align-items:center;gap:8px}
+.skill-icon{font-size:16px}
+.skill-name{font-size:12px;font-weight:600;color:var(--text-primary)}
+.skill-level-badge{font-size:10px;font-weight:700;color:var(--gold);background:var(--gold-dim);padding:2px 7px;border-radius:var(--r-full);font-family:'JetBrains Mono',monospace}
+.skill-xp-text{font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.skill-bar{height:5px;background:var(--border-strong);border-radius:3px;overflow:hidden}
+.skill-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.skill-desc{font-size:10px;color:var(--text-muted);margin-top:4px}
+
+.quest-filter-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.quest-tab{padding:4px 10px;border-radius:var(--r-full);font-size:11px;border:1px solid var(--border-default);background:transparent;color:var(--text-muted);cursor:pointer;transition:all var(--t-fast)}
+.quest-tab.active{background:var(--bg-active);color:var(--text-primary);border-color:var(--border-strong)}
+.quest-tab:hover{color:var(--text-secondary)}
+.quest-list{display:flex;flex-direction:column;gap:8px;max-height:480px;overflow-y:auto}
+.quest-item{background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--r-md);padding:13px 14px;transition:border-color var(--t-fast)}
+.quest-item:hover{border-color:var(--border-strong)}
+.quest-item.done{opacity:0.55}
+.quest-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.quest-title{font-size:13px;font-weight:600;color:var(--text-primary)}
+.quest-rank-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.rank-E{background:rgba(96,96,104,0.2);color:var(--text-muted)}
+.rank-D{background:rgba(82,200,120,0.15);color:var(--green)}
+.rank-C{background:rgba(82,148,224,0.15);color:var(--blue)}
+.rank-B{background:rgba(155,82,224,0.15);color:var(--purple)}
+.rank-A{background:rgba(224,120,32,0.15);color:var(--orange)}
+.rank-S{background:rgba(212,168,67,0.2);color:var(--gold)}
+.quest-desc{font-size:11px;color:var(--text-muted);margin-bottom:8px}
+.quest-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.quest-progress-wrap{flex:1}
+.quest-prog-bar{height:4px;background:var(--border-strong);border-radius:2px;overflow:hidden;margin-top:3px}
+.quest-prog-fill{height:100%;border-radius:2px;background:var(--gold);transition:width 0.5s ease}
+.quest-prog-label{font-size:9px;color:var(--text-muted);font-family:'JetBrains Mono',monospace}
+.quest-xp{font-size:11px;color:var(--gold);font-weight:700;background:var(--gold-dim);padding:2px 8px;border-radius:var(--r-full);white-space:nowrap}
+.quest-actions{display:flex;gap:4px}
+.quest-complete-btn{padding:4px 10px;border-radius:var(--r-sm);font-size:11px;font-weight:600;background:var(--green-dim);color:var(--green);border:1px solid rgba(82,200,120,0.3);cursor:pointer;transition:all var(--t-fast)}
+.quest-complete-btn:hover{background:rgba(82,200,120,0.2)}
+.quest-del-btn{padding:4px 8px;border-radius:var(--r-sm);font-size:11px;background:var(--red-dim);color:var(--red);border:1px solid rgba(224,82,82,0.2);cursor:pointer;transition:all var(--t-fast)}
+.quest-cat-chip{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);background:var(--bg-active);padding:2px 6px;border-radius:3px}
+.quest-expires{font-size:10px;color:var(--text-muted)}
+
+.titles-grid{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0}
+.title-badge{padding:5px 12px;border-radius:var(--r-full);font-size:11px;font-weight:600;border:1px solid var(--border-default);background:var(--bg-elevated);color:var(--text-secondary)}
+.title-badge.active{border-color:rgba(212,168,67,0.4);background:var(--gold-dim);color:var(--gold)}
+
+/* ---- SCHEDULE / TIME BLOCKING ---- */
+.schedule-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.sched-title{font-size:15px;font-weight:600;color:var(--text-primary);margin:0 8px}
+.sched-view-tabs{display:flex;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--r-sm);overflow:hidden}
+.sched-view-tab{padding:5px 12px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border:none;background:transparent;transition:all var(--t-fast)}
+.sched-view-tab.active{background:var(--bg-active);color:var(--text-primary)}
+.conflict-alert{display:flex;align-items:center;gap:10px;background:var(--red-dim);border:1px solid rgba(224,82,82,0.3);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--red)}
+
+/* Week view */
+.sched-week-view{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-md);overflow:hidden}
+.sched-week-header{display:grid;grid-template-columns:52px repeat(7,1fr);border-bottom:1px solid var(--border-subtle)}
+.sched-week-day-head{padding:10px 6px;text-align:center;border-right:1px solid var(--border-subtle)}
+.sched-week-day-head:last-child{border-right:none}
+.sched-wdh-name{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.sched-wdh-num{font-size:18px;font-weight:700;color:var(--text-primary);line-height:1.2}
+.sched-wdh-num.today-num{background:var(--gold);color:#0e0e0f;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:14px}
+.sched-time-corner{border-right:1px solid var(--border-subtle)}
+.sched-week-body{display:flex;height:600px;overflow-y:auto;position:relative}
+.sched-time-col{width:52px;flex-shrink:0;border-right:1px solid var(--border-subtle);position:relative}
+.sched-hour-label{position:absolute;font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;right:8px;transform:translateY(-50%);pointer-events:none;white-space:nowrap}
+.sched-week-cols{flex:1;display:grid;grid-template-columns:repeat(7,1fr);position:relative}
+.sched-day-col-grid{border-right:1px solid var(--border-subtle);position:relative;cursor:pointer}
+.sched-day-col-grid:last-child{border-right:none}
+.sched-day-col-grid:hover{background:rgba(255,255,255,0.01)}
+.sched-hour-line{position:absolute;left:0;right:0;border-top:1px solid var(--border-subtle);pointer-events:none}
+.sched-half-line{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,255,255,0.04);pointer-events:none}
+.sched-now-line{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:10;pointer-events:none}
+.sched-now-line::before{content:'';position:absolute;left:-4px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--red)}
+.time-block{position:absolute;left:2px;right:2px;border-radius:var(--r-sm);padding:4px 7px;font-size:11px;cursor:pointer;overflow:hidden;transition:filter var(--t-fast);z-index:2;border-left:3px solid transparent}
+.time-block:hover{filter:brightness(1.15)}
+.time-block .tb-title{font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.time-block .tb-time{font-size:9px;color:rgba(240,240,242,0.7);font-family:'JetBrains Mono',monospace}
+.time-block .tb-actions{position:absolute;top:3px;right:4px;display:none;gap:2px}
+.time-block:hover .tb-actions{display:flex}
+.tb-action-btn{width:16px;height:16px;border-radius:3px;background:rgba(0,0,0,0.3);border:none;color:white;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center}
+.tb-cat-focus{background:rgba(212,168,67,0.18);border-left-color:var(--gold)}
+.tb-cat-study{background:rgba(82,148,224,0.18);border-left-color:var(--blue)}
+.tb-cat-break{background:rgba(82,200,120,0.18);border-left-color:var(--green)}
+.tb-cat-exercise{background:rgba(224,120,32,0.18);border-left-color:var(--orange)}
+.tb-cat-review{background:rgba(155,82,224,0.18);border-left-color:var(--purple)}
+.tb-cat-other{background:rgba(96,96,104,0.18);border-left-color:var(--border-strong)}
+.tb-conflict{outline:2px solid var(--red)!important;outline-offset:-2px}
+
+/* Day view */
+.sched-day-view{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-md);overflow:hidden}
+.sched-day-header{padding:12px 16px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:10px}
+.sched-day-title{font-size:16px;font-weight:600;color:var(--text-primary)}
+.sched-day-body{display:flex;height:600px;overflow-y:auto;position:relative}
+.sched-day-col{flex:1;position:relative}
+
+/* Agenda view */
+.agenda-list{display:flex;flex-direction:column;gap:6px}
+.agenda-group{margin-bottom:14px}
+.agenda-group-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;padding:0 2px}
+.agenda-item{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-md);padding:11px 13px;display:flex;align-items:flex-start;gap:12px;border-left:3px solid var(--border-strong)}
+.agenda-time{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;min-width:80px;flex-shrink:0;margin-top:1px}
+.agenda-info{flex:1;min-width:0}
+.agenda-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+.agenda-cat{font-size:10px;color:var(--text-muted);margin-top:2px}
+.agenda-actions{display:flex;gap:4px;flex-shrink:0}
+
+/* ---- AI PLANNER ---- */
+.planner-hero{background:linear-gradient(135deg,var(--bg-card) 0%,#18181c 100%);border:1px solid var(--border-default);border-radius:var(--r-xl);padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.planner-hero-left{display:flex;align-items:center;gap:16px}
+.planner-date-badge{background:var(--bg-active);border:1px solid var(--border-strong);border-radius:var(--r-md);padding:8px 12px;text-align:center;min-width:52px;flex-shrink:0}
+.planner-date-badge span:first-child{display:block;font-size:22px;font-weight:800;color:var(--text-primary);line-height:1;font-family:'JetBrains Mono',monospace}
+.planner-date-badge span:last-child{display:block;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.planner-hero-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:4px}
+.planner-hero-title{font-size:22px;font-weight:700;color:var(--text-primary);letter-spacing:-0.5px}
+.planner-hero-sub{font-size:12px;color:var(--text-secondary);margin-top:4px}
+.planner-hero-actions{display:flex;gap:8px;flex-shrink:0}
+
+.planner-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.planner-stat-card{border-radius:var(--r-lg);padding:18px 20px;position:relative;overflow:hidden;border:1px solid var(--border-default)}
+.planner-stat-card.deep-work{background:linear-gradient(135deg,#111115 0%,#1a1a1d 100%)}
+.planner-stat-card.attention{background:linear-gradient(135deg,#1a1400 0%,#1a1610 100%);border-color:rgba(212,168,67,0.2)}
+.planner-stat-card.focus-stability{background:linear-gradient(135deg,#0a1020 0%,#101828 100%);border-color:rgba(82,148,224,0.2)}
+.ps-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px}
+.ps-value{font-size:28px;font-weight:800;color:var(--text-primary);letter-spacing:-1px;line-height:1}
+.ps-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.planner-stat-card.deep-work .ps-value{color:var(--accent)}
+.planner-stat-card.attention .ps-value{color:var(--gold)}
+.planner-stat-card.focus-stability .ps-value{color:var(--blue)}
+@media(max-width:768px){.planner-stats-row{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.planner-stats-row{grid-template-columns:1fr}}
+
+.planner-summary-bar{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-md);padding:12px 16px;display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:2px}
+.psb-item{display:flex;flex-direction:column;align-items:center;padding:0 16px;flex:1;min-width:80px}
+.psb-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px}
+.psb-val{font-size:14px;font-weight:700;color:var(--text-primary);margin-top:2px}
+.psb-div{width:1px;height:32px;background:var(--border-subtle);flex-shrink:0}
+
+.planner-timeline{min-height:200px}
+.timeline-slot{display:flex;align-items:flex-start;gap:14px;padding:8px 4px;border-bottom:1px solid var(--border-subtle);position:relative}
+.timeline-slot:last-child{border-bottom:none}
+.tl-time{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;min-width:44px;flex-shrink:0;padding-top:2px}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--border-strong);background:var(--bg-base);flex-shrink:0;margin-top:4px}
+.tl-dot.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px rgba(212,168,67,0.4)}
+.tl-dot.done{background:var(--green);border-color:var(--green)}
+.tl-dot.break-dot{background:var(--blue-dim);border-color:var(--blue)}
+.tl-line{width:1px;flex:1;background:var(--border-subtle);margin:4px 0}
+.tl-content{flex:1;min-width:0}
+.tl-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+.tl-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+.tl-priority{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:2px 7px;border-radius:var(--r-full)}
+.tl-priority.high{background:var(--orange-dim);color:var(--orange)}
+.tl-priority.urgent{background:var(--red-dim);color:var(--red)}
+.tl-priority.medium{background:var(--blue-dim);color:var(--blue)}
+.tl-priority.low{background:var(--bg-active);color:var(--text-muted)}
+.tl-focus-btn{padding:3px 9px;border-radius:var(--r-full);font-size:10px;font-weight:600;background:var(--gold-dim);color:var(--gold);border:1px solid rgba(212,168,67,0.3);cursor:pointer;transition:all var(--t-fast);white-space:nowrap;flex-shrink:0}
+.tl-focus-btn:hover{background:rgba(212,168,67,0.2)}
+.tl-break-badge{padding:3px 9px;border-radius:var(--r-full);font-size:10px;font-weight:600;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(82,148,224,0.2)}
+.tl-ai-badge{font-size:9px;color:var(--blue);font-weight:600;background:var(--blue-dim);padding:1px 6px;border-radius:3px;margin-left:6px}
+
+.planner-suggestions{display:flex;flex-direction:column;gap:8px}
+.suggestion-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--bg-elevated);border-radius:var(--r-sm)}
+.suggestion-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.suggestion-text{font-size:12px;color:var(--text-secondary);line-height:1.5}
+</style>
 </body>
 </html>
