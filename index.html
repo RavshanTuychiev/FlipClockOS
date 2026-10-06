@@ -1077,6 +1077,14 @@ img{max-width:100%;display:block}
         </div>
       </div>
       <div class="nav-group">
+        <div class="nav-group-label">AI</div>
+        <div class="nav-item" data-page="ai" role="button" tabindex="0" aria-label="Flip AI Assistant" id="navAI">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.15"/></svg></span>
+          <span class="nav-label">Flip AI</span>
+          <span class="nav-chip" style="background:linear-gradient(135deg,rgba(82,148,224,0.2),rgba(155,82,224,0.2));color:var(--blue);border:1px solid rgba(82,148,224,0.3)">✦</span>
+        </div>
+      </div>
+      <div class="nav-group">
         <div class="nav-group-label">System</div>
         <div class="nav-item" data-page="settings" role="button" tabindex="0" aria-label="Settings">
           <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>
@@ -6073,6 +6081,1786 @@ setTimeout(() => {
 .suggestion-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--bg-elevated);border-radius:var(--r-sm)}
 .suggestion-icon{font-size:16px;flex-shrink:0;margin-top:1px}
 .suggestion-text{font-size:12px;color:var(--text-secondary);line-height:1.5}
+
+/* ================================================================
+   FLIP AI — COMPLETE AI CHAT SYSTEM CSS
+   ================================================================ */
+/* AI Page Layout */
+#page-ai{padding:0!important;display:none;height:calc(100vh - var(--topbar-h));overflow:hidden}
+#page-ai.active{display:flex!important}
+.ai-shell{display:flex;width:100%;height:100%;overflow:hidden;background:var(--bg-base)}
+
+/* Conversation sidebar */
+.ai-conv-sidebar{width:240px;min-width:240px;background:var(--bg-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.ai-conv-header{padding:14px 14px 10px;border-bottom:1px solid var(--border-subtle);flex-shrink:0}
+.ai-conv-search{width:100%;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--r-sm);color:var(--text-primary);font-size:12px;padding:6px 10px;font-family:inherit;margin-bottom:8px}
+.ai-conv-search:focus{outline:none;border-color:var(--border-focus)}
+.ai-new-btn{width:100%;display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:var(--r-sm);background:var(--accent-dim);color:var(--accent-warm);border:1px solid rgba(200,184,154,0.2);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--t-fast)}
+.ai-new-btn:hover{background:rgba(200,184,154,0.18)}
+.ai-new-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.ai-conv-list{flex:1;overflow-y:auto;padding:6px}
+.ai-conv-item{padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;transition:background var(--t-fast);border:1px solid transparent;margin-bottom:2px}
+.ai-conv-item:hover{background:var(--bg-elevated)}
+.ai-conv-item.active{background:var(--bg-active);border-color:var(--border-default)}
+.ai-conv-title{font-size:12px;font-weight:500;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.ai-conv-meta{font-size:10px;color:var(--text-muted)}
+.ai-conv-actions{display:flex;gap:3px;margin-top:4px;opacity:0;transition:opacity var(--t-fast)}
+.ai-conv-item:hover .ai-conv-actions{opacity:1}
+.ai-conv-act-btn{padding:2px 6px;border-radius:3px;font-size:9px;border:1px solid var(--border-default);background:transparent;color:var(--text-muted);cursor:pointer;transition:all var(--t-fast)}
+.ai-conv-act-btn:hover{background:var(--bg-elevated);color:var(--text-primary)}
+.ai-conv-act-btn.danger:hover{background:var(--red-dim);color:var(--red);border-color:rgba(224,82,82,0.3)}
+.ai-conv-empty{text-align:center;padding:20px;color:var(--text-muted);font-size:12px}
+
+/* Main chat area */
+.ai-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* Chat topbar */
+.ai-topbar{height:52px;flex-shrink:0;background:var(--bg-card);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 16px;gap:10px}
+.ai-topbar-title{font-size:14px;font-weight:600;color:var(--text-primary);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ai-status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(82,200,120,0.5);flex-shrink:0}
+.ai-status-dot.offline{background:var(--text-disabled);box-shadow:none}
+.ai-status-dot.thinking{background:var(--blue);animation:aiPulse 1.2s ease-in-out infinite}
+@keyframes aiPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
+.ai-status-text{font-size:11px;color:var(--text-muted)}
+.ai-topbar-btn{width:30px;height:30px;background:transparent;border:1px solid var(--border-default);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:all var(--t-fast)}
+.ai-topbar-btn:hover{background:var(--bg-elevated);color:var(--text-primary)}
+.ai-topbar-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.75}
+
+/* Messages area */
+.ai-messages{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:14px}
+.ai-msg{display:flex;gap:10px;max-width:100%;animation:msgIn 0.2s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-msg-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-top:2px}
+.ai-msg.assistant .ai-msg-avatar{background:linear-gradient(135deg,var(--blue-dim),var(--purple-dim));color:var(--blue);border:1px solid rgba(82,148,224,0.3)}
+.ai-msg.user .ai-msg-avatar{background:var(--accent-dim);color:var(--accent-warm);border:1px solid rgba(200,184,154,0.3)}
+.ai-msg-content{flex:1;min-width:0;max-width:80%}
+.ai-msg.user .ai-msg-content{display:flex;flex-direction:column;align-items:flex-end}
+.ai-bubble{padding:11px 14px;border-radius:14px;font-size:13px;line-height:1.6;word-wrap:break-word;position:relative}
+.ai-msg.assistant .ai-bubble{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:2px 14px 14px 14px;color:var(--text-primary)}
+.ai-msg.user .ai-bubble{background:var(--accent-dim);border:1px solid rgba(200,184,154,0.2);border-radius:14px 2px 14px 14px;color:var(--text-primary)}
+.ai-bubble p{margin:0 0 8px}
+.ai-bubble p:last-child{margin-bottom:0}
+.ai-bubble strong{color:var(--text-primary);font-weight:600}
+.ai-bubble em{color:var(--accent-warm)}
+.ai-bubble code{background:var(--bg-active);border-radius:4px;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-warm)}
+.ai-bubble pre{background:var(--bg-base);border:1px solid var(--border-default);border-radius:var(--r-sm);padding:12px;overflow-x:auto;margin:8px 0}
+.ai-bubble pre code{background:none;padding:0;font-size:12px;color:var(--text-secondary)}
+.ai-bubble ul,.ai-bubble ol{padding-left:18px;margin:6px 0}
+.ai-bubble li{margin-bottom:4px}
+.ai-bubble h3{font-size:14px;font-weight:600;margin:10px 0 6px;color:var(--text-primary)}
+.ai-bubble h4{font-size:13px;font-weight:600;margin:8px 0 4px;color:var(--accent-warm)}
+.ai-bubble blockquote{border-left:3px solid var(--gold);padding-left:10px;margin:6px 0;color:var(--text-secondary);font-style:italic}
+.ai-bubble table{border-collapse:collapse;width:100%;font-size:12px;margin:8px 0}
+.ai-bubble th,.ai-bubble td{border:1px solid var(--border-default);padding:6px 8px;text-align:left}
+.ai-bubble th{background:var(--bg-active);font-weight:600}
+.ai-msg-time{font-size:9px;color:var(--text-muted);margin-top:4px;padding:0 2px}
+.ai-msg-actions{display:flex;gap:4px;margin-top:5px;opacity:0;transition:opacity var(--t-fast);flex-wrap:wrap}
+.ai-msg:hover .ai-msg-actions{opacity:1}
+.ai-msg-action{padding:3px 8px;border-radius:var(--r-full);font-size:9px;font-weight:600;border:1px solid var(--border-default);background:var(--bg-elevated);color:var(--text-muted);cursor:pointer;transition:all var(--t-fast);letter-spacing:0.3px}
+.ai-msg-action:hover{background:var(--bg-active);color:var(--text-primary);border-color:var(--border-strong)}
+.ai-msg-action.primary{border-color:rgba(212,168,67,0.3);color:var(--gold);background:var(--gold-dim)}
+.ai-msg-action.primary:hover{background:rgba(212,168,67,0.2)}
+
+/* Tool activity */
+.ai-tool-activity{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--r-sm);padding:8px 12px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px;max-width:340px}
+.ai-tool-spinner{width:10px;height:10px;border:1.5px solid var(--border-strong);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+.ai-tool-text{flex:1}
+
+/* Thinking indicator */
+.ai-thinking{display:flex;gap:4px;align-items:center;padding:11px 14px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:2px 14px 14px 14px;width:fit-content}
+.ai-thinking-dot{width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:thinkingDot 1.4s ease-in-out infinite}
+.ai-thinking-dot:nth-child(2){animation-delay:0.2s}
+.ai-thinking-dot:nth-child(3){animation-delay:0.4s}
+@keyframes thinkingDot{0%,80%,100%{opacity:0.3;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+
+/* Smart action chips */
+.ai-smart-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ai-smart-chip{padding:5px 12px;border-radius:var(--r-full);font-size:11px;font-weight:500;border:1px solid var(--border-default);background:var(--bg-elevated);color:var(--text-secondary);cursor:pointer;transition:all var(--t-fast);white-space:nowrap}
+.ai-smart-chip:hover{background:var(--bg-active);color:var(--text-primary);border-color:var(--border-strong)}
+.ai-smart-chip.gold{border-color:rgba(212,168,67,0.3);color:var(--gold);background:var(--gold-dim)}
+.ai-smart-chip.blue{border-color:rgba(82,148,224,0.3);color:var(--blue);background:var(--blue-dim)}
+.ai-smart-chip.green{border-color:rgba(82,200,120,0.3);color:var(--green);background:var(--green-dim)}
+
+/* Welcome screen */
+.ai-welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;text-align:center;gap:8px}
+.ai-welcome-icon{font-size:48px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(82,148,224,0.3))}
+.ai-welcome-title{font-size:22px;font-weight:700;color:var(--text-primary);letter-spacing:-0.5px}
+.ai-welcome-sub{font-size:13px;color:var(--text-secondary);line-height:1.6;max-width:420px;margin:0 auto 16px}
+.ai-quick-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:500px}
+.ai-quick-chip{padding:7px 14px;border-radius:var(--r-full);font-size:12px;border:1px solid var(--border-default);background:var(--bg-elevated);color:var(--text-secondary);cursor:pointer;transition:all var(--t-fast);text-align:left}
+.ai-quick-chip:hover{background:var(--bg-active);color:var(--text-primary);border-color:var(--border-strong);transform:translateY(-1px)}
+
+/* Input area */
+.ai-input-area{flex-shrink:0;background:var(--bg-card);border-top:1px solid var(--border-subtle);padding:12px 16px 16px}
+.ai-input-row{display:flex;gap:8px;align-items:flex-end}
+.ai-input-wrap{flex:1;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:14px;display:flex;align-items:flex-end;gap:6px;padding:8px 12px;transition:border-color var(--t-fast);min-height:42px}
+.ai-input-wrap:focus-within{border-color:var(--border-focus)}
+.ai-textarea{flex:1;background:transparent;border:none;color:var(--text-primary);font-size:13px;font-family:inherit;resize:none;line-height:1.5;max-height:120px;overflow-y:auto;padding:0}
+.ai-textarea:focus{outline:none}
+.ai-textarea::placeholder{color:var(--text-disabled)}
+.ai-attach-btn,.ai-voice-btn{width:28px;height:28px;border-radius:50%;background:transparent;border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color var(--t-fast);flex-shrink:0}
+.ai-attach-btn:hover,.ai-voice-btn:hover{color:var(--text-secondary)}
+.ai-attach-btn svg,.ai-voice-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.75}
+.ai-voice-btn.listening{color:var(--red);animation:aiPulse 1s infinite}
+.ai-send-btn{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#0e0e0f;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t-fast);flex-shrink:0}
+.ai-send-btn:hover:not(:disabled){background:var(--accent-warm);transform:scale(1.05)}
+.ai-send-btn:disabled{opacity:0.4;cursor:not-allowed}
+.ai-send-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+.ai-stop-btn{width:38px;height:38px;border-radius:50%;background:var(--red-dim);color:var(--red);border:1px solid rgba(224,82,82,0.3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t-fast);flex-shrink:0}
+.ai-stop-btn:hover{background:rgba(224,82,82,0.2)}
+.ai-stop-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.ai-input-meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10px;color:var(--text-muted)}
+.ai-input-hint{display:flex;gap:10px;align-items:center}
+.ai-provider-badge{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(82,148,224,0.2);border-radius:3px;padding:1px 5px;font-size:9px;font-weight:600}
+.ai-char-count{font-variant-numeric:tabular-nums}
+
+/* Action log */
+.ai-action-log{background:var(--bg-base);border-top:1px solid var(--border-subtle);padding:8px 16px;font-size:10px;color:var(--text-muted);max-height:60px;overflow-y:auto;flex-shrink:0;display:none}
+.ai-action-log.visible{display:block}
+.ai-log-item{display:flex;gap:8px;align-items:center;padding:2px 0}
+.ai-log-time{color:var(--text-disabled);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.ai-log-text{color:var(--text-muted)}
+
+/* Memory panel */
+.ai-memory-modal-body{max-height:380px;overflow-y:auto}
+.ai-mem-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-subtle)}
+.ai-mem-item:last-child{border-bottom:none}
+.ai-mem-cat{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--blue);background:var(--blue-dim);border-radius:3px;padding:2px 5px;flex-shrink:0;margin-top:2px}
+.ai-mem-text{font-size:12px;color:var(--text-secondary);flex:1;line-height:1.4}
+.ai-mem-del{width:20px;height:20px;border-radius:4px;border:1px solid var(--border-default);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--t-fast)}
+.ai-mem-del:hover{background:var(--red-dim);color:var(--red);border-color:rgba(224,82,82,0.3)}
+.ai-mem-del svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2}
+.ai-mem-empty{text-align:center;padding:20px;color:var(--text-muted);font-size:12px}
+
+/* File preview in input */
+.ai-file-preview{display:flex;align-items:center;gap:6px;background:var(--bg-active);border-radius:var(--r-sm);padding:5px 8px;font-size:11px;color:var(--text-secondary);margin-bottom:6px;flex-wrap:wrap}
+.ai-file-chip{display:flex;align-items:center;gap:5px;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:5px;padding:3px 8px}
+.ai-file-chip-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-file-chip-rm{cursor:pointer;color:var(--text-muted);transition:color var(--t-fast);margin-left:2px}
+.ai-file-chip-rm:hover{color:var(--red)}
+
+/* Provider config modal */
+.ai-provider-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+.ai-provider-row:last-child{border-bottom:none}
+.ai-provider-info{flex:1}
+.ai-provider-name{font-size:13px;color:var(--text-primary);font-weight:500}
+.ai-provider-desc{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* Responsive */
+@media(max-width:768px){
+  .ai-conv-sidebar{display:none}
+  .ai-conv-sidebar.mobile-show{display:flex;position:fixed;top:var(--topbar-h);left:0;bottom:0;z-index:300;box-shadow:var(--shadow-xl)}
+  .ai-bubble{max-width:100%}
+  .ai-msg-content{max-width:90%}
+}
+@media(prefers-reduced-motion:reduce){
+  .ai-thinking-dot,.ai-status-dot,.ai-voice-btn{animation:none!important}
+}
 </style>
+
+<!-- ================================================================
+     FLIP AI — PAGE HTML
+     ================================================================ -->
+<div class="page" id="page-ai" style="padding:0">
+  <div class="ai-shell">
+
+    <!-- Conversation Sidebar -->
+    <div class="ai-conv-sidebar" id="aiConvSidebar">
+      <div class="ai-conv-header">
+        <input type="text" class="ai-conv-search" id="aiConvSearch" placeholder="Search chats…" oninput="filterConversations(this.value)">
+        <button class="ai-new-btn" onclick="newAIConversation()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Chat
+        </button>
+      </div>
+      <div class="ai-conv-list" id="aiConvList">
+        <div class="ai-conv-empty">No conversations yet</div>
+      </div>
+    </div>
+
+    <!-- Main Chat -->
+    <div class="ai-main">
+
+      <!-- Chat topbar -->
+      <div class="ai-topbar">
+        <button class="ai-topbar-btn" onclick="toggleAIConvSidebar()" aria-label="Toggle sidebar" title="Conversations">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="ai-status-dot" id="aiStatusDot"></div>
+        <div class="ai-topbar-title" id="aiChatTitle">Flip AI</div>
+        <span class="ai-status-text" id="aiStatusText">Ready</span>
+        <button class="ai-topbar-btn" onclick="openAIMemoryModal()" aria-label="Memory" title="AI Memory">
+          <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+        </button>
+        <button class="ai-topbar-btn" onclick="openAISettings()" aria-label="AI Settings" title="AI Settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </button>
+        <button class="ai-topbar-btn" onclick="exportCurrentConversation()" aria-label="Export" title="Export Chat">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div class="ai-messages" id="aiMessages" role="log" aria-live="polite" aria-label="Chat messages"></div>
+
+      <!-- Action log -->
+      <div class="ai-action-log" id="aiActionLog"></div>
+
+      <!-- File preview row -->
+      <div class="ai-file-preview" id="aiFilePreview" style="display:none;padding:6px 16px"></div>
+
+      <!-- Input area -->
+      <div class="ai-input-area">
+        <div class="ai-input-row">
+          <div class="ai-input-wrap">
+            <textarea class="ai-textarea" id="aiTextarea" placeholder="Ask Flip AI anything… (⌘↵ to send)" rows="1"
+              onkeydown="aiHandleKeydown(event)" oninput="aiTextareaGrow(this)"></textarea>
+            <label class="ai-attach-btn" title="Attach file">
+              <input type="file" id="aiFileInput" style="display:none" accept=".txt,.pdf,.md,.json,.js,.py,.csv,image/*" onchange="aiHandleFileAttach(event)">
+              <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+            </label>
+            <button class="ai-voice-btn" id="aiVoiceBtn" onclick="toggleVoiceInput()" title="Voice input" aria-label="Voice input">
+              <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+          </div>
+          <button class="ai-send-btn" id="aiSendBtn" onclick="sendAIMessage()" aria-label="Send">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+          </button>
+          <button class="ai-stop-btn" id="aiStopBtn" onclick="stopAIGeneration()" aria-label="Stop" style="display:none">
+            <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          </button>
+        </div>
+        <div class="ai-input-meta">
+          <div class="ai-input-hint">
+            <span class="ai-provider-badge" id="aiProviderBadge">Local Engine</span>
+            <span>⌘↵ send · Shift↵ newline</span>
+          </div>
+          <span class="ai-char-count" id="aiCharCount"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Memory Modal -->
+<div class="modal-backdrop" id="aiMemoryModalBd">
+  <div class="modal" role="dialog" aria-label="AI Memory" style="max-width:500px">
+    <div class="modal-header">
+      <span class="modal-title">AI Memory</span>
+      <button class="modal-close" onclick="closeModal('aiMemoryModalBd')" aria-label="Close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body ai-memory-modal-body">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Flip AI remembers important context across conversations. You control what it stores.</p>
+      <div id="aiMemoryList"></div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn btn-danger btn-sm" onclick="clearAllAIMemory()">Clear All</button>
+      <button class="btn btn-ghost" onclick="closeModal('aiMemoryModalBd')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Settings Modal -->
+<div class="modal-backdrop" id="aiSettingsModalBd">
+  <div class="modal" role="dialog" aria-label="AI Settings" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title">AI Settings</span>
+      <button class="modal-close" onclick="closeModal('aiSettingsModalBd')" aria-label="Close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-section" style="margin-bottom:0">
+        <div class="settings-section-title">AI Provider</div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-title">Provider</div><div class="settings-row-sub">Where AI responses come from</div></div>
+          <select class="settings-select" id="aiProviderSelect" onchange="saveAISetting('provider',this.value);updateAIProviderUI()">
+            <option value="local">Local Rule Engine (offline)</option>
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI (GPT)</option>
+            <option value="gemini">Google (Gemini)</option>
+          </select>
+        </div>
+        <div class="settings-row" id="aiApiKeyRow">
+          <div class="settings-row-info"><div class="settings-row-title">API Key</div><div class="settings-row-sub">Stored locally, never sent to our servers</div></div>
+          <div style="display:flex;gap:8px">
+            <input type="password" class="settings-input" id="aiApiKeyInput" placeholder="sk-..." style="width:200px">
+            <button class="btn btn-secondary btn-sm" onclick="saveAIApiKey()">Save</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-title">Model</div><div class="settings-row-sub">Which model to use</div></div>
+          <select class="settings-select" id="aiModelSelect" onchange="saveAISetting('model',this.value)">
+            <option value="local">Local Engine</option>
+          </select>
+        </div>
+      </div>
+      <div class="settings-section" style="margin:12px 0 0">
+        <div class="settings-section-title">Behaviour</div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-title">Streaming</div><div class="settings-row-sub">Show responses as they generate</div></div>
+          <div class="toggle on" id="toggleAIStream" onclick="toggleAISetting('stream','toggleAIStream')"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-title">Long-term Memory</div><div class="settings-row-sub">Remember preferences across chats</div></div>
+          <div class="toggle on" id="toggleAIMemory" onclick="toggleAISetting('memory','toggleAIMemory')"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-title">Action Log</div><div class="settings-row-sub">Show what AI is doing step by step</div></div>
+          <div class="toggle" id="toggleAILog" onclick="toggleAISetting('actionLog','toggleAILog')"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-title">Voice Input</div><div class="settings-row-sub">Enable microphone (browser permission required)</div></div>
+          <div class="toggle" id="toggleAIVoice" onclick="toggleAISetting('voice','toggleAIVoice')"></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info"><div class="settings-row-title">Include Analytics Context</div><div class="settings-row-sub">Send productivity stats to AI</div></div>
+          <div class="toggle on" id="toggleAIAnalytics" onclick="toggleAISetting('includeAnalytics','toggleAIAnalytics')"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('aiSettingsModalBd')">Close</button>
+      <button class="btn btn-primary" onclick="testAIConnection()">Test Connection</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     FLIP AI — COMPLETE ENGINE
+     ================================================================ -->
+<script>
+/* ================================================================
+   FLIP AI AGENT SYSTEM
+   Provider-agnostic · Tool-use · Context-aware · Offline-safe
+   ================================================================ */
+
+// ── AI CONFIG & STATE ──────────────────────────────────────────
+const AI_VERSION = '1.0';
+const AI_STORE_KEY = 'fcos_ai';
+
+let AI_STATE = {
+  provider: 'local',      // local | anthropic | openai | gemini
+  model: 'local',
+  apiKey: '',
+  stream: true,
+  memory: true,
+  actionLog: false,
+  voice: false,
+  includeAnalytics: true,
+  conversations: [],       // [{id,title,messages:[],createdAt,updatedAt,summary}]
+  currentConvId: null,
+  memory_entries: [],      // [{id,category,text,createdAt}]
+  generating: false,
+  abortController: null,
+};
+
+const AI_MODELS = {
+  local:     ['local'],
+  anthropic: ['claude-opus-4-5','claude-sonnet-4-6','claude-haiku-4-5'],
+  openai:    ['gpt-4o','gpt-4o-mini','gpt-4-turbo','gpt-3.5-turbo'],
+  gemini:    ['gemini-1.5-pro','gemini-1.5-flash','gemini-2.0-flash'],
+};
+
+// Load AI state
+function loadAIState() {
+  try {
+    const raw = localStorage.getItem(AI_STORE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved && typeof saved === 'object') {
+      Object.keys(AI_STATE).forEach(k => {
+        if (saved[k] !== undefined) AI_STATE[k] = saved[k];
+      });
+      if (!Array.isArray(AI_STATE.conversations)) AI_STATE.conversations = [];
+      if (!Array.isArray(AI_STATE.memory_entries)) AI_STATE.memory_entries = [];
+    }
+  } catch(e) { console.warn('AI state load failed:', e.message); }
+}
+function saveAIState() {
+  try {
+    // Don't persist abortController or generating flag
+    const toSave = {...AI_STATE, generating: false, abortController: null};
+    localStorage.setItem(AI_STORE_KEY, JSON.stringify(toSave));
+  } catch(e) {}
+}
+
+// ── TOOL DEFINITIONS ───────────────────────────────────────────
+const AI_TOOLS = {
+  // TASKS
+  get_tasks: { desc:'Get all tasks', safe:true, fn: (args) => {
+    let tasks = APP.tasks || [];
+    if (args && args.filter === 'pending') tasks = tasks.filter(t=>!t.done);
+    if (args && args.filter === 'done') tasks = tasks.filter(t=>t.done);
+    if (args && args.priority) tasks = tasks.filter(t=>t.priority===args.priority);
+    return tasks.map(t=>({id:t.id,title:t.title,priority:t.priority,due:t.due,done:t.done,category:t.category,dur:t.dur}));
+  }},
+  create_task: { desc:'Create a new task', safe:true, fn: (args) => {
+    if (!args || !args.title) return {error:'title required'};
+    const task = {
+      id: APP.nextTaskId++, title: args.title,
+      desc: args.desc||'', category: args.category||'general',
+      priority: args.priority||'medium', due: args.due||'',
+      dur: args.dur||45, done: false, doneAt: null,
+      xp: ({low:10,medium:20,high:35,urgent:50}[args.priority||'medium']||20),
+      createdAt: new Date().toISOString(),
+    };
+    APP.tasks.unshift(task);
+    STORE.saveApp(); renderTasks(); renderDashboard(); updateSidebarStats();
+    addActivity(`AI created task: ${task.title}`, 'task', 0);
+    return {success:true, taskId:task.id, task};
+  }},
+  complete_task: { desc:'Mark task as done', safe:true, fn: (args) => {
+    const t = APP.tasks.find(x=>x.id===args.id || x.title.toLowerCase().includes((args.title||'').toLowerCase()));
+    if (!t) return {error:'task not found'};
+    if (!t.done) toggleTask(t.id);
+    return {success:true, task:t.title};
+  }},
+  update_task: { desc:'Update a task', safe:true, fn: (args) => {
+    const t = APP.tasks.find(x=>x.id===args.id || x.title.toLowerCase().includes((args.title||'').toLowerCase()));
+    if (!t) return {error:'task not found'};
+    if (args.due) t.due = args.due;
+    if (args.priority) t.priority = args.priority;
+    if (args.newTitle) t.title = args.newTitle;
+    if (args.dur) t.dur = args.dur;
+    STORE.saveApp(); renderTasks(); renderDashboard();
+    return {success:true, task:t};
+  }},
+  delete_task: { desc:'Delete a task — requires confirmation', safe:false, fn: (args) => {
+    const t = APP.tasks.find(x=>x.id===args.id || x.title.toLowerCase().includes((args.title||'').toLowerCase()));
+    if (!t) return {error:'task not found'};
+    APP.tasks = APP.tasks.filter(x=>x.id!==t.id);
+    STORE.saveApp(); renderTasks(); renderDashboard(); updateSidebarStats();
+    return {success:true, deleted:t.title};
+  }},
+  // FOCUS
+  start_focus: { desc:'Start focus timer', safe:true, fn: (args) => {
+    if (TIMER.isRunning) return {error:'Timer already running'};
+    const mins = args && args.duration ? parseInt(args.duration) : (APP.settings.focusDuration||25);
+    if (args && args.taskTitle) {
+      const t = APP.tasks.find(x=>!x.done && x.title.toLowerCase().includes(args.taskTitle.toLowerCase()));
+      if (t) { APP.currentFocusTask = t; STORE.saveApp(); }
+    }
+    TIMER.reset(mins*60);
+    navigateTo('focus');
+    setTimeout(()=>toggleTimer(), 200);
+    return {success:true, mins, task: APP.currentFocusTask?.title||null};
+  }},
+  get_focus_status: { desc:'Get current focus timer status', safe:true, fn: () => ({
+    state: TIMER.state,
+    remaining: TIMER.remaining(),
+    plannedSecs: TIMER.plannedSecs,
+    studyMinToday: APP.studyMinToday||0,
+    sessionsToday: APP.sessionsToday||0,
+    currentTask: APP.currentFocusTask?.title||null,
+  })},
+  // GOALS
+  get_goals: { desc:'Get all goals', safe:true, fn: () =>
+    (APP.goals||[]).map(g=>({id:g.id,name:g.name,current:g.current,target:g.target,deadline:g.deadline,pct:Math.round(g.current/g.target*100)}))
+  },
+  create_goal: { desc:'Create a goal', safe:true, fn: (args) => {
+    if (!args||!args.name) return {error:'name required'};
+    const goal = {id:APP.nextGoalId++,name:args.name,desc:args.desc||'',current:0,target:args.target||100,deadline:args.deadline||'',milestones:[],msDone:[],createdAt:new Date().toISOString()};
+    APP.goals.push(goal); STORE.saveApp(); renderGoals(); renderDashboard();
+    return {success:true, goal};
+  }},
+  update_goal_progress: { desc:'Update goal progress', safe:true, fn: (args) => {
+    const g = APP.goals.find(x=>x.id===args.id||x.name.toLowerCase().includes((args.name||'').toLowerCase()));
+    if (!g) return {error:'goal not found'};
+    g.current = args.value||g.current;
+    STORE.saveApp(); renderGoals(); renderDashboard();
+    return {success:true, goal:g.name, progress:`${g.current}/${g.target}`};
+  }},
+  // HABITS
+  get_habits: { desc:'Get habits and streaks', safe:true, fn: () =>
+    (APP.habits||[]).map(h=>({id:h.id,name:h.name,streak:h.streak,bestStreak:h.bestStreak,rate:Math.round(h.days.filter(Boolean).length/7*100)}))
+  },
+  create_habit: { desc:'Create a habit', safe:true, fn: (args) => {
+    if (!args||!args.name) return {error:'name required'};
+    const habit = {id:APP.nextHabitId++,name:args.name,emoji:args.emoji||'📚',days:[false,false,false,false,false,false,false],streak:0,bestStreak:0,createdAt:new Date().toISOString()};
+    APP.habits.push(habit); STORE.saveApp(); renderHabits(); updateSidebarStats();
+    return {success:true, habit:habit.name};
+  }},
+  // NOTES
+  get_notes: { desc:'Get notes', safe:true, fn: (args) => {
+    let notes = APP.notes||[];
+    if (args&&args.search) notes = notes.filter(n=>n.title.toLowerCase().includes(args.search.toLowerCase())||n.content.toLowerCase().includes(args.search.toLowerCase()));
+    return notes.map(n=>({id:n.id,title:n.title,content:n.content.slice(0,300),category:n.category,pinned:n.pinned}));
+  }},
+  create_note: { desc:'Create a note', safe:true, fn: (args) => {
+    if (!args||(!args.title&&!args.content)) return {error:'title or content required'};
+    const note = {id:APP.nextNoteId++,title:args.title||'AI Note',content:args.content||'',category:args.category||'general',pinned:false,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+    APP.notes.unshift(note); STORE.saveApp(); renderNotes();
+    return {success:true, note:note.title};
+  }},
+  // ANALYTICS
+  get_stats: { desc:'Get productivity statistics', safe:true, fn: () => {
+    const doneTasks = APP.tasks.filter(t=>t.done).length;
+    const habitRate = APP.habits.length>0 ? Math.round(APP.habits.reduce((a,h)=>a+h.days.filter(Boolean).length,0)/(APP.habits.length*7)*100) : 0;
+    const lvl = getLevel(APP.xp);
+    const weekStudy = (APP.weeklyData||[]).reduce((a,b)=>a+b,0);
+    return {
+      xp:APP.xp, level:lvl, levelTitle:getLevelTitle(lvl),
+      streak:APP.streak, bestStreak:APP.bestStreak||0,
+      studyMinToday:APP.studyMinToday||0, studyMinTotal:APP.studyMinTotal||0,
+      sessionsTotal:APP.sessionsTotal||0, sessionsToday:APP.sessionsToday||0,
+      tasksDone:doneTasks, tasksTotal:APP.tasks.length,
+      tasksPending:APP.tasks.filter(t=>!t.done).length,
+      habitRate, weekStudyMin:weekStudy,
+      goalsTotal:APP.goals.length, goalsDone:APP.goals.filter(g=>Number(g.current)>=Number(g.target)).length,
+    };
+  }},
+  // SCHEDULE
+  get_schedule: { desc:'Get today\'s time blocks', safe:true, fn: (args) => {
+    const date = args&&args.date ? args.date : localDateStr();
+    return (APP.timeBlocks||[]).filter(b=>b.date===date).sort((a,b)=>a.start.localeCompare(b.start));
+  }},
+  create_time_block: { desc:'Create a time block on the schedule', safe:true, fn: (args) => {
+    if (!args||!args.title||!args.start||!args.end) return {error:'title, start, end required'};
+    const block = {
+      id: APP.nextBlockId||1, title:args.title, desc:args.desc||'',
+      date:args.date||localDateStr(), start:args.start, end:args.end,
+      category:args.category||'study', priority:args.priority||'medium',
+      done:false, createdAt:new Date().toISOString(),
+    };
+    APP.nextBlockId = (APP.nextBlockId||1)+1;
+    if (!APP.timeBlocks) APP.timeBlocks = [];
+    const conflict = APP.timeBlocks.find(b=>b.date===block.date&&b.start<block.end&&b.end>block.start);
+    if (conflict) return {warning:`Overlaps with "${conflict.title}" (${conflict.start}–${conflict.end})`, block};
+    APP.timeBlocks.push(block); STORE.saveApp();
+    if (document.getElementById('page-schedule').classList.contains('active')) renderSchedule();
+    return {success:true, block};
+  }},
+  find_free_time: { desc:'Find free time slots today', safe:true, fn: (args) => {
+    const date = args&&args.date ? args.date : localDateStr();
+    const neededMins = args&&args.duration ? parseInt(args.duration) : 30;
+    const blocks = (APP.timeBlocks||[]).filter(b=>b.date===date).sort((a,b)=>a.start.localeCompare(b.start));
+    const workStart = args&&args.from ? args.from : '08:00';
+    const workEnd = args&&args.until ? args.until : '22:00';
+    const toMins = t => {const[h,m]=t.split(':').map(Number);return h*60+m;};
+    const toTime = m => `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+    let free=[], cursor=toMins(workStart);
+    const end=toMins(workEnd);
+    blocks.forEach(b=>{
+      const bs=toMins(b.start),be=toMins(b.end);
+      if(bs>cursor&&bs-cursor>=neededMins) free.push({start:toTime(cursor),end:toTime(bs),mins:bs-cursor});
+      if(be>cursor) cursor=be;
+    });
+    if(end-cursor>=neededMins) free.push({start:toTime(cursor),end:toTime(end),mins:end-cursor});
+    return {date, freeSlots:free, totalFreeMin:free.reduce((a,s)=>a+s.mins,0)};
+  }},
+  // GAMIFICATION
+  get_gamification: { desc:'Get XP, level, skills, quests', safe:true, fn: () => {
+    const lvl=getLevel(APP.xp);
+    const xpCur=APP.xp-xpForLevel(lvl), xpNxt=xpForNextLevel(lvl)-xpForLevel(lvl);
+    const quests = (APP.quests||[]).map(q=>({title:q.title,category:q.category,progress:q.progress,goal:q.goal,done:q.done,xp:q.xp,rank:q.rank}));
+    return {xp:APP.xp,level:lvl,levelTitle:getLevelTitle(lvl),xpToNext:xpNxt-xpCur,streak:APP.streak,questsDone:APP.questsDone||0,activeQuests:quests.filter(q=>!q.done).length,quests};
+  }},
+  // PLANNER
+  generate_plan: { desc:'Generate AI daily plan', safe:true, fn: (args) => {
+    generatePlan();
+    return {success:true, msg:'Plan generated and shown in AI Planner', blocks:(APP.plannerPlan||[]).length};
+  }},
+  apply_plan: { desc:'Apply the generated plan to schedule — requires confirmation', safe:false, fn: () => {
+    applyPlan();
+    return {success:true, msg:'Plan applied to Smart Schedule'};
+  }},
+  // SYSTEM
+  get_current_time: { desc:'Get current time and date', safe:true, fn: () => ({
+    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    date: localDateStr(), dayOfWeek: DAYS_FULL[localDayOfWeek()],
+    hour: new Date().getHours(),
+  })},
+  get_user_profile: { desc:'Get user profile', safe:true, fn: () => ({
+    name: APP.name||'Student',
+    level: getLevel(APP.xp), levelTitle: getLevelTitle(getLevel(APP.xp)),
+    xp: APP.xp, streak: APP.streak,
+    dailyGoalMin: APP.settings.dailyGoalMin||120,
+  })},
+  remember: { desc:'Store something in AI memory', safe:true, fn: (args) => {
+    if (!args||!args.text) return {error:'text required'};
+    if (!AI_STATE.memory) return {error:'memory is disabled in settings'};
+    aiAddMemory(args.category||'preference', args.text);
+    return {success:true, stored:args.text};
+  }},
+};
+
+// ── CONTEXT BUILDER ───────────────────────────────────────────
+function buildAIContext(userMessage) {
+  const now = new Date();
+  const msg = userMessage.toLowerCase();
+  const ctx = {
+    currentTime: now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    currentDate: localDateStr(),
+    dayOfWeek: DAYS_FULL[localDayOfWeek()],
+    userName: APP.name||'Student',
+  };
+
+  // Relevance-based data injection
+  const needsTasks    = /task|todo|finish|complete|pending|overdue|work|study/i.test(msg);
+  const needsGoals    = /goal|target|progress|achieve/i.test(msg);
+  const needsHabits   = /habit|routine|daily|consistent/i.test(msg);
+  const needsFocus    = /focus|timer|session|pomodoro|minute|hour/i.test(msg);
+  const needsSchedule = /schedule|block|time|calendar|when|slot|free|busy/i.test(msg);
+  const needsGamif    = /xp|level|quest|skill|streak|achievement|badge/i.test(msg);
+  const needsAnalytics= /productive|analytics|stats|week|progress|performance|score/i.test(msg);
+  const needsPlan     = /plan|today|day|priorit/i.test(msg);
+
+  // Always include basic profile
+  ctx.profile = { name:APP.name, level:getLevel(APP.xp), streak:APP.streak, xp:APP.xp };
+
+  if (needsTasks||needsPlan) {
+    ctx.pendingTasks = (APP.tasks||[]).filter(t=>!t.done).slice(0,10).map(t=>({
+      id:t.id, title:t.title, priority:t.priority, due:t.due, dur:t.dur, category:t.category
+    }));
+  }
+  if (needsGoals) ctx.goals = (APP.goals||[]).slice(0,5).map(g=>({name:g.name,pct:Math.round(g.current/g.target*100),deadline:g.deadline}));
+  if (needsHabits) ctx.habits = (APP.habits||[]).map(h=>({name:h.name,streak:h.streak,rate:Math.round(h.days.filter(Boolean).length/7*100)}));
+  if (needsFocus||needsAnalytics) ctx.focusStats = {studyMinToday:APP.studyMinToday||0,sessionsToday:APP.sessionsToday||0,studyMinTotal:APP.studyMinTotal||0,sessionsTotal:APP.sessionsTotal||0};
+  if (needsSchedule||needsPlan) {
+    const today = localDateStr();
+    ctx.todayBlocks = (APP.timeBlocks||[]).filter(b=>b.date===today).sort((a,b)=>a.start.localeCompare(b.start)).slice(0,8);
+  }
+  if (needsGamif) {
+    const lvl=getLevel(APP.xp);
+    ctx.gamification = {level:lvl,xpToNext:xpForNextLevel(lvl)-APP.xp+(xpForLevel(lvl)),activeQuests:(APP.quests||[]).filter(q=>!q.done).length,streak:APP.streak};
+  }
+  if (AI_STATE.includeAnalytics&&(needsAnalytics||needsPlan)) {
+    ctx.weeklyStudy = (APP.weeklyData||[]).reduce((a,b)=>a+b,0);
+    ctx.productivityScore = Math.round(
+      Math.min(100,Math.round((APP.studyMinToday||0)/(APP.settings.dailyGoalMin||120)*100))*0.4 +
+      (APP.tasks.length>0?Math.round(APP.tasks.filter(t=>t.done).length/APP.tasks.length*100):0)*0.35 +
+      (APP.habits.length>0?Math.round(APP.habits.filter(h=>h.days[localDayOfWeek()]).length/APP.habits.length*100):0)*0.25
+    );
+  }
+  if (AI_STATE.memory&&AI_STATE.memory_entries.length>0) {
+    ctx.userMemory = AI_STATE.memory_entries.slice(-8).map(m=>`[${m.category}] ${m.text}`);
+  }
+  return ctx;
+}
+
+// ── LOCAL RULE ENGINE ──────────────────────────────────────────
+// Full offline AI — no API needed
+function runLocalEngine(messages, ctx) {
+  const last = messages[messages.length-1];
+  const msg = (last?.content||'').toLowerCase().trim();
+  const userName = ctx.userName||'Student';
+
+  // ── INTENT DETECTION ──
+  // Plan day
+  if (/plan.*(my|today|the).*(day|schedule|evening|morning)|today.*plan|schedule.*today|what.*should.*do/i.test(msg)) {
+    return localPlanDay(ctx);
+  }
+  // Tasks queries
+  if (/show.*(my|all).*(tasks?|todo)|list.*(my|all).*(tasks?|pending)|what.*tasks?|pending tasks?|unfinished/i.test(msg)) {
+    return localShowTasks(ctx);
+  }
+  // Create task
+  if (/add.*task|create.*task|new.*task|task.*add|remind.*me.*to/i.test(msg)) {
+    return localCreateTaskSuggestion(msg, ctx);
+  }
+  // Focus start
+  if (/start.*(focus|session|pomodoro|timer)|focus.*(session|timer|now|start)|begin.*study/i.test(msg)) {
+    return localStartFocus(msg, ctx);
+  }
+  // Stats / analytics
+  if (/how.*productiv|stat|analytics|week.*study|how.*doing|progress|study.*time|focus.*time/i.test(msg)) {
+    return localShowStats(ctx);
+  }
+  // Streak
+  if (/streak|consecutive|days.*row|maintain/i.test(msg)) {
+    return localStreakInfo(ctx);
+  }
+  // Goals
+  if (/goal|target|achieve|working.*toward/i.test(msg)) {
+    return localGoalsInfo(ctx);
+  }
+  // Habits
+  if (/habit|routine|daily|consistent|track/i.test(msg)) {
+    return localHabitsInfo(ctx);
+  }
+  // XP / Level
+  if (/xp|level|exp|next level|rank|how.*level|how.*xp/i.test(msg)) {
+    return localXPInfo(ctx);
+  }
+  // Quests
+  if (/quest|mission|challenge|daily.*quest|active.*quest/i.test(msg)) {
+    return localQuestsInfo(ctx);
+  }
+  // Schedule
+  if (/schedule|time.*block|calendar|block.*time|when.*free|free.*time|busy/i.test(msg)) {
+    return localScheduleInfo(msg, ctx);
+  }
+  // Explain topic (study assistant)
+  if (/explain|what.*is|how.*does|teach|describe|define|meaning.*of/i.test(msg)) {
+    return localExplainTopic(msg, ctx);
+  }
+  // Quiz
+  if (/quiz|test.*me|practice.*question|exam.*prep|questions.*about/i.test(msg)) {
+    return localGenerateQuiz(msg, ctx);
+  }
+  // Flashcards
+  if (/flashcard|flash.*card|card.*study|memorize/i.test(msg)) {
+    return localGenerateFlashcards(msg, ctx);
+  }
+  // Study plan
+  if (/study.*plan|revision.*plan|exam.*plan|prepare.*for|weeks?.*until/i.test(msg)) {
+    return localStudyPlan(msg, ctx);
+  }
+  // Reschedule incomplete
+  if (/reschedule|move.*task|postpone|tomorrow|push.*back/i.test(msg)) {
+    return localReschedule(msg, ctx);
+  }
+  // Memory
+  if (/remember|note.*that|keep.*in.*mind|save.*that|don.*forget/i.test(msg)) {
+    return localRemember(msg, ctx);
+  }
+  // Greeting
+  if (/^(hi|hello|hey|good\s*(morning|afternoon|evening|night)|sup|what.*up)\b/i.test(msg)) {
+    return localGreeting(ctx);
+  }
+  // Help
+  if (/help|what.*can.*do|what.*can.*you|capabilities|commands|how.*work/i.test(msg)) {
+    return localHelp(ctx);
+  }
+  // Weekly review
+  if (/week.*review|review.*week|how.*week|week.*go/i.test(msg)) {
+    return localWeeklyReview(ctx);
+  }
+  // Productivity score
+  if (/score|productive.*score|daily.*score/i.test(msg)) {
+    return localProductivityScore(ctx);
+  }
+  // Mathematics help
+  if (/math|equation|calcul|algebra|geometry|quadratic|integral|derivative|formula/i.test(msg)) {
+    return localMathHelp(msg, ctx);
+  }
+  // English help
+  if (/english|grammar|vocabulary|writing|essay|sentence|word.*mean|synonym/i.test(msg)) {
+    return localEnglishHelp(msg, ctx);
+  }
+
+  // Default: smart context-aware response
+  return localDefault(msg, ctx);
+}
+
+// ── LOCAL ENGINE RESPONSE FUNCTIONS ───────────────────────────
+function localGreeting(ctx) {
+  const h = new Date().getHours();
+  const g = h<5?'night':h<12?'morning':h<17?'afternoon':'evening';
+  const pending = (ctx.pendingTasks||[]).length;
+  const studyToday = ctx.focusStats?.studyMinToday||0;
+  let body = `Good ${g}, **${ctx.userName}**! ✦\n\n`;
+  if (studyToday>0) body += `You've already studied **${fmtMins(studyToday)}** today — great start! `;
+  else body += `Ready to make today count? `;
+  if (pending>0) body += `You have **${pending} pending task${pending!==1?'s':''}** to work through.`;
+  body += `\n\nWhat can I help you with?`;
+  return {
+    text: body,
+    actions: ['Plan my day','Show my tasks','Start focus session','How am I doing?'],
+  };
+}
+function localHelp(ctx) {
+  return {
+    text: `## What Flip AI can do for you\n\n**📋 Task Management**\n- "Show my tasks" / "Create a task: [title]"\n- "Complete my math task" / "Move SAT task to tomorrow"\n\n**⏱ Focus & Time**\n- "Start a 45-minute focus session"\n- "Start focus for my English task"\n- "Find me a free 30-minute slot today"\n\n**📅 Planning**\n- "Plan my day" — generates a smart schedule\n- "Schedule study from 17:00 to 18:30"\n- "How much free time do I have today?"\n\n**📊 Analytics**\n- "How productive was I this week?"\n- "Show my streak and XP"\n- "What's my productivity score?"\n\n**🎮 Gamification**\n- "What quests should I complete today?"\n- "How much XP to the next level?"\n\n**📚 Study Assistant**\n- "Explain quadratic equations"\n- "Quiz me on biology"\n- "Create flashcards for [topic]"\n- "Make a 2-week study plan for my exam"\n\n**💾 Notes & Habits**\n- "Create a note about [topic]"\n- "Add [habit] to my habits"\n\nType anything naturally — I'll understand! 💬`,
+    actions: ['Plan my day','Show my tasks','How am I doing?','Start focus session'],
+  };
+}
+function localPlanDay(ctx) {
+  const now = new Date();
+  const h = now.getHours();
+  const pending = (ctx.pendingTasks||[]).slice(0,6);
+  const blocks = ctx.todayBlocks||[];
+  const studyLeft = Math.max(0,(ctx.profile?.dailyGoalMin||120)-(ctx.focusStats?.studyMinToday||0));
+
+  if (pending.length===0) {
+    return {
+      text: `## Today's Plan ✦\n\nYou have **no pending tasks** right now — great work! ${ctx.focusStats?.studyMinToday>0?`You've already studied **${fmtMins(ctx.focusStats.studyMinToday)}** today.`:''}\n\n**Suggestions:**\n- Review your goals for progress updates\n- Add new tasks for tomorrow\n- Take a well-earned break!\n\nWant me to generate a review session or create new tasks?`,
+      actions: ['Show my goals','Add a new task','Weekly review'],
+    };
+  }
+
+  const prioMap = {urgent:4,high:3,medium:2,low:1};
+  const sorted = [...pending].sort((a,b)=>(prioMap[b.priority]||2)-(prioMap[a.priority]||2));
+  let plan = `## Your Plan for Today 📋\n\n**${DAYS_FULL[localDayOfWeek()]}, ${MONTHS[now.getMonth()]} ${now.getDate()}** · ${fmtMins(studyLeft)} left to reach your daily goal\n\n`;
+
+  plan += `### 🎯 Priority Order\n`;
+  sorted.forEach((t,i)=>{ plan += `${i+1}. **${t.title}** — ${t.priority} priority${t.due?` · due ${fmtDue(t.due)}`:''}${t.dur?` · ${t.dur}m`:''}\n`; });
+
+  if (blocks.length>0) {
+    plan += `\n### 📅 Already Scheduled\n`;
+    blocks.forEach(b=>{ plan += `- **${b.start}–${b.end}** ${b.title}\n`; });
+  }
+
+  const suggested = [];
+  let cursor = Math.max(h*60+30, 9*60);
+  sorted.slice(0,3).forEach(t=>{
+    const dur = t.dur||45;
+    const endMins = cursor+dur;
+    if (endMins<=22*60) {
+      const s = `${String(Math.floor(cursor/60)).padStart(2,'0')}:${String(cursor%60).padStart(2,'0')}`;
+      const e = `${String(Math.floor(endMins/60)).padStart(2,'0')}:${String(endMins%60).padStart(2,'0')}`;
+      suggested.push({title:t.title,start:s,end:e,dur});
+      cursor = endMins+15;
+    }
+  });
+  if (suggested.length>0) {
+    plan += `\n### ⏰ Suggested Schedule\n`;
+    suggested.forEach(s=>{ plan += `- **${s.start}–${s.end}** ${s.title} (${s.dur}m)\n`; });
+    plan += `\nWant me to **add these blocks to your schedule**?`;
+  }
+
+  return {
+    text: plan,
+    actions: ['Apply schedule','Start focus session','Open schedule','Show my tasks'],
+    toolSuggestions: suggested.length>0 ? {action:'createBlocks', blocks:suggested} : null,
+  };
+}
+function localShowTasks(ctx) {
+  const pending = ctx.pendingTasks||[];
+  if (pending.length===0) return {text:'✅ You have **no pending tasks**! Everything is done. Want to add new ones?', actions:['Add a task','Show completed tasks','Plan my day']};
+  const prioMap = {urgent:4,high:3,medium:2,low:1};
+  const sorted = [...pending].sort((a,b)=>(prioMap[b.priority]||2)-(prioMap[a.priority]||2));
+  const urgent = sorted.filter(t=>t.priority==='urgent'||t.priority==='high');
+  let text = `## Your Pending Tasks (${pending.length})\n\n`;
+  if (urgent.length>0) {
+    text += `### 🔴 High Priority\n`;
+    urgent.forEach(t=>{ text += `- **${t.title}**${t.due?` · due ${fmtDue(t.due)}`:''}${t.dur?` · ${t.dur}m`:''}\n`; });
+    text += '\n';
+  }
+  const rest = sorted.filter(t=>t.priority!=='urgent'&&t.priority!=='high');
+  if (rest.length>0) {
+    text += `### 📋 Other Tasks\n`;
+    rest.forEach(t=>{ text += `- ${t.title}${t.due?` · due ${fmtDue(t.due)}`:''}${t.dur?` · ${t.dur}m`:''}\n`; });
+  }
+  return {text, actions:['Plan my day','Start focus session','Open tasks','Complete a task']};
+}
+function localCreateTaskSuggestion(msg, ctx) {
+  // Extract task name from message
+  const patterns = [/add.*task[:\s]+(.+)/i,/create.*task[:\s]+(.+)/i,/new.*task[:\s]+(.+)/i,/remind.*me.*to\s+(.+)/i,/task:\s*(.+)/i];
+  let taskName = null;
+  for (const p of patterns) { const m = msg.match(p); if (m) { taskName = m[1].replace(/['"]/g,'').trim(); break; } }
+  if (taskName && taskName.length>2) {
+    const result = AI_TOOLS.create_task.fn({title:taskName,priority:'medium'});
+    aiLog(`Created task: "${taskName}"`);
+    return {text:`✅ I've created the task **"${taskName}"** for you!\n\nYou can find it in your task list. Want to set a due date or priority?`, actions:['Open tasks','Set due date','Start focus on this task']};
+  }
+  return {text:`Sure! What would you like to call the task?\n\nYou can say something like:\n- *"Add task: Complete SAT practice test"*\n- *"Create task: Read chapter 5"*\n\nOr just tell me what needs to be done and I'll handle the rest.`, actions:['Open tasks']};
+}
+function localStartFocus(msg, ctx) {
+  const durMatch = msg.match(/(\d+)\s*(min|minute|m\b)/i);
+  const dur = durMatch ? parseInt(durMatch[1]) : (APP.settings.focusDuration||25);
+  const taskMatch = msg.match(/(?:for|on)\s+(?:my\s+)?(.{3,40})(?:\s+task)?$/i);
+  const taskHint = taskMatch ? taskMatch[1].toLowerCase() : null;
+  const relatedTask = taskHint ? (APP.tasks||[]).find(t=>!t.done&&t.title.toLowerCase().includes(taskHint)) : null;
+
+  const result = AI_TOOLS.start_focus.fn({duration:dur, taskTitle:relatedTask?.title});
+  aiLog(`Started ${dur}m focus session`);
+
+  let text = `▶️ **${dur}-minute focus session started!**\n\n`;
+  if (relatedTask) text += `Working on: **${relatedTask.title}**\n\n`;
+  text += `I've switched you to the Focus Timer. Stay in the zone — I'll be here when you're done! 🎯`;
+  return {text, actions:['Pause timer','How long left?','Add a task']};
+}
+function localShowStats(ctx) {
+  const stats = AI_TOOLS.get_stats.fn();
+  const goalPct = Math.min(100,Math.round((stats.studyMinToday/(APP.settings.dailyGoalMin||120))*100));
+  let text = `## Your Productivity Stats 📊\n\n`;
+  text += `**Today:** ${fmtMins(stats.studyMinToday)} studied · ${goalPct}% of daily goal · ${stats.sessionsToday} sessions\n\n`;
+  text += `**This Week:** ${fmtMins(ctx.weeklyStudy||0)} total study time\n\n`;
+  text += `**All Time:**\n- ${fmtMins(stats.studyMinTotal)} total study\n- ${stats.sessionsTotal} focus sessions\n- ${stats.tasksDone} tasks completed\n\n`;
+  text += `**Level:** ${stats.level} — ${stats.levelTitle} · ${stats.xp.toLocaleString()} XP\n`;
+  text += `**Streak:** 🔥 ${stats.streak} day${stats.streak!==1?'s':''} (best: ${stats.bestStreak})\n\n`;
+  if (goalPct>=100) text += `🎉 You've reached your daily study goal!`;
+  else if (goalPct>50) text += `📈 Great progress! ${fmtMins((APP.settings.dailyGoalMin||120)-stats.studyMinToday)} more to hit your goal.`;
+  else text += `⚡ You've got ${fmtMins((APP.settings.dailyGoalMin||120)-stats.studyMinToday)} left to reach your daily goal.`;
+  return {text, actions:['Open analytics','Plan my day','Start focus session']};
+}
+function localStreakInfo(ctx) {
+  const s = APP.streak||0, best = APP.bestStreak||0;
+  let text = `## Your Streak 🔥\n\n**Current streak:** ${s} day${s!==1?'s':''}\n**Best streak:** ${best} day${best!==1?'s':''}\n\n`;
+  if (s===0) text += `Start a focus session today to begin your streak!`;
+  else if (s<3) text += `You're building momentum! Keep studying daily to hit a 7-day streak.`;
+  else if (s<7) text += `You're on fire! ${7-s} more day${7-s!==1?'s':''} to hit the **7-day streak** achievement.`;
+  else if (s<30) text += `Incredible discipline! ${30-s} more day${30-s!==1?'s':''} to hit the **30-day streak**.`;
+  else text += `🏆 You're a consistency legend with a ${s}-day streak!`;
+  return {text, actions:['Start focus session','View achievements','Plan my day']};
+}
+function localGoalsInfo(ctx) {
+  const goals = ctx.goals || AI_TOOLS.get_goals.fn();
+  if (!goals||goals.length===0) return {text:"You don't have any goals yet. Want me to help you create one?", actions:['Create a goal','Open goals']};
+  let text = `## Your Goals 🎯\n\n`;
+  goals.forEach(g=>{ text += `**${g.name}** — ${g.pct||0}% complete${g.deadline?` · due ${fmtDue(g.deadline)}`:''}\n`; });
+  const done = goals.filter(g=>g.pct>=100).length;
+  if (done>0) text += `\n✅ ${done} goal${done!==1?'s':''} completed!`;
+  return {text, actions:['Open goals','Update goal progress','Create a goal']};
+}
+function localHabitsInfo(ctx) {
+  const habits = ctx.habits || AI_TOOLS.get_habits.fn();
+  if (!habits||habits.length===0) return {text:"You don't have any habits tracked yet. Want me to add one?", actions:['Add a habit','Open habits']};
+  let text = `## Your Habits 🔄\n\n`;
+  habits.forEach(h=>{ text += `${h.streak>0?'✅':'⭕'} **${h.name}** — 🔥 ${h.streak} day streak · ${h.rate}% this week\n`; });
+  const todayDone = (APP.habits||[]).filter(h=>h.days[localDayOfWeek()]).length;
+  text += `\n**Today:** ${todayDone}/${habits.length} habits completed`;
+  return {text, actions:['Open habits','Add a habit','Plan my day']};
+}
+function localXPInfo(ctx) {
+  const lvl = getLevel(APP.xp);
+  const xpCur = APP.xp - xpForLevel(lvl);
+  const xpNxt = xpForNextLevel(lvl) - xpForLevel(lvl);
+  const pct = Math.round(xpCur/xpNxt*100);
+  let text = `## XP & Level ✨\n\n**Level ${lvl}** — ${getLevelTitle(lvl)}\n**Total XP:** ${APP.xp.toLocaleString()}\n\n`;
+  text += `**Progress to Level ${lvl+1}:**\n${xpCur.toLocaleString()} / ${xpNxt.toLocaleString()} XP (${pct}%)\n`;
+  const needed = xpNxt-xpCur;
+  text += `\n**To next level:** ${needed.toLocaleString()} XP\n\n`;
+  text += `**How to earn XP:**\n- Complete a focus session (~25-80 XP)\n- Complete tasks (10-50 XP)\n- Track habits (10 XP each)\n- Complete quests (50-300 XP)`;
+  return {text, actions:['View gamification','View quests','Start focus session']};
+}
+function localQuestsInfo(ctx) {
+  const gam = AI_TOOLS.get_gamification.fn();
+  const active = (APP.quests||[]).filter(q=>!q.done).slice(0,5);
+  if (active.length===0) {
+    generateDailyQuests();
+    return {text:"I've generated some fresh quests for you! Check your Gamification page to see them.", actions:['Open gamification']};
+  }
+  let text = `## Active Quests ⚔️\n\n`;
+  active.forEach(q=>{
+    const pct = q.goal>0?Math.round(q.progress/q.goal*100):0;
+    text += `**${q.title}** [${q.rank||'C'}-Rank]\n${q.description||''} · ${q.progress||0}/${q.goal} · +${q.xp} XP\n\n`;
+  });
+  text += `Complete these to earn XP and level up faster!`;
+  return {text, actions:['Open gamification','Complete a quest','Start focus session']};
+}
+function localScheduleInfo(msg, ctx) {
+  const blocks = ctx.todayBlocks||[];
+  const freeResult = AI_TOOLS.find_free_time.fn({duration:30});
+  let text = `## Today's Schedule 📅\n\n`;
+  if (blocks.length===0) text += `**No blocks scheduled today.**\n\n`;
+  else {
+    blocks.forEach(b=>{ text += `**${b.start}–${b.end}** ${b.title}${b.done?' ✅':''}\n`; });
+    text += '\n';
+  }
+  if (freeResult.freeSlots.length>0) {
+    text += `**Free time today:**\n`;
+    freeResult.freeSlots.slice(0,4).forEach(s=>{ text += `- ${s.start}–${s.end} (${fmtMins(s.mins)})\n`; });
+  }
+  return {text, actions:['Open schedule','Plan my day','Add a time block']};
+}
+function localExplainTopic(msg, ctx) {
+  const topicMatch = msg.match(/(?:explain|what.*is|how.*does|teach.*me|describe|define|meaning.*of)\s+(.{2,60}?)[\?!\.]*$/i);
+  const topic = topicMatch ? topicMatch[1].trim() : msg.replace(/^(explain|what is|how does|teach me about|describe|define)\s*/i,'').trim();
+  return {
+    text: `## ${topic.charAt(0).toUpperCase()+topic.slice(1)}\n\nI'm your study assistant! I can help you understand **${topic}** using your existing knowledge as a starting point.\n\n**To give you the best explanation, tell me:**\n1. What level are you at? (beginner / intermediate / advanced)\n2. Which subject or context? (e.g., math, biology, physics)\n3. Do you want a quick overview or step-by-step breakdown?\n\nOr just ask: *"Explain [topic] simply"* or *"Explain [topic] step by step"* and I'll adapt!\n\n> 💡 **Pro tip:** The more specific your question, the better my explanation. Instead of "explain calculus", try "explain how to find derivatives of polynomial functions".`,
+    actions: [`Quiz me on ${topic}`,`Create flashcards for ${topic}`,`Study plan for ${topic}`],
+  };
+}
+function localGenerateQuiz(msg, ctx) {
+  const topicMatch = msg.match(/(?:quiz.*(?:me|on)|test.*me.*on|questions.*about|practice.*on)\s+(.{2,60}?)[\?!\.]*$/i);
+  const topic = topicMatch ? topicMatch[1].trim() : 'your chosen subject';
+  const sampleQ = [
+    {q:`What is the main characteristic of ${topic}?`,type:'open'},
+    {q:`Give an example of ${topic} in practice.`,type:'open'},
+    {q:`How does ${topic} relate to what you've studied this week?`,type:'open'},
+  ];
+  let text = `## Quiz: ${topic.charAt(0).toUpperCase()+topic.slice(1)} 📝\n\n`;
+  text += `Here are some questions to test your understanding:\n\n`;
+  sampleQ.forEach((q,i)=>{ text += `**Q${i+1}.** ${q.q}\n\n`; });
+  text += `Answer these in your reply and I'll give you feedback! Or tell me:\n- A specific topic you want to be quizzed on\n- How many questions you want\n- What difficulty level (easy / medium / hard)`;
+  return {text, actions:[`More questions on ${topic}`,`Create flashcards for ${topic}`,`Study plan`]};
+}
+function localGenerateFlashcards(msg, ctx) {
+  const topicMatch = msg.match(/flashcard.*(?:for|about|on)\s+(.{2,60}?)[\?!\.]*$/i);
+  const topic = topicMatch ? topicMatch[1].trim() : 'your topic';
+  let text = `## Flashcards: ${topic.charAt(0).toUpperCase()+topic.slice(1)} 🃏\n\n`;
+  text += `To generate accurate flashcards for **${topic}**, share:\n\n`;
+  text += `1. **Your notes** — paste them here and I'll extract key concepts\n2. **A topic name** — I'll create flashcard templates\n3. **Specific terms** — give me a list and I'll define each\n\nExample: *"Make flashcards for: mitosis, meiosis, DNA replication, protein synthesis"*\n\nI'll save them as a Note so you can review anytime.`;
+  return {text, actions:[`Quiz me on ${topic}`,`Create a study note`]};
+}
+function localStudyPlan(msg, ctx) {
+  const weeksMatch = msg.match(/(\d+)\s*week/i);
+  const daysMatch = msg.match(/(\d+)\s*day/i);
+  const weeks = weeksMatch ? parseInt(weeksMatch[1]) : 2;
+  const examMatch = msg.match(/(?:for|exam|test|about|on)\s+(.{3,40}?)(?:\s+in|\s+exam|$)/i);
+  const subject = examMatch ? examMatch[1].trim() : 'your exam';
+  let text = `## ${weeks}-Week Study Plan: ${subject.charAt(0).toUpperCase()+subject.slice(1)} 📚\n\n`;
+  text += `Here's a structured approach for the next **${weeks} weeks**:\n\n`;
+  const phases = weeks <= 1
+    ? [{name:'Review & Practice',days:'Days 1-5',focus:'Cover all key topics systematically'},{name:'Mock Tests',days:'Days 6-7',focus:'Simulate exam conditions'}]
+    : weeks <= 2
+    ? [{name:'Foundation',days:'Week 1',focus:'Cover all key topics and concepts'},{name:'Practice & Review',days:'Week 2 (Days 1-4)',focus:'Practice problems and past papers'},{name:'Final Revision',days:'Week 2 (Days 5-7)',focus:'Weak areas + mock exam'}]
+    : [{name:'Foundation',days:`Weeks 1-${Math.floor(weeks/3)}`,focus:'Cover all topics systematically'},{name:'Practice',days:`Weeks ${Math.floor(weeks/3)+1}-${Math.floor(weeks*2/3)}`,focus:'Exercises and problem sets'},{name:'Consolidation',days:`Week ${Math.floor(weeks*2/3)+1}-${weeks-1}`,focus:'Mock tests and review'},{name:'Final Revision',days:`Week ${weeks}`,focus:'Key concepts and exam technique'}];
+  phases.forEach(p=>{ text += `**${p.name}** (${p.days})\n${p.focus}\n\n`; });
+  text += `**Daily Schedule:**\n- Study: 2–3 focused sessions of 25–50 min\n- Review notes before sleep\n- Practice problems daily\n\nWant me to create the tasks and schedule blocks for this plan?`;
+  return {text, actions:[`Create study tasks`,`Schedule study blocks`,`Plan my day`]};
+}
+function localReschedule(msg, ctx) {
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  const tStr = localDateStr(tomorrow);
+  const pending = (APP.tasks||[]).filter(t=>!t.done&&t.due&&t.due<localDateStr());
+  if (pending.length===0) return {text:"You don't have any overdue tasks to reschedule. All your tasks are on track! 🎉", actions:['Show my tasks','Plan my day']};
+  let text = `## Tasks to Reschedule 📅\n\nYou have **${pending.length} overdue task${pending.length!==1?'s':''}**:\n\n`;
+  pending.forEach(t=>{ text += `- **${t.title}** (was due: ${fmtDue(t.due)})\n`; });
+  text += `\nShall I move these to **tomorrow (${DAYS_FULL[localDayOfWeek(tomorrow)]}, ${MONTHS[tomorrow.getMonth()]} ${tomorrow.getDate()})**?`;
+  return {
+    text,
+    actions: [`Yes, reschedule all to tomorrow`, `Schedule individually`, `Open tasks`],
+    toolSuggestions: {action:'rescheduleOverdue', tasks:pending, toDate:tStr},
+  };
+}
+function localRemember(msg, ctx) {
+  const patterns = [/remember.*that\s+(.+)/i,/note.*that\s+(.+)/i,/keep.*in.*mind.*that\s+(.+)/i,/don.*t.*forget.*that\s+(.+)/i,/i\s+(?:prefer|like|want|always)\s+(.+)/i];
+  let memory = null;
+  for (const p of patterns) { const m = msg.match(p); if (m) { memory = m[1].trim(); break; } }
+  if (!memory) memory = msg.replace(/^(?:remember|note|keep in mind|save that)/i,'').trim();
+  if (memory.length>5 && AI_STATE.memory) {
+    aiAddMemory('preference', memory);
+    return {text:`✅ Got it! I'll remember:\n\n> "${memory}"\n\nThis is saved in my memory and will help me give you better recommendations.`, actions:['View my memory','Plan my day']};
+  }
+  return {text:`I'll keep that in mind for this conversation! You can also open AI Memory (the database icon) to review and manage everything I remember.`, actions:['View my memory']};
+}
+function localWeeklyReview(ctx) {
+  const wd = APP.weeklyData||[0,0,0,0,0,0,0];
+  const total = wd.reduce((a,b)=>a+b,0);
+  const best = Math.max(...wd); const bestDay = DAYS_SHORT[wd.indexOf(best)];
+  const worst = wd.filter(d=>d>0).length>0 ? Math.min(...wd.filter(d=>d>0)) : 0;
+  const tasksDone = (APP.tasks||[]).filter(t=>t.done).length;
+  let text = `## Weekly Review 📈\n\n**Total study time:** ${fmtMins(total)}\n**Best day:** ${bestDay} (${fmtMins(best)})\n**Total sessions:** ${APP.sessionsTotal||0}\n**Tasks completed:** ${tasksDone}\n**Current streak:** 🔥 ${APP.streak||0} days\n\n`;
+  if (total>=600) text += `🏆 Exceptional week! You've logged ${fmtMins(total)} — that's serious dedication.\n\n`;
+  else if (total>=300) text += `✅ Solid week! ${fmtMins(total)} of focused study is meaningful progress.\n\n`;
+  else text += `📈 This week was a start. Even small sessions compound — aim for consistency over intensity.\n\n`;
+  text += `**Next week, focus on:**\n1. Maintain your ${APP.streak||0}-day streak\n2. Tackle your highest priority tasks first\n3. Aim for ${fmtMins(Math.max(total+30,90))} next week`;
+  return {text, actions:['Plan my day','Open analytics','Show my goals']};
+}
+function localProductivityScore(ctx) {
+  const goal = APP.settings.dailyGoalMin||120;
+  const studyPct = Math.min(100,Math.round((APP.studyMinToday||0)/goal*100));
+  const taskDone = (APP.tasks||[]).filter(t=>t.done).length;
+  const taskPct = APP.tasks.length>0?Math.round(taskDone/APP.tasks.length*100):0;
+  const habitsDone = (APP.habits||[]).filter(h=>h.days[localDayOfWeek()]).length;
+  const habitPct = APP.habits.length>0?Math.round(habitsDone/APP.habits.length*100):0;
+  const score = Math.round(studyPct*0.4+taskPct*0.35+habitPct*0.25);
+  let text = `## Today's Productivity Score: **${score}/100** ✦\n\n`;
+  text += `| Factor | Progress | Weight |\n|---|---|---|\n`;
+  text += `| Study Goal | ${studyPct}% (${fmtMins(APP.studyMinToday||0)}) | 40% |\n`;
+  text += `| Task Completion | ${taskPct}% (${taskDone}/${APP.tasks.length}) | 35% |\n`;
+  text += `| Habit Tracking | ${habitPct}% (${habitsDone}/${APP.habits.length}) | 25% |\n\n`;
+  if (score>=80) text += `🔥 Outstanding! You're having a highly productive day.`;
+  else if (score>=60) text += `✅ Good progress! A bit more focus time will push you higher.`;
+  else if (score>=40) text += `📈 You're getting started. Complete one more task and a habit to boost your score.`;
+  else text += `⚡ The day is still young! Start a focus session to build momentum.`;
+  return {text, actions:['Start focus session','Open analytics','Plan my day']};
+}
+function localMathHelp(msg, ctx) {
+  return {
+    text: `## Math Assistant 📐\n\nI can help you with mathematics! Here's what works best:\n\n**Ask me to:**\n- *"Explain [concept]"* — clear breakdown with examples\n- *"Solve [problem]"* — step-by-step solution\n- *"Create practice problems for [topic]"*\n- *"Quiz me on [chapter/topic]"*\n\n**I'm strong at:**\n- Algebra & equations\n- Geometry & trigonometry\n- Calculus (derivatives, integrals)\n- Statistics & probability\n- SAT/ACT math preparation\n\nWhat specific math concept or problem would you like help with?`,
+    actions: ['Explain quadratic equations','Solve step by step','Create practice problems','Quiz me on algebra'],
+  };
+}
+function localEnglishHelp(msg, ctx) {
+  return {
+    text: `## English Assistant 📝\n\nI can help improve your English skills!\n\n**Grammar & Writing:**\n- Correct my sentences\n- Explain grammar rules\n- Improve my essay/paragraph\n- Explain punctuation\n\n**Vocabulary:**\n- *"Give me 10 advanced vocabulary words"*\n- *"What does [word] mean?"*\n- *"Synonyms for [word]"*\n- *"Use [word] in a sentence"*\n\n**Practice:**\n- Reading comprehension questions\n- Writing prompts\n- Fill-in-the-blank exercises\n- SAT verbal practice\n\nWhat would you like to practice or improve?`,
+    actions: ['Grammar check my writing','Give me vocabulary words','Writing prompt','English practice quiz'],
+  };
+}
+function localDefault(msg, ctx) {
+  const pending = (ctx.pendingTasks||[]).length;
+  const studyToday = ctx.focusStats?.studyMinToday||0;
+  let text = `I understand you're asking about **"${msg.length>60?msg.slice(0,60)+'…':msg}"**.\n\n`;
+
+  // Try to be helpful based on context
+  if (msg.length < 10) {
+    text = `Could you tell me a bit more about what you need? I can help with:\n- Planning your day\n- Managing tasks and goals\n- Starting focus sessions\n- Study assistance (explanations, quizzes)\n- Analyzing your productivity\n\nJust ask naturally!`;
+  } else {
+    text += `I'm not sure exactly what you need here — could you rephrase or be more specific?\n\n`;
+    if (pending>0) text += `I notice you have **${pending} pending tasks**. Want me to help you prioritize them?\n`;
+    if (studyToday===0) text += `You haven't started studying yet today. Want me to plan a session?\n`;
+    text += `\nOr type **"help"** to see everything I can do for you.`;
+  }
+  return {text, actions:['Plan my day','Show my tasks','Help']};
+}
+
+// ── ANTHROPIC API PROVIDER ─────────────────────────────────────
+async function callAnthropicAPI(messages, ctx, onChunk) {
+  const key = AI_STATE.apiKey;
+  if (!key||!key.startsWith('sk-')) throw new Error('Invalid Anthropic API key. Set it in AI Settings.');
+  const systemPrompt = buildSystemPrompt(ctx);
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
+    body: JSON.stringify({
+      model: AI_STATE.model||'claude-sonnet-4-6',
+      max_tokens: 2048,
+      system: systemPrompt,
+      messages: messages.slice(-20).map(m=>({role:m.role,content:m.content})),
+      stream: AI_STATE.stream,
+    }),
+    signal: AI_STATE.abortController?.signal,
+  });
+  if (!resp.ok) {
+    const err = await resp.json().catch(()=>({error:{message:resp.statusText}}));
+    throw new Error(err.error?.message||`API error ${resp.status}`);
+  }
+  if (AI_STATE.stream) {
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let full = '';
+    while (true) {
+      const {done,value} = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      for (const line of chunk.split('\n')) {
+        if (line.startsWith('data: ')) {
+          try {
+            const d = JSON.parse(line.slice(6));
+            if (d.type==='content_block_delta'&&d.delta?.text) {
+              full += d.delta.text;
+              onChunk(d.delta.text, full);
+            }
+          } catch(e) {}
+        }
+      }
+    }
+    return full;
+  } else {
+    const data = await resp.json();
+    return data.content?.[0]?.text||'';
+  }
+}
+
+async function callOpenAIAPI(messages, ctx, onChunk) {
+  const key = AI_STATE.apiKey;
+  if (!key||!key.startsWith('sk-')) throw new Error('Invalid OpenAI API key.');
+  const systemPrompt = buildSystemPrompt(ctx);
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+    body: JSON.stringify({
+      model: AI_STATE.model||'gpt-4o-mini',
+      max_tokens: 2048,
+      messages:[{role:'system',content:systemPrompt},...messages.slice(-20).map(m=>({role:m.role,content:m.content}))],
+      stream: AI_STATE.stream,
+    }),
+    signal: AI_STATE.abortController?.signal,
+  });
+  if (!resp.ok) { const err=await resp.json().catch(()=>({error:{message:resp.statusText}})); throw new Error(err.error?.message||`API error ${resp.status}`); }
+  if (AI_STATE.stream) {
+    const reader=resp.body.getReader();const decoder=new TextDecoder();let full='';
+    while(true){const{done,value}=await reader.read();if(done)break;const chunk=decoder.decode(value);
+      for(const line of chunk.split('\n')){if(line.startsWith('data: ')&&line!=='data: [DONE]'){try{const d=JSON.parse(line.slice(6));const t=d.choices?.[0]?.delta?.content||'';if(t){full+=t;onChunk(t,full);}}catch(e){}}}
+    }
+    return full;
+  } else {const data=await resp.json();return data.choices?.[0]?.message?.content||'';}
+}
+
+async function callGeminiAPI(messages, ctx, onChunk) {
+  const key = AI_STATE.apiKey;
+  if (!key) throw new Error('Gemini API key required.');
+  const model = AI_STATE.model||'gemini-1.5-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+  const systemPrompt = buildSystemPrompt(ctx);
+  const contents = messages.slice(-20).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+  const resp = await fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({systemInstruction:{parts:[{text:systemPrompt}]},contents,generationConfig:{maxOutputTokens:2048}}),
+    signal:AI_STATE.abortController?.signal,
+  });
+  if(!resp.ok){const err=await resp.json().catch(()=>({}));throw new Error(err.error?.message||`API error ${resp.status}`);}
+  const data=await resp.json();
+  const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+  onChunk(text,text);return text;
+}
+
+function buildSystemPrompt(ctx) {
+  const mem = AI_STATE.memory_entries.slice(-5).map(m=>`[${m.category}] ${m.text}`).join('\n');
+  return `You are Flip AI, the intelligent productivity assistant built into FlipClock Study OS. You are helpful, precise, and student-focused.
+
+Current context:
+- User: ${ctx.userName}
+- Time: ${ctx.currentTime} on ${ctx.dayOfWeek}, ${ctx.currentDate}
+- Level: ${ctx.profile?.level} (${getLevelTitle(ctx.profile?.level||1)})
+- XP: ${ctx.profile?.xp?.toLocaleString()}
+- Streak: ${ctx.profile?.streak} days
+${ctx.pendingTasks?.length>0?`- Pending tasks: ${ctx.pendingTasks.map(t=>`"${t.title}" (${t.priority})`).join(', ')}`:''}
+${ctx.focusStats?`- Study today: ${fmtMins(ctx.focusStats.studyMinToday)} in ${ctx.focusStats.sessionsToday} sessions`:''}
+${ctx.goals?.length>0?`- Goals: ${ctx.goals.map(g=>`${g.name} ${g.pct}%`).join(', ')}`:''}
+${ctx.todayBlocks?.length>0?`- Today's schedule: ${ctx.todayBlocks.map(b=>`${b.start}-${b.end} ${b.title}`).join(', ')}`:''}
+${mem?`\nUser memory:\n${mem}`:''}
+
+You can help with: task management, focus sessions, scheduling, goal tracking, analytics, study assistance (explanations, quizzes, flashcards), gamification, and daily planning. Respond concisely, using markdown when it helps clarity. Be encouraging but not sycophantic.`;
+}
+
+// ── CONTEXT COMPACTION ────────────────────────────────────────
+function compactConversation(conv) {
+  if (!conv || conv.messages.length < 30) return conv;
+  const recent = conv.messages.slice(-20);
+  const older = conv.messages.slice(0,-20);
+  const summary = `[Conversation summary: This conversation covered ${older.length} messages. Topics included: ${[...new Set(older.filter(m=>m.role==='user').map(m=>m.content.slice(0,40)))].slice(0,5).join('; ')}]`;
+  const summaryMsg = {role:'system',content:summary,ts:new Date().toISOString(),id:'summary-'+Date.now()};
+  conv.messages = [summaryMsg,...recent];
+  conv.summary = summary;
+  return conv;
+}
+
+// ── CONVERSATION MANAGEMENT ───────────────────────────────────
+function getCurrentConv() {
+  return AI_STATE.conversations.find(c=>c.id===AI_STATE.currentConvId)||null;
+}
+function newAIConversation() {
+  const id = 'conv-'+Date.now();
+  const conv = {id, title:'New Chat', messages:[], createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(), summary:'', archived:false};
+  AI_STATE.conversations.unshift(conv);
+  AI_STATE.currentConvId = id;
+  saveAIState();
+  renderAIConvList();
+  renderAIMessages();
+  setAIChatTitle('New Chat');
+  const ta = document.getElementById('aiTextarea');
+  if (ta) ta.focus();
+}
+function selectConversation(id) {
+  AI_STATE.currentConvId = id;
+  saveAIState();
+  renderAIConvList();
+  const conv = getCurrentConv();
+  setAIChatTitle(conv?.title||'Chat');
+  renderAIMessages();
+}
+function renameConversation(id) {
+  const conv = AI_STATE.conversations.find(c=>c.id===id);
+  if (!conv) return;
+  const newTitle = prompt('Rename conversation:', conv.title);
+  if (newTitle?.trim()) { conv.title = newTitle.trim(); saveAIState(); renderAIConvList(); if (id===AI_STATE.currentConvId) setAIChatTitle(conv.title); }
+}
+function deleteConversation(id) {
+  confirmAction('Delete Conversation','Delete this conversation? Cannot be undone.',()=>{
+    AI_STATE.conversations = AI_STATE.conversations.filter(c=>c.id!==id);
+    if (AI_STATE.currentConvId===id) { AI_STATE.currentConvId = AI_STATE.conversations[0]?.id||null; }
+    saveAIState(); renderAIConvList(); renderAIMessages();
+  });
+}
+function filterConversations(q) {
+  renderAIConvList(q.toLowerCase());
+}
+function setAIChatTitle(t) {
+  const el=document.getElementById('aiChatTitle');if(el)el.textContent=t||'Flip AI';
+}
+function exportCurrentConversation() {
+  const conv = getCurrentConv();
+  if (!conv) { addToast('No conversation to export','','red'); return; }
+  const data = JSON.stringify(conv, null, 2);
+  const blob = new Blob([data],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`flip-ai-chat-${localDateStr()}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  addToast('Chat exported!','','green');
+}
+function toggleAIConvSidebar() {
+  const sb = document.getElementById('aiConvSidebar');
+  sb.classList.toggle('mobile-show');
+}
+
+// ── RENDERING ─────────────────────────────────────────────────
+function renderAIConvList(search='') {
+  const el = document.getElementById('aiConvList');
+  if (!el) return;
+  let convs = AI_STATE.conversations.filter(c=>!c.archived);
+  if (search) convs = convs.filter(c=>c.title.toLowerCase().includes(search));
+  if (convs.length===0) { el.innerHTML=`<div class="ai-conv-empty">${search?'No results':'No conversations yet'}</div>`; return; }
+  el.innerHTML = convs.map(c=>`
+    <div class="ai-conv-item${c.id===AI_STATE.currentConvId?' active':''}" onclick="selectConversation('${c.id}')">
+      <div class="ai-conv-title">${escHtml(c.title)}</div>
+      <div class="ai-conv-meta">${timeAgo(c.updatedAt)} · ${c.messages.filter(m=>m.role!=='system').length} msgs</div>
+      <div class="ai-conv-actions">
+        <button class="ai-conv-act-btn" onclick="event.stopPropagation();renameConversation('${c.id}')">Rename</button>
+        <button class="ai-conv-act-btn danger" onclick="event.stopPropagation();deleteConversation('${c.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderAIMessages() {
+  const el = document.getElementById('aiMessages');
+  if (!el) return;
+  const conv = getCurrentConv();
+  if (!conv || conv.messages.filter(m=>m.role!=='system').length===0) {
+    el.innerHTML = `
+      <div class="ai-welcome">
+        <div class="ai-welcome-icon">✦</div>
+        <div class="ai-welcome-title">Flip AI</div>
+        <div class="ai-welcome-sub">Your intelligent study operating system. Ask me anything about your tasks, schedule, goals, or studying — or just say hello.</div>
+        <div class="ai-quick-chips">
+          ${['📋 Plan my day','⏱ Start 25m focus','📊 Show my stats','🎮 Check my quests','📚 Explain a concept','🎯 Show my goals','📅 Find free time today','🔥 Check my streak'].map(c=>`<div class="ai-quick-chip" onclick="aiQuickSend('${c.replace(/^[^\s]+ /,'')}')">${c}</div>`).join('')}
+        </div>
+      </div>`;
+    return;
+  }
+  const msgs = conv.messages.filter(m=>m.role!=='system');
+  el.innerHTML = msgs.map(m=>renderAIMessage(m)).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function renderAIMessage(msg) {
+  const isUser = msg.role==='user';
+  const avatar = isUser ? (APP.name||'S')[0].toUpperCase() : '✦';
+  const time = msg.ts ? new Date(msg.ts).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
+  const rendered = isUser ? escHtml(msg.content).replace(/\n/g,'<br>') : renderMarkdown(msg.content);
+  const actions = isUser ? '' : `
+    <div class="ai-msg-actions">
+      <button class="ai-msg-action" onclick="copyAIMsg('${msg.id}')">Copy</button>
+      <button class="ai-msg-action" onclick="regenerateFromMsg('${msg.id}')">Regenerate</button>
+      <button class="ai-msg-action primary" onclick="saveAIMsgAsNote('${msg.id}')">Save to Notes</button>
+      <button class="ai-msg-action primary" onclick="createTaskFromMsg('${msg.id}')">Create Task</button>
+    </div>`;
+  const smartChips = (msg.smartActions&&msg.smartActions.length>0) ? `
+    <div class="ai-smart-actions">
+      ${msg.smartActions.map(a=>`<div class="ai-smart-chip" onclick="aiQuickSend('${escHtml(a)}')">${escHtml(a)}</div>`).join('')}
+    </div>` : '';
+  return `
+    <div class="ai-msg ${isUser?'user':'assistant'}" data-msg-id="${msg.id||''}">
+      <div class="ai-msg-avatar">${avatar}</div>
+      <div class="ai-msg-content">
+        <div class="ai-bubble" id="bubble-${msg.id||''}">${rendered}</div>
+        ${smartChips}
+        <div class="ai-msg-time">${time}</div>
+        ${actions}
+      </div>
+    </div>`;
+}
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  let t = escHtml(text);
+  // Headers
+  t = t.replace(/^### (.+)$/gm,'<h4>$1</h4>');
+  t = t.replace(/^## (.+)$/gm,'<h3>$1</h3>');
+  t = t.replace(/^# (.+)$/gm,'<h3>$1</h3>');
+  // Bold/italic
+  t = t.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
+  t = t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  t = t.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  // Code blocks
+  t = t.replace(/```[\w]*\n?([\s\S]*?)```/g,'<pre><code>$1</code></pre>');
+  t = t.replace(/`([^`]+)`/g,'<code>$1</code>');
+  // Blockquote
+  t = t.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
+  // Tables (basic)
+  t = t.replace(/\|(.+)\|\n\|[-| :]+\|\n((?:\|.+\|\n?)*)/g,(match,header,rows)=>{
+    const ths=header.split('|').filter(s=>s.trim()).map(s=>`<th>${s.trim()}</th>`).join('');
+    const trs=rows.trim().split('\n').map(row=>{const tds=row.split('|').filter(s=>s.trim()).map(s=>`<td>${s.trim()}</td>`).join('');return`<tr>${tds}</tr>`;}).join('');
+    return`<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+  });
+  // Lists
+  t = t.replace(/^(\d+)\. (.+)$/gm,'<li>$2</li>');
+  t = t.replace(/^[-*] (.+)$/gm,'<li>$1</li>');
+  t = t.replace(/(<li>.*<\/li>\n?)+/g,(match)=>`<ul>${match}</ul>`);
+  // Horizontal rule
+  t = t.replace(/^---$/gm,'<hr>');
+  // Paragraphs — blank line = paragraph break
+  t = t.split(/\n\n+/).map(para=>{
+    para = para.trim();
+    if (!para) return '';
+    if (/^<[hH][1-6]|^<ul|^<pre|^<blockquote|^<table|^<hr/.test(para)) return para;
+    return `<p>${para.replace(/\n/g,'<br>')}</p>`;
+  }).join('');
+  return t;
+}
+
+function addAIThinking() {
+  const el=document.getElementById('aiMessages');if(!el)return null;
+  const div=document.createElement('div');div.className='ai-msg assistant';div.id='ai-thinking-indicator';
+  div.innerHTML=`<div class="ai-msg-avatar">✦</div><div class="ai-msg-content"><div class="ai-thinking"><div class="ai-thinking-dot"></div><div class="ai-thinking-dot"></div><div class="ai-thinking-dot"></div></div></div>`;
+  el.appendChild(div);el.scrollTop=el.scrollHeight;return div;
+}
+function removeAIThinking() {const el=document.getElementById('ai-thinking-indicator');if(el)el.remove();}
+
+function addAIToolActivity(text) {
+  const el=document.getElementById('aiMessages');if(!el)return null;
+  const div=document.createElement('div');div.className='ai-msg assistant';div.id='ai-tool-activity';
+  div.innerHTML=`<div class="ai-msg-avatar">✦</div><div class="ai-msg-content"><div class="ai-tool-activity"><div class="ai-tool-spinner"></div><div class="ai-tool-text">${escHtml(text)}</div></div></div>`;
+  el.appendChild(div);el.scrollTop=el.scrollHeight;
+  return div;
+}
+function updateAIToolActivity(text) {const el=document.getElementById('ai-tool-activity');if(el){const t=el.querySelector('.ai-tool-text');if(t)t.textContent=text;}}
+function removeAIToolActivity() {const el=document.getElementById('ai-tool-activity');if(el)el.remove();}
+
+function setAIStatus(status) {
+  const dot=document.getElementById('aiStatusDot');
+  const txt=document.getElementById('aiStatusText');
+  const map={ready:{cls:'',text:'Ready'},thinking:{cls:'thinking',text:'Thinking…'},streaming:{cls:'thinking',text:'Generating…'},offline:{cls:'offline',text:'Offline — Local Engine'},error:{cls:'offline',text:'Error'}};
+  const s=map[status]||map.ready;
+  if(dot){dot.className='ai-status-dot';if(s.cls)dot.classList.add(s.cls);}
+  if(txt)txt.textContent=s.text;
+}
+
+// ── SEND MESSAGE ──────────────────────────────────────────────
+async function sendAIMessage() {
+  const ta=document.getElementById('aiTextarea');
+  if(!ta)return;
+  const text=(ta.value||'').trim();
+  if(!text||AI_STATE.generating)return;
+  // Create conversation if needed
+  if(!AI_STATE.currentConvId||!getCurrentConv()) newAIConversation();
+  ta.value='';ta.style.height='';
+  updateCharCount('');
+  // Add user message
+  const userMsg = {id:'msg-'+Date.now(),role:'user',content:text,ts:new Date().toISOString()};
+  const conv = getCurrentConv();
+  conv.messages.push(userMsg);
+  // Auto-title after first message
+  if(conv.messages.filter(m=>m.role!=='system').length===1) {
+    conv.title = text.slice(0,50)+(text.length>50?'…':'');
+  }
+  conv.updatedAt=new Date().toISOString();
+  saveAIState();
+  appendAIMessage(userMsg);
+  renderAIConvList();
+  // Disable send
+  AI_STATE.generating=true;
+  setAISending(true);
+  setAIStatus('thinking');
+  // Handle file attachments
+  let attachedContent = '';
+  if (pendingAttachments.length>0) {
+    attachedContent = '\n\n[Attached files:\n'+pendingAttachments.map(a=>`${a.name}: ${a.content.slice(0,500)}`).join('\n')+']';
+    pendingAttachments=[];
+    const fp=document.getElementById('aiFilePreview');if(fp)fp.style.display='none';fp.innerHTML='';
+  }
+  const fullContent = text + attachedContent;
+  conv.messages[conv.messages.length-1].content = fullContent;
+  // Build context
+  const ctx = buildAIContext(fullContent);
+  // Context compaction
+  if (conv.messages.length>30) compactConversation(conv);
+  try {
+    AI_STATE.abortController = new AbortController();
+    let responseText='';
+    let smartActions=[];
+    if(AI_STATE.provider==='local'||!AI_STATE.apiKey) {
+      addAIThinking();
+      aiLog('Analyzing request…');
+      await new Promise(r=>setTimeout(r,400+Math.random()*300));
+      removeAIThinking();
+      const result = runLocalEngine(conv.messages.filter(m=>m.role!=='system'), ctx);
+      responseText = result.text||'';
+      smartActions = result.actions||[];
+      // Handle tool suggestions
+      if(result.toolSuggestions) await handleToolSuggestion(result.toolSuggestions);
+      aiLog('Response generated');
+    } else {
+      const thinking=addAIThinking();
+      aiLog(`Calling ${AI_STATE.provider} API…`);
+      setAIStatus('streaming');
+      // Streaming bubble
+      removeAIThinking();
+      const streamMsgId='stream-'+Date.now();
+      const streamMsg={id:streamMsgId,role:'assistant',content:'',ts:new Date().toISOString(),smartActions:[]};
+      appendAIMessage(streamMsg);
+      const onChunk=(chunk,full)=>{
+        responseText=full;
+        const bubble=document.getElementById('bubble-'+streamMsgId);
+        if(bubble)bubble.innerHTML=renderMarkdown(full)+'<span style="opacity:0.5;animation:aiPulse 1s infinite">▋</span>';
+        const msgs=document.getElementById('aiMessages');if(msgs)msgs.scrollTop=msgs.scrollHeight;
+      };
+      if(AI_STATE.provider==='anthropic') responseText=await callAnthropicAPI(conv.messages.filter(m=>m.role!=='system'),ctx,onChunk);
+      else if(AI_STATE.provider==='openai') responseText=await callOpenAIAPI(conv.messages.filter(m=>m.role!=='system'),ctx,onChunk);
+      else if(AI_STATE.provider==='gemini') responseText=await callGeminiAPI(conv.messages.filter(m=>m.role!=='system'),ctx,onChunk);
+      // Remove stream placeholder
+      const streamEl=document.querySelector(`[data-msg-id="${streamMsgId}"]`);
+      if(streamEl)streamEl.remove();
+      aiLog('Response received');
+    }
+    // Add final assistant message
+    const assistantMsg={id:'msg-'+Date.now(),role:'assistant',content:responseText,ts:new Date().toISOString(),smartActions};
+    conv.messages.push(assistantMsg);
+    conv.updatedAt=new Date().toISOString();
+    saveAIState();
+    appendAIMessage(assistantMsg);
+    renderAIConvList();
+    setAIStatus('ready');
+    // Auto-memory: extract preferences
+    if(AI_STATE.memory&&/remember|prefer|always|like to/i.test(text)) {
+      aiLog('Checking for memory to store…');
+    }
+  } catch(err) {
+    removeAIThinking();removeAIToolActivity();
+    if(err.name==='AbortError'){addToast('AI generation stopped','','');setAIStatus('ready');}
+    else {
+      const errMsg={id:'err-'+Date.now(),role:'assistant',content:`❌ **Something went wrong**\n\n${err.message}\n\nYour FlipClock OS data is safe. Try again or check AI Settings.`,ts:new Date().toISOString(),smartActions:['Check AI Settings','Try local engine']};
+      const c=getCurrentConv();if(c){c.messages.push(errMsg);c.updatedAt=new Date().toISOString();saveAIState();}
+      appendAIMessage(errMsg);
+      setAIStatus('error');
+      console.warn('[Flip AI] Error:', err);
+    }
+  } finally {
+    AI_STATE.generating=false;AI_STATE.abortController=null;
+    setAISending(false);
+  }
+}
+
+async function handleToolSuggestion(suggestion) {
+  if (!suggestion) return;
+  if (suggestion.action==='createBlocks') {
+    const today = localDateStr();
+    suggestion.blocks.forEach(b=>{
+      AI_TOOLS.create_time_block.fn({title:b.title,start:b.start,end:b.end,date:today,category:'study',priority:'medium'});
+    });
+    aiLog(`Created ${suggestion.blocks.length} schedule blocks`);
+  }
+  if (suggestion.action==='rescheduleOverdue') {
+    suggestion.tasks.forEach(t=>{ t.due=suggestion.toDate; });
+    STORE.saveApp(); renderTasks(); renderDashboard();
+    aiLog(`Rescheduled ${suggestion.tasks.length} tasks to ${suggestion.toDate}`);
+  }
+}
+
+function appendAIMessage(msg) {
+  const el=document.getElementById('aiMessages');if(!el)return;
+  // Clear welcome screen if present
+  const welcome=el.querySelector('.ai-welcome');if(welcome)welcome.remove();
+  const html=renderAIMessage(msg);
+  const div=document.createElement('div');div.innerHTML=html;
+  while(div.firstChild)el.appendChild(div.firstChild);
+  el.scrollTop=el.scrollHeight;
+}
+
+function stopAIGeneration() {
+  if(AI_STATE.abortController)AI_STATE.abortController.abort();
+  AI_STATE.generating=false;setAISending(false);setAIStatus('ready');
+  removeAIThinking();removeAIToolActivity();
+}
+function setAISending(sending) {
+  const send=document.getElementById('aiSendBtn'),stop=document.getElementById('aiStopBtn');
+  if(send)send.style.display=sending?'none':'flex';
+  if(stop)stop.style.display=sending?'flex':'none';
+}
+
+function aiQuickSend(text) {
+  const ta=document.getElementById('aiTextarea');if(ta){ta.value=text;sendAIMessage();}
+}
+
+async function regenerateFromMsg(msgId) {
+  const conv=getCurrentConv();if(!conv)return;
+  const idx=conv.messages.findIndex(m=>m.id===msgId);
+  if(idx>0){
+    conv.messages=conv.messages.slice(0,idx);
+    saveAIState();renderAIMessages();
+    const lastUser=conv.messages.filter(m=>m.role==='user').slice(-1)[0];
+    if(lastUser)await sendAIMessage();
+  }
+}
+function copyAIMsg(msgId) {
+  const conv=getCurrentConv();if(!conv)return;
+  const msg=conv.messages.find(m=>m.id===msgId);if(!msg)return;
+  navigator.clipboard.writeText(msg.content).then(()=>addToast('Copied to clipboard','','green')).catch(()=>addToast('Copy failed','','red'));
+}
+function saveAIMsgAsNote(msgId) {
+  const conv=getCurrentConv();if(!conv)return;
+  const msg=conv.messages.find(m=>m.id===msgId);if(!msg)return;
+  AI_TOOLS.create_note.fn({title:`AI Note — ${new Date().toLocaleDateString()}`,content:msg.content,category:'general'});
+  addToast('Saved to Notes!','','green');
+}
+function createTaskFromMsg(msgId) {
+  openTaskModal();addToast('Task modal opened','Fill in the details','');
+}
+
+// ── INPUT HANDLING ─────────────────────────────────────────────
+function aiHandleKeydown(e) {
+  if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();sendAIMessage();}
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAIMessage();}
+}
+function aiTextareaGrow(el) {
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,120)+'px';
+  updateCharCount(el.value);
+}
+function updateCharCount(val) {
+  const el=document.getElementById('aiCharCount');
+  if(el&&val.length>50)el.textContent=`${val.length} chars`;
+  else if(el)el.textContent='';
+}
+
+// File attachments
+let pendingAttachments=[];
+function aiHandleFileAttach(event) {
+  const files=event.target.files;if(!files.length)return;
+  Array.from(files).forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const content=e.target.result;
+      pendingAttachments.push({name:file.name,content:String(content).slice(0,3000),type:file.type});
+      renderFilePreview();
+    };
+    if(file.type.startsWith('image/'))reader.readAsDataURL(file);
+    else reader.readAsText(file);
+  });
+  event.target.value='';
+}
+function renderFilePreview() {
+  const fp=document.getElementById('aiFilePreview');if(!fp)return;
+  if(pendingAttachments.length===0){fp.style.display='none';fp.innerHTML='';return;}
+  fp.style.display='flex';
+  fp.innerHTML='<span style="font-size:11px;color:var(--text-muted);margin-right:4px">Attached:</span>'+pendingAttachments.map((a,i)=>`
+    <div class="ai-file-chip">
+      <span>${a.type.startsWith('image/')?' 🖼':'📄'}</span>
+      <span class="ai-file-chip-name">${escHtml(a.name)}</span>
+      <span class="ai-file-chip-rm" onclick="removeAttachment(${i})">✕</span>
+    </div>`).join('');
+}
+function removeAttachment(i){pendingAttachments.splice(i,1);renderFilePreview();}
+
+// Voice input
+let voiceRecognition=null;
+function toggleVoiceInput() {
+  if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){addToast('Voice not supported in this browser','','red');return;}
+  if(!AI_STATE.voice){addToast('Enable voice in AI Settings','','');return;}
+  const btn=document.getElementById('aiVoiceBtn');
+  if(voiceRecognition){voiceRecognition.stop();voiceRecognition=null;if(btn)btn.classList.remove('listening');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  voiceRecognition=new SR();voiceRecognition.lang='en-US';voiceRecognition.continuous=false;voiceRecognition.interimResults=false;
+  voiceRecognition.onresult=e=>{const t=e.results[0][0].transcript;const ta=document.getElementById('aiTextarea');if(ta)ta.value=t;aiTextareaGrow(ta);};
+  voiceRecognition.onend=()=>{voiceRecognition=null;if(btn)btn.classList.remove('listening');};
+  voiceRecognition.onerror=e=>{addToast('Voice error: '+e.error,'','red');voiceRecognition=null;if(btn)btn.classList.remove('listening');};
+  voiceRecognition.start();if(btn)btn.classList.add('listening');
+}
+
+// ── ACTION LOG ─────────────────────────────────────────────────
+function aiLog(text) {
+  if(!AI_STATE.actionLog)return;
+  const el=document.getElementById('aiActionLog');if(!el)return;
+  el.classList.add('visible');
+  const t=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const item=document.createElement('div');item.className='ai-log-item';
+  item.innerHTML=`<span class="ai-log-time">${t}</span><span class="ai-log-text">${escHtml(text)}</span>`;
+  el.appendChild(item);el.scrollTop=el.scrollHeight;
+}
+
+// ── MEMORY ─────────────────────────────────────────────────────
+function aiAddMemory(category, text) {
+  const mem={id:'mem-'+Date.now(),category,text,createdAt:new Date().toISOString()};
+  AI_STATE.memory_entries.push(mem);
+  if(AI_STATE.memory_entries.length>50)AI_STATE.memory_entries=AI_STATE.memory_entries.slice(-50);
+  saveAIState();
+}
+function openAIMemoryModal() {renderAIMemoryList();openModal('aiMemoryModalBd');}
+function renderAIMemoryList() {
+  const el=document.getElementById('aiMemoryList');if(!el)return;
+  if(!AI_STATE.memory_entries.length){el.innerHTML='<div class="ai-mem-empty">No memories stored yet. I\'ll remember things you tell me to keep in mind.</div>';return;}
+  el.innerHTML=AI_STATE.memory_entries.slice().reverse().map(m=>`
+    <div class="ai-mem-item">
+      <span class="ai-mem-cat">${m.category}</span>
+      <span class="ai-mem-text">${escHtml(m.text)}</span>
+      <button class="ai-mem-del" onclick="deleteAIMemory('${m.id}')" aria-label="Delete"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`).join('');
+}
+function deleteAIMemory(id) {
+  AI_STATE.memory_entries=AI_STATE.memory_entries.filter(m=>m.id!==id);
+  saveAIState();renderAIMemoryList();addToast('Memory deleted');
+}
+function clearAllAIMemory() {
+  confirmAction('Clear All Memory','Delete all AI memory? This cannot be undone.',()=>{
+    AI_STATE.memory_entries=[];saveAIState();renderAIMemoryList();addToast('Memory cleared');
+  });
+}
+
+// ── AI SETTINGS ────────────────────────────────────────────────
+function openAISettings() {
+  syncAISettingsUI();openModal('aiSettingsModalBd');
+}
+function syncAISettingsUI() {
+  const sel=document.getElementById('aiProviderSelect');if(sel)sel.value=AI_STATE.provider;
+  updateAIProviderUI();
+  setToggle('toggleAIStream',AI_STATE.stream!==false);
+  setToggle('toggleAIMemory',AI_STATE.memory!==false);
+  setToggle('toggleAILog',AI_STATE.actionLog||false);
+  setToggle('toggleAIVoice',AI_STATE.voice||false);
+  setToggle('toggleAIAnalytics',AI_STATE.includeAnalytics!==false);
+}
+function updateAIProviderUI() {
+  const provider=document.getElementById('aiProviderSelect')?.value||'local';
+  const keyRow=document.getElementById('aiApiKeyRow');
+  const modelSel=document.getElementById('aiModelSelect');
+  const badge=document.getElementById('aiProviderBadge');
+  if(keyRow)keyRow.style.display=provider==='local'?'none':'flex';
+  if(modelSel){
+    modelSel.innerHTML=(AI_MODELS[provider]||['local']).map(m=>`<option value="${m}"${AI_STATE.model===m?' selected':''}>${m}</option>`).join('');
+    if(AI_STATE.model&&modelSel.querySelector(`[value="${AI_STATE.model}"]`))modelSel.value=AI_STATE.model;
+  }
+  if(badge){
+    const labels={local:'Local Engine',anthropic:'Claude',openai:'GPT',gemini:'Gemini'};
+    badge.textContent=labels[provider]||provider;
+  }
+}
+function saveAIApiKey() {
+  const val=document.getElementById('aiApiKeyInput')?.value?.trim();
+  if(!val){addToast('Enter an API key','','red');return;}
+  AI_STATE.apiKey=val;
+  AI_STATE.provider=document.getElementById('aiProviderSelect')?.value||AI_STATE.provider;
+  AI_STATE.model=document.getElementById('aiModelSelect')?.value||AI_STATE.model;
+  saveAIState();updateAIProviderUI();addToast('API key saved','','green');
+}
+function saveAISetting(key,val){AI_STATE[key]=val;saveAIState();}
+function toggleAISetting(key,toggleId){AI_STATE[key]=!AI_STATE[key];setToggle(toggleId,AI_STATE[key]);saveAIState();}
+async function testAIConnection() {
+  if(AI_STATE.provider==='local'){addToast('Local engine is always available ✅','','green');return;}
+  if(!AI_STATE.apiKey){addToast('Enter an API key first','','red');return;}
+  addToast('Testing connection…','','');
+  try{
+    const testMsg=[{role:'user',content:'Reply with exactly: OK'}];
+    let result='';
+    if(AI_STATE.provider==='anthropic')result=await callAnthropicAPI(testMsg,{},()=>{});
+    else if(AI_STATE.provider==='openai')result=await callOpenAIAPI(testMsg,{},()=>{});
+    else if(AI_STATE.provider==='gemini')result=await callGeminiAPI(testMsg,{},()=>{});
+    if(result)addToast('Connection successful! ✅',AI_STATE.provider+' is working','green');
+  }catch(e){addToast('Connection failed',e.message,'red');}
+}
+
+// ── NAV INTEGRATION ───────────────────────────────────────────
+// Extend navigateTo to handle 'ai' page
+const _origNavigateTo = navigateTo;
+window.navigateTo = function(pageId) {
+  _origNavigateTo(pageId);
+  if (pageId==='ai') {
+    const el=document.getElementById('page-ai');
+    if(el)el.classList.add('active');
+    // Remove active from other pages (already done by _origNavigateTo, but page-ai uses display:flex)
+    document.querySelectorAll('.page').forEach(p=>{if(p.id!=='page-ai')p.classList.remove('active');});
+    if(!AI_STATE.currentConvId||!getCurrentConv()) {
+      if(AI_STATE.conversations.length===0)newAIConversation();
+      else AI_STATE.currentConvId=AI_STATE.conversations[0].id;
+    }
+    renderAIConvList();renderAIMessages();
+    setAIStatus(AI_STATE.provider==='local'?'offline':'ready');
+  }
+};
+
+// Add AI to CMD list
+CMD_LIST.push(
+  {label:'Open Flip AI',icon:'focus',shortcut:'I',action:()=>navigateTo('ai')},
+  {label:'AI: Plan my day',icon:'chart',shortcut:'',action:()=>{navigateTo('ai');setTimeout(()=>aiQuickSend('Plan my day'),300);}},
+  {label:'AI: Show my tasks',icon:'task',shortcut:'',action:()=>{navigateTo('ai');setTimeout(()=>aiQuickSend('Show my tasks'),300);}},
+  {label:'AI: Start focus session',icon:'focus',shortcut:'',action:()=>{navigateTo('ai');setTimeout(()=>aiQuickSend('Start a 25-minute focus session'),300);}},
+  {label:'AI: Weekly review',icon:'chart',shortcut:'',action:()=>{navigateTo('ai');setTimeout(()=>aiQuickSend('Give me a weekly review'),300);}}
+);
+// Add page title
+PAGE_TITLES['ai']='Flip AI';
+
+// ── BOOT AI ────────────────────────────────────────────────────
+(function BOOT_AI() {
+  try {
+    loadAIState();
+    // Status badge
+    const badge=document.getElementById('aiProviderBadge');
+    if(badge){const l={local:'Local Engine',anthropic:'Claude',openai:'GPT',gemini:'Gemini'};badge.textContent=l[AI_STATE.provider]||'Local Engine';}
+    // Ensure AI nav item gets click handler (already handled by navigateTo patch)
+    const aiNav=document.getElementById('navAI');
+    if(aiNav)aiNav.addEventListener('click',()=>navigateTo('ai'));
+    // Set initial status
+    setTimeout(()=>setAIStatus(AI_STATE.provider==='local'?'offline':'ready'),200);
+    console.log('[Flip AI] Initialized ✅ — Provider:',AI_STATE.provider);
+  } catch(e) {
+    console.warn('[Flip AI] Boot error (non-fatal):', e.message);
+    // AI failure never crashes the app — just show offline status
+  }
+})();
+</script>
 </body>
 </html>
