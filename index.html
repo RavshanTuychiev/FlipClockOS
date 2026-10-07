@@ -6458,7 +6458,7 @@ const AI_MODELS = {
   local:     ['local'],
   anthropic: ['claude-opus-4-5','claude-sonnet-4-6','claude-haiku-4-5'],
   openai:    ['gpt-4o','gpt-4o-mini','gpt-4-turbo','gpt-3.5-turbo'],
-  gemini:    ['gemini-1.5-pro','gemini-1.5-flash','gemini-2.0-flash'],
+  gemini:    ['gemini-2.0-flash-lite','gemini-1.5-flash','gemini-1.5-pro'],
 };
 
 // Load AI state
@@ -7254,7 +7254,7 @@ async function callOpenAIAPI(messages, ctx, onChunk) {
 async function callGeminiAPI(messages, ctx, onChunk) {
   const key = AI_STATE.apiKey;
   if (!key) throw new Error('Gemini API key required.');
-  const model = AI_STATE.model||'gemini-1.5-flash';
+  const model = AI_STATE.model||'gemini-2.0-flash-lite';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
   const systemPrompt = buildSystemPrompt(ctx);
   const contents = messages.slice(-20).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
