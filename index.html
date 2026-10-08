@@ -4037,6 +4037,10 @@ function navigateTo(pageId) {
   if (titleEl) titleEl.textContent = PAGE_TITLES[pageId] || pageId;
   closeMobileSidebar();
   // Trigger page-specific renders
+  // AI page needs display:flex not display:block — apply inline to override .page.active rule
+  const aiPage = document.getElementById('page-ai');
+  if (aiPage) aiPage.style.display = pageId === 'ai' ? 'flex' : 'none';
+
   switch(pageId) {
     case 'dashboard': renderDashboard(); break;
     case 'tasks': renderTasks(); break;
@@ -4051,6 +4055,15 @@ function navigateTo(pageId) {
     case 'gamification': renderGamification(); break;
     case 'schedule': renderSchedule(); break;
     case 'planner': renderPlanner(); break;
+    case 'ai':
+      if (!AI_STATE.currentConvId || !getCurrentConv()) {
+        if (AI_STATE.conversations.length === 0) newAIConversation();
+        else AI_STATE.currentConvId = AI_STATE.conversations[0].id;
+      }
+      renderAIConvList();
+      renderAIMessages();
+      setAIStatus(AI_STATE.provider === 'local' ? 'offline' : 'ready');
+      break;
   }
 }
 
@@ -7814,23 +7827,7 @@ async function testAIConnection() {
 }
 
 // ── NAV INTEGRATION ───────────────────────────────────────────
-// Extend navigateTo to handle 'ai' page
-const _origNavigateTo = navigateTo;
-window.navigateTo = function(pageId) {
-  _origNavigateTo(pageId);
-  if (pageId==='ai') {
-    const el=document.getElementById('page-ai');
-    if(el)el.classList.add('active');
-    // Remove active from other pages (already done by _origNavigateTo, but page-ai uses display:flex)
-    document.querySelectorAll('.page').forEach(p=>{if(p.id!=='page-ai')p.classList.remove('active');});
-    if(!AI_STATE.currentConvId||!getCurrentConv()) {
-      if(AI_STATE.conversations.length===0)newAIConversation();
-      else AI_STATE.currentConvId=AI_STATE.conversations[0].id;
-    }
-    renderAIConvList();renderAIMessages();
-    setAIStatus(AI_STATE.provider==='local'?'offline':'ready');
-  }
-};
+// 'ai' case is handled directly inside navigateTo switch above
 
 // Add AI to CMD list
 CMD_LIST.push(
