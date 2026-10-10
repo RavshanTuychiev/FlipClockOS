@@ -6475,7 +6475,7 @@ const AI_MODELS = {
   local:     ['local'],
   anthropic: ['claude-opus-4-5','claude-sonnet-4-6','claude-haiku-4-5'],
   openai:    ['gpt-4o','gpt-4o-mini','gpt-4-turbo','gpt-3.5-turbo'],
-  gemini:    ['gemini-2.0-flash-lite','gemini-1.5-flash','gemini-1.5-pro'],
+  gemini:    ['gemini-2.5-flash-lite','gemini-2.5-flash','gemini-1.5-flash','gemini-1.5-pro'],
 };
 
 // Load AI state
@@ -7372,7 +7372,7 @@ async function callOpenAIAPI(messages, ctx, onChunk) {
 async function callGeminiAPI(messages, ctx, onChunk) {
   const key = AI_STATE.apiKey;
   if (!key) throw new Error('Gemini API key required. Enter it in AI Settings.');
-  const model = AI_STATE.model || 'gemini-2.0-flash-lite';
+  const model = AI_STATE.model || 'gemini-2.5-flash-lite';
   const systemPrompt = buildSystemPrompt(ctx);
   const useStream = AI_STATE.stream !== false;
 
@@ -8091,6 +8091,12 @@ PAGE_TITLES['ai']='Flip AI';
     const aiNav=document.getElementById('navAI');
     if(aiNav)aiNav.addEventListener('click',()=>navigateTo('ai'));
     // Set initial status
+    // Migrate deprecated model saved in localStorage
+    if (AI_STATE.model === 'gemini-2.0-flash-lite') {
+      AI_STATE.model = 'gemini-2.5-flash-lite';
+      saveAIState();
+      console.log('[Flip AI] Migrated gemini-2.0-flash-lite → gemini-2.5-flash-lite');
+    }
     setTimeout(()=>setAIStatus(AI_STATE.provider==='local'?'offline':'ready'),200);
     console.log('[Flip AI] Initialized ✅ — Provider:',AI_STATE.provider);
   } catch(e) {
