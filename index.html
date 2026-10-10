@@ -7196,95 +7196,284 @@ function localDefault(msg, ctx) {
 }
 
 // ── ANTHROPIC API PROVIDER ─────────────────────────────────────
+// ── PROVIDER: ANTHROPIC ───────────────────────────────────────
+// Requires: anthropic-dangerous-direct-browser-access header for browser CORS (2024+)
+// Docs: https://docs.anthropic.com/en/api/messages
 async function callAnthropicAPI(messages, ctx, onChunk) {
   const key = AI_STATE.apiKey;
-  if (!key||!key.startsWith('sk-')) throw new Error('Invalid Anthropic API key. Set it in AI Settings.');
+  if (!key || !key.startsWith('sk-')) throw new Error('Invalid Anthropic API key. Keys start with "sk-ant-".');
+  const model = AI_STATE.model || 'claude-haiku-4-5';
   const systemPrompt = buildSystemPrompt(ctx);
+  const useStream = AI_STATE.stream !== false;
+
+  // Filter to only user/assistant roles, ensure alternating (Anthropic requires it)
+  const filtered = messages.slice(-20)
+    .filter(m => m.role === 'user' || m.role === 'assistant')
+    .filter(m => m.content && m.content.trim());
+  // Deduplicate consecutive same-role messages by merging content
+  const deduped = [];
+  for (const m of filtered) {
+    if (deduped.length > 0 && deduped[deduped.length-1].role === m.role) {
+      deduped[deduped.length-1].content += '\n' + m.content;
+    } else {
+      deduped.push({role: m.role, content: m.content});
+    }
+  }
+  // Must start with user
+  while (deduped.length > 0 && deduped[0].role !== 'user') deduped.shift();
+  if (deduped.length === 0) throw new Error('No valid messages to send.');
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-api-key': key,
+    'anthropic-version': '2023-06-01',
+    'anthropic-dangerous-direct-browser-access': 'true', // required for browser CORS
+  };
+  if (useStream) headers['anthropic-beta'] = 'messages-2023-12-15';
+
+  const body = {
+    model,
+    max_tokens: 2048,
+    system: systemPrompt,
+    messages: deduped,
+    stream: useStream,
+  };
+
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: {'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
-    body: JSON.stringify({
-      model: AI_STATE.model||'claude-sonnet-4-6',
-      max_tokens: 2048,
-      system: systemPrompt,
-      messages: messages.slice(-20).map(m=>({role:m.role,content:m.content})),
-      stream: AI_STATE.stream,
-    }),
+    headers,
+    body: JSON.stringify(body),
     signal: AI_STATE.abortController?.signal,
   });
+
   if (!resp.ok) {
-    const err = await resp.json().catch(()=>({error:{message:resp.statusText}}));
-    throw new Error(err.error?.message||`API error ${resp.status}`);
+    let errMsg = `Anthropic API error ${resp.status}`;
+    try {
+      const err = await resp.json();
+      errMsg = err.error?.message || err.message || errMsg;
+      if (resp.status === 401) errMsg = 'Invalid Anthropic API key.';
+      if (resp.status === 403) errMsg = 'Anthropic API key lacks permissions.';
+      if (resp.status === 429) errMsg = 'Anthropic rate limit or quota exceeded.';
+      if (resp.status === 404) errMsg = `Model "${model}" not found on Anthropic.`;
+    } catch(e) {}
+    throw new Error(errMsg);
   }
-  if (AI_STATE.stream) {
+
+  if (useStream) {
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let full = '';
+    let buf = '';
     while (true) {
-      const {done,value} = await reader.read();
+      const {done, value} = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value);
-      for (const line of chunk.split('\n')) {
-        if (line.startsWith('data: ')) {
-          try {
-            const d = JSON.parse(line.slice(6));
-            if (d.type==='content_block_delta'&&d.delta?.text) {
-              full += d.delta.text;
-              onChunk(d.delta.text, full);
-            }
-          } catch(e) {}
-        }
+      buf += decoder.decode(value, {stream: true});
+      const lines = buf.split('\n');
+      buf = lines.pop() || ''; // keep incomplete line in buffer
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (!raw || raw === '[DONE]') continue;
+        try {
+          const d = JSON.parse(raw);
+          // Anthropic SSE: content_block_delta with delta.type=text_delta
+          if (d.type === 'content_block_delta' && d.delta?.type === 'text_delta' && d.delta.text) {
+            full += d.delta.text;
+            onChunk(d.delta.text, full);
+          }
+        } catch(e) {}
       }
     }
     return full;
   } else {
     const data = await resp.json();
-    return data.content?.[0]?.text||'';
+    const text = data.content?.[0]?.text || '';
+    onChunk(text, text);
+    return text;
   }
 }
 
+// ── PROVIDER: OPENAI ──────────────────────────────────────────
+// Docs: https://platform.openai.com/docs/api-reference/chat/create
 async function callOpenAIAPI(messages, ctx, onChunk) {
   const key = AI_STATE.apiKey;
-  if (!key||!key.startsWith('sk-')) throw new Error('Invalid OpenAI API key.');
+  if (!key || !key.startsWith('sk-')) throw new Error('Invalid OpenAI API key. Keys start with "sk-".');
+  const model = AI_STATE.model || 'gpt-4o-mini';
   const systemPrompt = buildSystemPrompt(ctx);
+  const useStream = AI_STATE.stream !== false;
+
+  // Filter valid messages with content
+  const filtered = messages.slice(-20)
+    .filter(m => (m.role === 'user' || m.role === 'assistant') && m.content && m.content.trim())
+    .map(m => ({role: m.role, content: m.content}));
+
+  const body = {
+    model,
+    max_tokens: 2048,
+    messages: [{role: 'system', content: systemPrompt}, ...filtered],
+    stream: useStream,
+  };
+
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
-    body: JSON.stringify({
-      model: AI_STATE.model||'gpt-4o-mini',
-      max_tokens: 2048,
-      messages:[{role:'system',content:systemPrompt},...messages.slice(-20).map(m=>({role:m.role,content:m.content}))],
-      stream: AI_STATE.stream,
-    }),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`,
+    },
+    body: JSON.stringify(body),
     signal: AI_STATE.abortController?.signal,
   });
-  if (!resp.ok) { const err=await resp.json().catch(()=>({error:{message:resp.statusText}})); throw new Error(err.error?.message||`API error ${resp.status}`); }
-  if (AI_STATE.stream) {
-    const reader=resp.body.getReader();const decoder=new TextDecoder();let full='';
-    while(true){const{done,value}=await reader.read();if(done)break;const chunk=decoder.decode(value);
-      for(const line of chunk.split('\n')){if(line.startsWith('data: ')&&line!=='data: [DONE]'){try{const d=JSON.parse(line.slice(6));const t=d.choices?.[0]?.delta?.content||'';if(t){full+=t;onChunk(t,full);}}catch(e){}}}
+
+  if (!resp.ok) {
+    let errMsg = `OpenAI API error ${resp.status}`;
+    try {
+      const err = await resp.json();
+      errMsg = err.error?.message || errMsg;
+      if (resp.status === 401) errMsg = 'Invalid OpenAI API key.';
+      if (resp.status === 429) errMsg = 'OpenAI rate limit or quota exceeded. Check your billing.';
+      if (resp.status === 404) errMsg = `Model "${model}" not found on OpenAI.`;
+    } catch(e) {}
+    throw new Error(errMsg);
+  }
+
+  if (useStream) {
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let full = '';
+    let buf = '';
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, {stream: true});
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (!raw || raw === '[DONE]') continue;
+        try {
+          const d = JSON.parse(raw);
+          const t = d.choices?.[0]?.delta?.content || '';
+          if (t) { full += t; onChunk(t, full); }
+        } catch(e) {}
+      }
     }
     return full;
-  } else {const data=await resp.json();return data.choices?.[0]?.message?.content||'';}
+  } else {
+    const data = await resp.json();
+    const text = data.choices?.[0]?.message?.content || '';
+    onChunk(text, text);
+    return text;
+  }
 }
 
+// ── PROVIDER: GOOGLE GEMINI ───────────────────────────────────
+// Docs: https://ai.google.dev/gemini-api/docs/text-generation
 async function callGeminiAPI(messages, ctx, onChunk) {
   const key = AI_STATE.apiKey;
-  if (!key) throw new Error('Gemini API key required.');
-  const model = AI_STATE.model||'gemini-2.0-flash-lite';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+  if (!key) throw new Error('Gemini API key required. Enter it in AI Settings.');
+  const model = AI_STATE.model || 'gemini-2.0-flash-lite';
   const systemPrompt = buildSystemPrompt(ctx);
-  const contents = messages.slice(-20).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
-  const resp = await fetch(url, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({systemInstruction:{parts:[{text:systemPrompt}]},contents,generationConfig:{maxOutputTokens:2048}}),
-    signal:AI_STATE.abortController?.signal,
-  });
-  if(!resp.ok){const err=await resp.json().catch(()=>({}));throw new Error(err.error?.message||`API error ${resp.status}`);}
-  const data=await resp.json();
-  const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
-  onChunk(text,text);return text;
+  const useStream = AI_STATE.stream !== false;
+
+  // Gemini requires strictly alternating user/model turns, starting with user
+  // Map assistant→model, filter system messages, merge consecutive same-role
+  const raw = messages.slice(-20)
+    .filter(m => (m.role === 'user' || m.role === 'assistant') && m.content && m.content.trim())
+    .map(m => ({role: m.role === 'assistant' ? 'model' : 'user', parts: [{text: m.content}]}));
+
+  // Merge consecutive same-role messages
+  const contents = [];
+  for (const m of raw) {
+    if (contents.length > 0 && contents[contents.length-1].role === m.role) {
+      contents[contents.length-1].parts[0].text += '\n' + m.parts[0].text;
+    } else {
+      contents.push({role: m.role, parts: [{text: m.parts[0].text}]});
+    }
+  }
+  // Must start with user
+  while (contents.length > 0 && contents[0].role !== 'user') contents.shift();
+  if (contents.length === 0) throw new Error('No valid messages to send to Gemini.');
+
+  const requestBody = {
+    systemInstruction: {parts: [{text: systemPrompt}]},
+    contents,
+    generationConfig: {maxOutputTokens: 2048, temperature: 0.7},
+  };
+
+  if (useStream) {
+    // Use streamGenerateContent endpoint with SSE
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${key}`;
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(requestBody),
+      signal: AI_STATE.abortController?.signal,
+    });
+    if (!resp.ok) {
+      let errMsg = `Gemini API error ${resp.status}`;
+      try {
+        const err = await resp.json();
+        errMsg = err.error?.message || errMsg;
+        if (resp.status === 400) errMsg = `Gemini bad request — check model name "${model}" or message format.`;
+        if (resp.status === 403) errMsg = 'Invalid Gemini API key or API not enabled in Google Cloud.';
+        if (resp.status === 429) errMsg = 'Gemini quota exceeded. Wait or upgrade your plan.';
+        if (resp.status === 404) errMsg = `Gemini model "${model}" not found. Check model name.`;
+      } catch(e) {}
+      throw new Error(errMsg);
+    }
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let full = '';
+    let buf = '';
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, {stream: true});
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw2 = line.slice(6).trim();
+        if (!raw2) continue;
+        try {
+          const d = JSON.parse(raw2);
+          const t = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          if (t) { full += t; onChunk(t, full); }
+        } catch(e) {}
+      }
+    }
+    return full;
+  } else {
+    // Non-streaming: generateContent
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(requestBody),
+      signal: AI_STATE.abortController?.signal,
+    });
+    if (!resp.ok) {
+      let errMsg = `Gemini API error ${resp.status}`;
+      try {
+        const err = await resp.json();
+        errMsg = err.error?.message || errMsg;
+        if (resp.status === 400) errMsg = `Gemini bad request — check model name "${model}".`;
+        if (resp.status === 403) errMsg = 'Invalid Gemini API key or API not enabled.';
+        if (resp.status === 429) errMsg = 'Gemini quota exceeded.';
+        if (resp.status === 404) errMsg = `Gemini model "${model}" not found.`;
+      } catch(e) {}
+      throw new Error(errMsg);
+    }
+    const data = await resp.json();
+    // Check for blocked content
+    if (data.promptFeedback?.blockReason) {
+      throw new Error(`Gemini blocked: ${data.promptFeedback.blockReason}`);
+    }
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    onChunk(text, text);
+    return text;
+  }
 }
 
 function buildSystemPrompt(ctx) {
@@ -7807,27 +7996,74 @@ function updateAIProviderUI() {
   }
 }
 function saveAIApiKey() {
-  const val=document.getElementById('aiApiKeyInput')?.value?.trim();
-  if(!val){addToast('Enter an API key','','red');return;}
-  AI_STATE.apiKey=val;
-  AI_STATE.provider=document.getElementById('aiProviderSelect')?.value||AI_STATE.provider;
-  AI_STATE.model=document.getElementById('aiModelSelect')?.value||AI_STATE.model;
-  saveAIState();updateAIProviderUI();addToast('API key saved','','green');
+  const val = (document.getElementById('aiApiKeyInput')?.value||'').trim();
+  if (!val) { addToast('Enter an API key first','','red'); return; }
+  // Validate key format per provider
+  const provider = document.getElementById('aiProviderSelect')?.value || AI_STATE.provider;
+  if (provider === 'anthropic' && !val.startsWith('sk-')) {
+    addToast('Anthropic keys start with "sk-ant-"','Check your key','red'); return;
+  }
+  if (provider === 'openai' && !val.startsWith('sk-')) {
+    addToast('OpenAI keys start with "sk-"','Check your key','red'); return;
+  }
+  // Gemini keys typically start with 'AIzaSy' but we don't block other formats
+  AI_STATE.apiKey = val;
+  AI_STATE.provider = provider;
+  AI_STATE.model = document.getElementById('aiModelSelect')?.value || AI_STATE.model;
+  saveAIState();
+  updateAIProviderUI();
+  // Show masked key confirmation (never show full key)
+  const masked = val.slice(0,8) + '…' + val.slice(-4);
+  addToast('API key saved ✅', `${provider} · ${masked}`, 'green');
+  // Clear the input field so key isn't visible
+  const inp = document.getElementById('aiApiKeyInput');
+  if (inp) inp.value = '';
+  // Update provider badge
+  const badge = document.getElementById('aiProviderBadge');
+  const labels = {local:'Local Engine',anthropic:'Claude',openai:'GPT',gemini:'Gemini'};
+  if (badge) badge.textContent = labels[provider] || provider;
 }
-function saveAISetting(key,val){AI_STATE[key]=val;saveAIState();}
-function toggleAISetting(key,toggleId){AI_STATE[key]=!AI_STATE[key];setToggle(toggleId,AI_STATE[key]);saveAIState();}
+
+function saveAISetting(key, val) {
+  AI_STATE[key] = val;
+  saveAIState();
+}
+function toggleAISetting(key, toggleId) {
+  AI_STATE[key] = !AI_STATE[key];
+  setToggle(toggleId, AI_STATE[key]);
+  saveAIState();
+}
+
 async function testAIConnection() {
-  if(AI_STATE.provider==='local'){addToast('Local engine is always available ✅','','green');return;}
-  if(!AI_STATE.apiKey){addToast('Enter an API key first','','red');return;}
-  addToast('Testing connection…','','');
-  try{
-    const testMsg=[{role:'user',content:'Reply with exactly: OK'}];
-    let result='';
-    if(AI_STATE.provider==='anthropic')result=await callAnthropicAPI(testMsg,{},()=>{});
-    else if(AI_STATE.provider==='openai')result=await callOpenAIAPI(testMsg,{},()=>{});
-    else if(AI_STATE.provider==='gemini')result=await callGeminiAPI(testMsg,{},()=>{});
-    if(result)addToast('Connection successful! ✅',AI_STATE.provider+' is working','green');
-  }catch(e){addToast('Connection failed',e.message,'red');}
+  if (AI_STATE.provider === 'local') {
+    addToast('Local engine is always available ✅','No API key needed','green'); return;
+  }
+  if (!AI_STATE.apiKey) {
+    addToast('No API key configured','Enter and save an API key in AI Settings','red'); return;
+  }
+  const provider = AI_STATE.provider;
+  const model = AI_STATE.model;
+  addToast(`Testing ${provider}…`, `Model: ${model}`, '');
+  try {
+    // Temporarily disable streaming for the test (cleaner for a simple ping)
+    const wasStream = AI_STATE.stream;
+    AI_STATE.stream = false;
+    const testMsg = [{role:'user', content:'Reply with exactly: OK'}];
+    const minCtx = {userName:'Test', currentTime:'--:--', currentDate:'--', dayOfWeek:'--', profile:{level:1,xp:0,streak:0}};
+    let result = '';
+    if (provider === 'anthropic') result = await callAnthropicAPI(testMsg, minCtx, ()=>{});
+    else if (provider === 'openai') result = await callOpenAIAPI(testMsg, minCtx, ()=>{});
+    else if (provider === 'gemini') result = await callGeminiAPI(testMsg, minCtx, ()=>{});
+    AI_STATE.stream = wasStream;
+    if (result) {
+      addToast('Connection successful! ✅', `${provider} (${model}) is responding`, 'green');
+    } else {
+      addToast('Connected but empty response','Provider responded with no text','');
+    }
+  } catch(e) {
+    addToast('Connection failed ❌', e.message, 'red');
+    console.warn('[Flip AI] Test connection error:', e.message);
+  }
 }
 
 // ── NAV INTEGRATION ───────────────────────────────────────────
